@@ -1,0 +1,4 @@
+{
+    "DB_URI": "mongodb://127.0.0.1:27017/gamified_lms_dev",
+    "jwtSecret": "vKsjWSgv0Qi+EJQzPbcR/UQlrqSZv7uYQjNpbnwAznTyQ/0gT2lUzL9X/ZjvI1ah"
+}
