@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
+const options = { discriminatorKey: 'kind' };
+
 const userSchema = new Schema({
     name: {
         type: String,
@@ -20,6 +22,6 @@ const userSchema = new Schema({
         required: true,
         default: Date.now
     }
-});
+}, options);
 
 export default mongoose.model('User', userSchema);
