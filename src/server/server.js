@@ -9,6 +9,8 @@ import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import learnerRoutes from './routes/learnerRoutes';
 import teacherRoutes from './routes/teacherRoutes';
+import lessonRoutes from './routes/lessonRoutes';
+import courseRoutes from './routes/courseRoutes';
 
 import App from '../components/App';
 
@@ -24,6 +26,8 @@ server.use('/api/users', userRoutes);
 server.use('/api/auth', authRoutes);
 server.use('/api/learner', learnerRoutes);
 server.use('/api/teacher', teacherRoutes);
+server.use('/api/lesson', lessonRoutes);
+server.use('/api/course', courseRoutes);
 
 
 server.get('/*', (req, res) => {
