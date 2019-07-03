@@ -9,11 +9,15 @@ import Lesson from '../schemas/LessonSchema';
 const router = express.Router();
 
 // @route POST api/courses
-// @desc Register new course
+// @desc Add new course
 // @access Private
 
 router.post('/', auth, function(req, res) {
     const lessonsIds = req.body.lessons;
+
+    if (!lessonsIds) {
+        return res.status(400).json({ msg: 'Lessons required to create course' });
+    }
     
     try {
         if (lessonsIds.length == 0) {
