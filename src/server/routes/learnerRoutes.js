@@ -8,8 +8,8 @@ import Learner from '../schemas/LearnerSchema';
 
 const router = express.Router();
 
-// @route POST api/teacher
-// @desc Register new teacher
+// @route POST api/learners
+// @desc Register new learner
 // @access Public
 router.post('/', function(req, res) {
     const { name, email, password } = req.body;

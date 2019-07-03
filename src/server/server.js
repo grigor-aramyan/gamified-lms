@@ -24,10 +24,10 @@ server.use(express.static('dist'));
 // Routes
 server.use('/api/users', userRoutes);
 server.use('/api/auth', authRoutes);
-server.use('/api/learner', learnerRoutes);
-server.use('/api/teacher', teacherRoutes);
-server.use('/api/lesson', lessonRoutes);
-server.use('/api/course', courseRoutes);
+server.use('/api/learners', learnerRoutes);
+server.use('/api/teachers', teacherRoutes);
+server.use('/api/lessons', lessonRoutes);
+server.use('/api/courses', courseRoutes);
 
 
 server.get('/*', (req, res) => {

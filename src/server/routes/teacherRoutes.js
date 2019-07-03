@@ -8,7 +8,7 @@ import Teacher from '../schemas/TeacherSchema';
 
 const router = express.Router();
 
-// @route POST api/teacher
+// @route POST api/teachers
 // @desc Register new teacher
 // @access Public
 router.post('/', function(req, res) {

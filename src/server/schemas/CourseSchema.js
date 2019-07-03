@@ -1,13 +1,15 @@
 import mongoose, { ObjectId } from 'mongoose';
 
+// Schema
+import LessonSchema from './LessonSchema';
+
 const Schema = mongoose.Schema;
 
 const courseSchema = new Schema({
     lessons: {
         type: Array,
-        of: ObjectId,
-        required: true
-        // TODO: check for inability to create course with empty lessons array
+        of: LessonSchema,
+        default: undefined
     }
 });
 
