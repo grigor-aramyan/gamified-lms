@@ -4,49 +4,48 @@ import auth from '../../../middleware/auth';
 
 // Schemas
 import Course from '../schemas/CourseSchema';
-import Lesson from '../schemas/LessonSchema';
 
 const router = express.Router();
 
 // @route POST api/courses
 // @desc Add new course
 // @access Private
-
 router.post('/', auth, function(req, res) {
     const lessonsIds = req.body.lessons;
-
-    if (!lessonsIds) {
-        return res.status(400).json({ msg: 'Lessons required to create course' });
-    }
+    const { title, description, author, price } = req.body;
     
     try {
-        if (lessonsIds.length == 0) {
+        if (!lessonsIds || lessonsIds.length == 0) {
             return res.status(400).json({ msg: 'Course should contain at least one lesson!' });
         }
     } catch(e) {
         return res.status(400).json({ msg: 'Bad request' });
     }
 
-    const lessons = lessonsIds.filter(l => {
-        Lesson.findById(mongoose.Types.ObjectId(l), (err, lesson) => {
-            if (err) return false;
+    if (!title || !description || !author) {
+        return res.status(400).json({ msg: 'Fields marked with asterisk are required!' });
+    }
 
-            if (lesson == null || lesson == undefined) return false;
-
+    const lessonsIdsFiltered = lessonsIds.filter(l => {
+        //let objectId = null;
+        try {
+            mongoose.Types.ObjectId(l);
             return true;
-        });
-    }).map(l => {
-        Lesson.findById(mongoose.Types.ObjectId(l), (err, lesson) => {
-            return lesson;
-        });
-    });
+        } catch(e) {
+            return false;
+        }
+    }).map(l => { return mongoose.Types.ObjectId(l); });
 
-    if (lessons.length == 0) {
+    if (lessonsIdsFiltered.length == 0) {
         return res.status(400).json({ msg: 'Course should contain at least one lesson!' });
     }
 
     const course = new Course({
-        lessons
+        lessons: lessonsIdsFiltered,
+        title,
+        description,
+        author,
+        price
     });
 
     course.save()
@@ -54,12 +53,9 @@ router.post('/', auth, function(req, res) {
             res.json(JSON.stringify(c));
         })
         .catch(e => {
+            console.log(e);
             res.status(400).json({ msg: 'Bad request!' });
         });
-});
-
-router.get('/', function(req, res) {
-    res.json({ msg: 'Test route for courses!' });
 });
 
 export default router;

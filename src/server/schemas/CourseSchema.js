@@ -1,16 +1,17 @@
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 // Schema
-import LessonSchema from './LessonSchema';
+import MainContentSchema from './MainContentSchema';
 
 const Schema = mongoose.Schema;
+const options = { discriminatorKey: 'kind' };
 
 const courseSchema = new Schema({
     lessons: {
         type: Array,
-        of: LessonSchema,
+        of: mongoose.Types.ObjectId,
         default: undefined
     }
-});
+}, options);
 
-export default mongoose.model('Course', courseSchema);
+export default MainContentSchema.discriminator('Course', courseSchema);

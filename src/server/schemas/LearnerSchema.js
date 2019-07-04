@@ -6,11 +6,11 @@ import UserSchema from './UserSchema';
 const Schema = mongoose.Schema;
 const options = { discriminatorKey: 'kind' };
 
-const LearnerSchema = new Schema({
+const learnerSchema = new Schema({
     points: {
         type: Number,
         default: 0
     }
 }, options);
 
-export default UserSchema.discriminator('Learner', LearnerSchema);
+export default UserSchema.discriminator('Learner', learnerSchema);
