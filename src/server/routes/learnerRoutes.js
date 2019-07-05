@@ -2,11 +2,33 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
+
+import auth from '../../../middleware/auth';
 
 // Schemas
 import Learner from '../schemas/LearnerSchema';
 
 const router = express.Router();
+
+// @route PUT api/learners
+// @desc Update learner data
+// @access Private
+router.put('/', auth, function(req, res) {
+
+    const dataObject = req.body;
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    Learner.findById(learnerId, (err, learner) => {
+        if (err || (learner == null)) return res.status(400).json({ msg: 'No learner found with provided credentials' });
+
+        Learner.updateOne({ _id: learner._id}, dataObject, (err, affected, resp) => {
+            if (err) return res.status(500).json({ msg: 'Internal error. Try later, please!' });
+
+            res.json({ msg: `success` });
+        });
+    });
+});
 
 // @route POST api/learners
 // @desc Register new learner
