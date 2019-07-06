@@ -2,11 +2,32 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
+
+import auth from '../../../middleware/auth';
 
 // Schemas
 import Teacher from '../schemas/TeacherSchema';
 
 const router = express.Router();
+
+// @route PUT api/teachers
+// @desc Update teacher data
+// @access Private
+router.put('/', auth, function(req, res) {
+    const dataObject = req.body;
+    const teacherId = mongoose.Types.ObjectId(req.user.id);
+
+    Teacher.findById(teacherId, (err, teacher) => {
+        if (err || (teacher == null)) return res.status(400).json({ msg: 'No teacher found with provided credentials' });
+
+        Teacher.updateOne({ _id: teacher._id }, dataObject, (err, affected, resp) => {
+            if (err) return res.status(500).json({ msg: 'Internal error. Try later, please!' });
+
+            res.json({ msg: `success` });
+        });
+    });
+});
 
 // @route POST api/teachers
 // @desc Register new teacher
