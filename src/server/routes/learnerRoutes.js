@@ -11,6 +11,19 @@ import Learner from '../schemas/LearnerSchema';
 
 const router = express.Router();
 
+// @route DELETE api/learners
+// @desc Delete learner (self)
+// @access Private
+router.delete('/', auth, function(req, res) {
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    Learner.findByIdAndDelete(learnerId, (err, learner) => {
+        if (err || (learner == null)) return res.status(400).json({ msg: 'No learner found with provided credentials' });
+
+        res.status(200).json({ msg: 'deleted', id: learner._id });
+    });
+});
+
 // @route PUT api/learners
 // @desc Update learner data
 // @access Private
