@@ -11,6 +11,19 @@ import Teacher from '../schemas/TeacherSchema';
 
 const router = express.Router();
 
+// @route DELETE api/teachers
+// @desc Delete teacher (self)
+// @access Private
+router.delete('/', auth, function(req, res) {
+    const teacherId = mongoose.Types.ObjectId(req.user.id);
+
+    Teacher.findByIdAndDelete(teacherId, (err, teacher) => {
+        if (err || (teacher == null)) return res.status(400).json({ msg: 'No teacher found with provided credentials' });
+
+        res.status(200).json({ msg: 'deleted', id: teacher._id });
+    });
+});
+
 // @route PUT api/teachers
 // @desc Update teacher data
 // @access Private
