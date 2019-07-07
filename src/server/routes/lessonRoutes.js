@@ -8,6 +8,30 @@ import Teacher from '../schemas/TeacherSchema';
 
 const router = express.Router();
 
+// @route GET api/lessons
+// @desc Get lessons
+// @access Private
+router.get('/', auth, function(req, res) {
+    Lesson.find({}, (err, lessons) => {
+        if (err || (lessons == null)) return res.status(400).json({ msg: 'Bad request!' });
+
+        const lessonsFiltered = lessons.map(l => {
+            return {
+                id: l._id,
+                title: l.title,
+                description: l.description,
+                content: l.content,
+                imageUris: l.imageUris,
+                videoUris: l.videoUris,
+                price: l.price,
+                authorId: l.author
+            };
+        });
+
+        res.status(200).json({ lessons: lessonsFiltered });
+    });
+});
+
 // @route DELETE api/lessons/:id
 // @desc Delete lesson
 // @access Private
