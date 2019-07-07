@@ -8,6 +8,28 @@ import Teacher from '../schemas/TeacherSchema';
 
 const router = express.Router();
 
+// @route GET api/courses
+// @desc Get courses
+// @access Private
+router.get('/', auth, function(req, res) {
+    Course.find({}, (err, courses) => {
+        if (err || (courses == null)) return res.status(400).json({ msg: 'Bad request!' });
+
+        const coursesFiltered = courses.map(c => {
+            return {
+                id: c._id,
+                title: c.title,
+                description: c.description,
+                authorId: c.author,
+                lessonsId: c.lessons,
+                price: c.price
+            };
+        });
+
+        res.status(200).json({ courses: coursesFiltered });
+    });
+});
+
 // @route DELETE api/courses/:id
 // @desc Delete course
 // @access Private
