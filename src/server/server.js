@@ -12,6 +12,7 @@ import teacherRoutes from './routes/teacherRoutes';
 import lessonRoutes from './routes/lessonRoutes';
 import courseRoutes from './routes/courseRoutes';
 import lessonOngoingRoutes from './routes/lessonOngoingRoutes';
+import courseOngoingRoutes from './routes/courseOngoingRoutes';
 
 import App from '../components/App';
 
@@ -30,6 +31,7 @@ server.use('/api/teachers', teacherRoutes);
 server.use('/api/lessons', lessonRoutes);
 server.use('/api/courses', courseRoutes);
 server.use('/api/lesson_ongoings', lessonOngoingRoutes);
+server.use('/api/course_ongoings', courseOngoingRoutes);
 
 
 server.get('/*', (req, res) => {
