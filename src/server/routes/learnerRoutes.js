@@ -11,6 +11,27 @@ import Learner from '../schemas/LearnerSchema';
 
 const router = express.Router();
 
+// @route GET api/learners
+// @desc Get learners
+// @access Private
+router.get('/', auth, function(req, res) {
+    Learner.find({}, (err, learners) => {
+        if (err || (learners == null)) return res.status(400).json({ msg: 'Bad request!' });
+
+        const learnersFiltered = learners.map(l => {
+            return {
+                id: l._id,
+                name: l.name,
+                email: l.email,
+                points: l.points,
+                registration_date: l.registration_date
+            };
+        });
+
+        res.status(200).json({ learners: learnersFiltered });
+    });
+});
+
 // @route DELETE api/learners
 // @desc Delete learner (self)
 // @access Private
