@@ -11,6 +11,30 @@ import Teacher from '../schemas/TeacherSchema';
 
 const router = express.Router();
 
+// @route GET api/teachers
+// @desc Get teachers list
+// @access Private
+router.get('/', auth, function(req, res) {
+    Teacher.find({}, (err, teachers) => {
+        if (err || (teachers == null)) return res.status(400).json({ msg: 'Bad request' });
+
+        const teachersFiltered = teachers.map(t => {
+            return {
+                id: t._id,
+                name: t.name,
+                email: t.email,
+                subject: t.subject,
+                registration_date: t.registration_date,
+                lessons: t.lessons,
+                courses: t.courses
+            };
+        });
+
+        res.status(200).json({ teachers: teachersFiltered });
+    });
+});
+
+
 // @route DELETE api/teachers
 // @desc Delete teacher (self)
 // @access Private
