@@ -5,8 +5,48 @@ import auth from '../../../middleware/auth';
 // Schemas
 import CourseOngoing from '../schemas/CourseOngoingSchema';
 import Learner from '../schemas/LearnerSchema';
+import Course from '../schemas/CourseSchema';
 
 const router = express.Router();
+
+// @route POST api/course_ongoings
+// @desc Create course ongoing for logged in learner
+// @access Private
+router.post('/', auth, function(req, res) {
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    let courseId = null;
+    try {
+        courseId = mongoose.Types.ObjectId(req.body.courseId);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No course found with provided credentials!' });
+    }
+
+    Learner.findById(learnerId, (err, learner) => {
+        if (err || (learner == null)) return res.status(400).json({ msg: 'No learner found with provided credentials' });
+
+        Course.findById(courseId, (err, course) => {
+            if (err || (course == null)) return res.status(400).json({ msg: 'No course found with provided credentials!' });
+
+            const courseOngoing = new CourseOngoing({
+                learnerId: learner._id,
+                courseId: course._id
+            });
+
+            courseOngoing.save()
+                .then(co => {
+                    res.status(201).json({
+                        course_ongoing: {
+                            id: co._id,
+                            completed: co.completed,
+                            courseId: co.courseId,
+                            learnerId: co.learnerId        
+                        }
+                    });
+                });
+        });
+    });
+});
 
 // @route GET api/course_ongoings
 // @desc Get course ongoings of logged in learner
