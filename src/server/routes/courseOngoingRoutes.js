@@ -9,6 +9,30 @@ import Course from '../schemas/CourseSchema';
 
 const router = express.Router();
 
+// @route DELETE api/course_ongoings/:id
+// @desc Delete course ongoing of logged in learner
+// @access Private
+router.delete('/:id', auth, function(req, res) {
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    let courseOngoingId = null;
+    try {
+        courseOngoingId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No data found to delete!' });
+    }
+
+    Learner.findById(learnerId, (err, learner) => {
+        if (err || (learner == null)) return res.status(400).json({ msg: 'No learner found with provided credentials' });
+
+        CourseOngoing.findOneAndDelete({ _id: courseOngoingId, learnerId: learner._id }, (err, co) => {
+            if (err || (co == null)) return res.status(400).json({ msg: 'No data found to delete!' });
+
+            res.status(200).json({ msg: 'deleted', id: co._id });
+        });
+    });
+});
+
 // @route POST api/course_ongoings
 // @desc Create course ongoing for logged in learner
 // @access Private
