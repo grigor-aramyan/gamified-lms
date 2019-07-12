@@ -9,6 +9,31 @@ import Lesson from '../schemas/LessonSchema';
 
 const router = express.Router();
 
+// @route DELETE api/lesson_ongoings/:id
+// @desc Delete lesson ongoing of logged in learner
+// @access Private
+router.delete('/:id', auth, function(req, res) {
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    let lessonOngoingId = null;
+    try {
+        lessonOngoingId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No data found for provided credentials!' });
+    }
+
+    Learner.findById(learnerId, (err, learner) => {
+        if (err || (learner == null)) return res.status(400).json({ msg: 'No learner found with provided credentials' });
+
+        LessonOngoing.findOneAndDelete({ _id: lessonOngoingId, learnerId: learner._id }, (err, lo) => {
+            if (err || (lo == null)) return res.status(400).json({ msg: 'No data found to delete' });
+
+            res.status(200).json({ msg: 'deleted', id: lo._id });
+        });
+        
+    });
+});
+
 // @route POST api/lesson_ongoings
 // @desc Create lesson ongoing for logged in learner
 // @access Private
