@@ -5,9 +5,92 @@ import auth from '../../../middleware/auth';
 // Schemas
 import CourseOngoing from '../schemas/CourseOngoingSchema';
 import Learner from '../schemas/LearnerSchema';
+import Teacher from '../schemas/TeacherSchema';
 import Course from '../schemas/CourseSchema';
+import Lesson from '../schemas/LessonSchema';
 
 const router = express.Router();
+
+// @route UPDATE api/course_ongoings/:id
+// @desc Update course ongoing of learner by logged in teacher
+// @access Private
+router.put('/:id', auth, function(req, res) {
+    const teacherId = mongoose.Types.ObjectId(req.user.id);
+
+    const dataObject = req.body;
+
+    let courseOngoingId = null;
+    try {
+        courseOngoingId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No data found to update!' });
+    }
+
+    Teacher.findById(teacherId, (err, teacher) => {
+        if (err || (teacher == null)) return res.status(400).json({ msg: 'No teacher found with provided credentials' });
+
+        CourseOngoing.findById(courseOngoingId, (err, co) => {
+            if (err || (co == null)) return res.status(400).json({ msg: 'No data found to update!' });
+
+            Course.findById(co.courseId, (err, course) => {
+                if (err || (course == null)) return res.status(500).json({ msg: 'Internal error! Try later or contact with us, please!' });
+
+                const lessonIdsArray = course.lessons;
+                if (lessonIdsArray.length <= 0) {
+                    return res.status(500).json({ msg: 'Internal error! Contact with us or try later, please!' });
+                } else {
+                    const lessonId = lessonIdsArray[0];
+                    Lesson.findById(lessonId, (err, lesson) => {
+                        if (err || (lesson == null)) return res.status(500).json({ msg: 'Internal error!' });
+
+                        if (teacher._id.toString() === lesson.author.toString()) {
+                            if (dataObject.completionPoints) {
+                                const cp = dataObject.completionPoints;
+
+                                let dynamicMap = {};
+                                for (let [k, v] of Object.entries(cp)) {
+                                    
+                                    const filteredLesson = course.lessons.filter(l => {
+                                        if ( (l.toString() === k) &&
+                                            ( (co.completionPoints == undefined) ||
+                                                (co.completionPoints.get(l.toString()) == undefined) ) ) return true;
+
+                                        return false;
+                                    });
+
+                                    if (filteredLesson.length > 0) {
+                                        dynamicMap[k] = v;
+                                    }
+                                }
+
+                                if (Object.keys(dynamicMap).length > 0) {
+                                    dataObject.completionPoints = dynamicMap;
+                                } else {
+                                    delete dataObject.completionPoints;
+                                }
+
+                                CourseOngoing.updateOne({ _id: co._id }, dataObject, (err, affected, resp) => {
+                                    if (err) return res.status(500).json({ msg: 'Internal error!' });
+
+                                    res.status(200).json({ msg: 'success' });
+                                });
+                                
+                            } else {
+                                CourseOngoing.updateOne({ _id: co._id }, dataObject, (err, affected, resp) => {
+                                    if (err) return res.status(500).json({ msg: 'Internal error! Contact with us, please.' });
+
+                                    res.status(200).json({ msg: 'success' });
+                                });
+                            }
+                        } else {
+                            return res.status(400).json({ msg: 'Only author of this course can modify it!' });
+                        }
+                    });
+                }
+            });
+        });
+    });
+});
 
 // @route DELETE api/course_ongoings/:id
 // @desc Delete course ongoing of logged in learner
