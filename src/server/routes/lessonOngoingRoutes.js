@@ -5,9 +5,50 @@ import auth from '../../../middleware/auth';
 // Schemas
 import LessonOngoing from '../schemas/LessonOngoingSchema';
 import Learner from '../schemas/LearnerSchema';
+import Teacher from '../schemas/TeacherSchema';
 import Lesson from '../schemas/LessonSchema';
 
 const router = express.Router();
+
+// @route UPDATE api/lesson_ongoings/:id
+// @desc Update lesson ongoing of learner by logged in teacher
+// @access Private
+router.put('/:id', auth, function(req, res) {
+    const teacherId = mongoose.Types.ObjectId(req.user.id);
+
+    const dataObject = req.body;
+
+    let lessonOngoingId = null;
+    try {
+        lessonOngoingId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No data found to update!' });
+    }
+
+    Teacher.findById(teacherId, (err, teacher) => {
+        if (err || (teacher == null)) return res.status(400).json({ msg: 'No teacher found with provided credentials' });
+
+        LessonOngoing.findById(lessonOngoingId, (err, lo) => {
+            if (err || (lo == null)) return res.status(400).json({ msg: 'No data found to update!' });
+
+            Lesson.findById(lo.lessonId, (err, lesson) => {
+                if (err || (lesson == null)) return res.status(400).json({ msg: 'Bad request!' });
+
+                if (teacher._id.toString() === lesson.author.toString()) {
+
+                    LessonOngoing.updateOne({ _id: lessonOngoingId }, dataObject, (err, affected, resp) => {
+                        if (err) return res.status(500).json({ msg: 'Internal error! Try later or contact with us, please.' });
+
+                        return res.status(200).json({ msg: 'success' });
+                    });
+
+                } else {
+                    return res.status(400).json({ msg: 'Only author of this lesson can modify it!' });
+                }
+            });
+        });
+    });
+});
 
 // @route DELETE api/lesson_ongoings/:id
 // @desc Delete lesson ongoing of logged in learner
@@ -30,7 +71,7 @@ router.delete('/:id', auth, function(req, res) {
 
             res.status(200).json({ msg: 'deleted', id: lo._id });
         });
-        
+
     });
 });
 
