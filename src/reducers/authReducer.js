@@ -5,7 +5,9 @@ import {
     LOGIN_FAIL,
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
-    LOAD_LOCAL_TOKEN
+    LOAD_LOCAL_TOKEN,
+    SWITCH_TO_LEARNER_LOGIN,
+    SWITCH_TO_TEACHER_LOGIN
 } from '../actions/types';
 
 const initialState = {
@@ -19,6 +21,16 @@ const initialState = {
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case SWITCH_TO_TEACHER_LOGIN:
+            return {
+                ...state,
+                isTeacher: true
+            };
+        case SWITCH_TO_LEARNER_LOGIN:
+            return {
+                ...state,
+                isTeacher: false
+            };
         case LOAD_LOCAL_TOKEN:
             return {
                 ...state,
@@ -69,14 +81,14 @@ export default function(state = initialState, action) {
                     ...state,
                     isAuthenticated: true,
                     isLoading: false,
-                    teacher: action.payload.user
+                    teacher: action.payload
                 };
             } else {
                 return {
                     ...state,
                     isAuthenticated: true,
                     isLoading: false,
-                    learner: action.payload.user
+                    learner: action.payload
                 };
             }
         default:
