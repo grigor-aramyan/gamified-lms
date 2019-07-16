@@ -21,8 +21,6 @@ export default function(state = initialState, action) {
             return {
                 ...state
             };
-        case LEARNER_UPDATE_FAIL:
-            return state;
         case LEARNER_DELETE_SUCCESS:
             return {
                 ...state,
@@ -30,15 +28,14 @@ export default function(state = initialState, action) {
                 learner: null,
                 allLearners: []
             };
-        case LEARNER_DELETE_FAIL:
-            return state;
         case LEARNERS_GET_SUCCESS:
             return {
                 ...state,
                 allLearners: action.payload
             };
+        case LEARNER_UPDATE_FAIL:
+        case LEARNER_DELETE_FAIL:
         case LEARNERS_GET_FAIL:
-            return state;
         case LEARNER_CREATED_FAIL:
             return state;
         case LEARNER_CREATED_SUCCESS:
