@@ -108,7 +108,7 @@ router.post('/', auth, function(req, res) {
 
         lesson.save()
         .then(l => {
-            res.status(201).json(JSON.stringify(l));
+            res.status(201).json(l);
         })
         .catch(e => {
             res.status(400).json({ msg: 'Bad request!' });
