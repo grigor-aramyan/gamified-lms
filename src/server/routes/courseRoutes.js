@@ -159,10 +159,9 @@ router.post('/', auth, function(req, res) {
 
     course.save()
         .then(c => {
-            res.json(JSON.stringify(c));
+            res.json(c);
         })
         .catch(e => {
-            console.log(e);
             res.status(400).json({ msg: 'Bad request!' });
         });
 });

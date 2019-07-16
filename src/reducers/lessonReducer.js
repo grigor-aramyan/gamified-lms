@@ -46,7 +46,7 @@ export default function(state = initialState, action) {
         case LESSON_CREATED_SUCCESS:
             return {
                 ...state,
-                allLessons: state.allLessons(action.payload)
+                allLessons: state.allLessons.unshift(action.payload)
             };
         default:
             return state;
