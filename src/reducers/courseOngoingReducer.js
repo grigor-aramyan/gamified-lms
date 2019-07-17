@@ -7,7 +7,7 @@ import {
     COURSE_ONGOING_UPDATE_FAIL,
     COURSE_ONGOING_DELETE_SUCCESS,
     COURSE_ONGOING_DELETE_FAIL
-} from './types';
+} from '../actions/types';
 
 const initialState = {
     currentCourseOngoing: null,

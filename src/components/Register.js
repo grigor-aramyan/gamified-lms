@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-
 import Header from './Header';
 
-class App extends Component {
+class Register extends Component {
     render() {
         return(
             <div>
                 <Header />
-                <h2>App Component</h2>
+                Register component goes here!
             </div>
         );
     }
 }
 
-export default App;
+export default Register;

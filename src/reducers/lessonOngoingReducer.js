@@ -7,7 +7,7 @@ import {
     LESSON_ONGOING_UPDATE_FAIL,
     LESSON_ONGOING_DELETE_SUCCESS,
     LESSON_ONGOING_DELETE_FAIL
-} from './types';
+} from '../actions/types';
 
 const initialState = {
     currentLessonOngoing: null,

@@ -7,7 +7,7 @@ import {
     COURSE_UPDATE_FAIL,
     COURSE_DELETE_SUCCESS,
     COURSE_DELETE_FAIL
-} from './types';
+} from '../actions/types';
 
 const initialState = {
     currentCourse: null,

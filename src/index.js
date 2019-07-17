@@ -5,6 +5,13 @@ import { Provider } from 'react-redux';
 import store from './store';
 
 import App from './components/App';
+import Register from './components/Register';
+import Lessons from './components/Lessons';
+import Courses from './components/Courses';
+import LessonOngoings from './components/LessonOngoings';
+import CourseOngoings from './components/CourseOngoings';
+import Learners from './components/Learners';
+import Teachers from './components/Teachers';
 
 ReactDOM.hydrate(
     <Provider store={store}>
@@ -12,6 +19,13 @@ ReactDOM.hydrate(
             <Route path='/'>
                 <Switch>
                     <Route exact path='/' component={App} />
+                    <Route path='/register' component={Register} />
+                    <Route path='/lessons' component={Lessons} />
+                    <Route path='/courses' component={Courses} />
+                    <Route path='/lesson_ongoings' component={LessonOngoings} />
+                    <Route path='/course_ongoings' component={CourseOngoings} />
+                    <Route path='/learners' component={Learners} />
+                    <Route path='/teachers' component={Teachers} />
                     <Route path='/*' render={ () => {
                         return(
                             <div>
