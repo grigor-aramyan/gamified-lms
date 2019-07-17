@@ -14,6 +14,7 @@ import { tokenConfig } from './authActions';
 
 // Constants
 const API_URI = 'http://localhost:4242/api/learners';
+export const CREATE_LEARNER_ERROR = 'CREATE_LEARNER_ERROR';
 
 export const updateLearner = (newData) => (dispatch, getState) => {
 
@@ -57,7 +58,7 @@ export const createLearner = ({ name, email, password}) => (dispatch, getState) 
             });
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch(returnErrors(err.response.data, err.response.status, CREATE_LEARNER_ERROR));
             dispatch({ type: LEARNER_CREATED_FAIL });
         });
 }

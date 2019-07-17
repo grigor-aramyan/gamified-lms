@@ -14,6 +14,7 @@ import { tokenConfig } from './authActions';
 
 // Constants
 const API_URI = 'http://localhost:4242/api/teachers';
+export const CREATE_TEACHER_ERROR = 'CREATE_TEACHER_ERROR';
 
 export const updateTeacher = (newData) => (dispatch, getState) => {
 
@@ -57,7 +58,7 @@ export const createTeacher = ({ name, email, password, subject }) => (dispatch, 
             });
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch(returnErrors(err.response.data, err.response.status, CREATE_TEACHER_ERROR));
             dispatch({ type: TEACHER_CREATED_FAIL });
         });
 }
