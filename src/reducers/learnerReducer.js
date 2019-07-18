@@ -39,6 +39,9 @@ export default function(state = initialState, action) {
         case LEARNER_CREATED_FAIL:
             return state;
         case LEARNER_CREATED_SUCCESS:
+            localStorage.setItem('gl_token', action.payload.token);
+            localStorage.setItem('gl_teacher', 'false');
+
             return {
                 ...state,
                 ...action.payload

@@ -12,13 +12,28 @@ import {
 
 import { createTeacher, CREATE_TEACHER_ERROR } from '../actions/teacherActions';
 import { createLearner, CREATE_LEARNER_ERROR } from '../actions/learnerActions';
+import { loadLocalToken, loadUser } from '../actions/authActions';
 
 // components
 import Header from './Header';
 
 
-
 class Register extends Component {
+    componentDidMount() {
+        if (this.props.isAuthenticated) {
+            window.location.replace('/');
+        } else {
+            this.props.loadLocalToken();
+            this.props.loadUser();
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.isAuthenticated || this.props.learner || this.props.teacher) {
+            window.location.replace('/');
+        }
+    }
+
     state = {
         registerAsTeacher: true,
         teacherName: '',
@@ -176,15 +191,25 @@ class Register extends Component {
 
 Register.propTypes = {
     error: PropTypes.object.isRequired,
+    learner: PropTypes.object,
+    teacher: PropTypes.object,
     createLearner: PropTypes.func.isRequired,
-    createTeacher: PropTypes.func.isRequired
+    createTeacher: PropTypes.func.isRequired,
+    loadLocalToken: PropTypes.func.isRequired,
+    loadUser: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool
 }
 
 const mapStateToProps = (state) => ({
-    error: state.error
+    error: state.error,
+    learner: state.learner.learner,
+    teacher: state.teacher.teacher,
+    isAuthenticated: state.auth.isAuthenticated
 });
 
 export default connect(mapStateToProps, {
     createLearner,
-    createTeacher
+    createTeacher,
+    loadLocalToken,
+    loadUser
 })(Register);

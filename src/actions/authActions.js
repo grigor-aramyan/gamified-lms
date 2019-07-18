@@ -14,6 +14,8 @@ import {
 
 // Constants
 const API_URI = 'http://localhost:4242/api';
+export const TEACHER_LOGIN_ERROR = 'TEACHER_LOGIN_ERROR';
+export const LEARNER_LOGIN_ERROR = 'LEARNER_LOGIN_ERROR';
 
 export const loginInit = ({ email, password }) => (dispatch, getState) => {
     dispatch({ type: USER_LOADING });
@@ -30,7 +32,13 @@ export const loginInit = ({ email, password }) => (dispatch, getState) => {
             });
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status));
+            let errorType = '';
+            if (getState().auth.isTeacher) {
+                errorType = TEACHER_LOGIN_ERROR;
+            } else {
+                errorType = LEARNER_LOGIN_ERROR;
+            }
+            dispatch(returnErrors(err.response.data, err.response.status, errorType));
             dispatch({ type: LOGIN_FAIL });
         });
 }
@@ -68,10 +76,18 @@ export const loadUser = () => (dispatch, getState) => {
 export const loadLocalToken = () => dispatch => {
     try {
         const token = localStorage.getItem('gl_token');
+        const userType = localStorage.getItem('gl_teacher');
 
+        let isTeacher = true;
+        if (userType !== 'true') {
+            isTeacher = false;
+        }
         dispatch({
             type: LOAD_LOCAL_TOKEN,
-            payload: token
+            payload: {
+                token: token,
+                isTeacher: isTeacher
+            }
         });
     } catch(e) {
 
