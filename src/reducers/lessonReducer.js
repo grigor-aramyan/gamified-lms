@@ -11,7 +11,7 @@ import {
 
 const initialState = {
     currentLesson: null,
-    allLessons: []
+    allLessons: null
 };
 
 export default function(state = initialState, action) {
@@ -44,9 +44,11 @@ export default function(state = initialState, action) {
         case LESSON_CREATED_FAIL:
             return state;
         case LESSON_CREATED_SUCCESS:
+            const lessons = [...state.allLessons];
+            lessons.unshift(action.payload);
             return {
                 ...state,
-                allLessons: state.allLessons.unshift(action.payload)
+                allLessons: lessons
             };
         default:
             return state;

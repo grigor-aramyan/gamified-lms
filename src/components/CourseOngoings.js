@@ -2,32 +2,65 @@ import React, { Component } from 'react';
 import { connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
-// utils
-import { checkAuthenticationAndRedirect } from '../utils/utilFuncs';
-
 import Header from './Header';
+import NotAuthenticated from './NotAuthenticated';
+
+import { loadLocalToken, loadUser } from '../actions/authActions';
 
 class CourseOngoings extends Component {
     componentDidMount() {
-        checkAuthenticationAndRedirect(this.props.isAuthenticated);
+        this.props.loadLocalToken();
+        this.props.loadUser();
     }
 
     render() {
+        const {
+            isAuthenticated,
+            isTeacher
+        } = this.props;
+
         return(
             <div>
-                <Header />
-                CourseOngoings will go here
+                { (isAuthenticated && isTeacher) ?
+                    <div>
+                        <Header />
+                        <Container>
+                            Teacher courses ongoings
+                        </Container>           
+                    </div>
+                    : null
+                }
+                { (isAuthenticated && !isTeacher) ?
+                    <div>
+                        <Header />
+                        <Container>
+                            Learner courses ongoings
+                        </Container>           
+                    </div>
+                    : null
+                }
+                { !isAuthenticated ?
+                    <NotAuthenticated /> 
+                    : null
+                }
             </div>
         );
     }
 }
 
 CourseOngoings.propTypes = {
-    isAuthenticated: PropTypes.func
+    isAuthenticated: PropTypes.bool,
+    isTeacher: PropTypes.bool.isRequired,
+    loadLocalToken: PropTypes.func.isRequired,
+    loadUser: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    isTeacher: state.auth.isTeacher
 });
 
-export default connect(mapStateToProps, {})(CourseOngoings);
+export default connect(mapStateToProps, {
+    loadLocalToken,
+    loadUser
+})(CourseOngoings);

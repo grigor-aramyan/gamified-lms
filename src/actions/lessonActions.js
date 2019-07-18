@@ -15,6 +15,7 @@ import { returnErrors } from './errorActions';
 
 // Constants
 const API_URI = 'http://localhost:4242/api/lessons';
+export const CREATE_LESSON_ERROR = 'CREATE_LESSON_ERROR';
 
 export const updateLesson = (lessonId, newData) => (dispatch, getState) => {
 
