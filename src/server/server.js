@@ -69,7 +69,7 @@ server.get('/*', (req, res) => {
 mongoose.connect(config.get('DB_URI'), { useNewUrlParser: true, useCreateIndex: true }, (err) => {
     if(err) return console.log(err);
 
-    server.listen(PORT, () => console.log(`server listening on port ${PORT}`));
+    server.listen(process.env.PORT, () => console.log(`server listening on port ${PORT}`));
 });
 
 process.on('SIGINT', () => {
