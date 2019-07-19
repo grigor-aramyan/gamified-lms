@@ -5,10 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev-server": "nodemon --exec babel-node src/server/server.js --ignore dist/",
-    "prod-server": "node --exec babel-node src/server/server.js --ignore dist/",
     "dev-bundle": "webpack -wd",
     "dev-start": "concurrently \"npm run dev-bundle\" \"npm run dev-server\"",
-    "start": "concurrently \"npm run dev-bundle\" \"npm run prod-server\""
+    "start": "node src/server/server.js"
   },
   "repository": {
     "type": "git",
