@@ -44,9 +44,12 @@ export default function(state = initialState, action) {
         case LESSON_ONGOING_CREATED_FAIL:
             return state;
         case LESSON_ONGOING_CREATED_SUCCESS:
+            const data = [...state.allLessonOngoings];
+            data.unshift(action.payload.lesson_ongoing);
+
             return {
                 ...state,
-                allLessonOngoings: state.allLessonOngoings.unshift(action.payload.lesson_ongoing)
+                allLessonOngoings: data
             };
         default:
             return state;

@@ -15,6 +15,7 @@ import { tokenConfig } from './authActions';
 
 // Constants
 const API_URI = 'http://localhost:4242/api/lesson_ongoings';
+export const CREATE_LESSON_ONGOING_ERROR = 'CREATE_LESSON_ONGOING_ERROR';
 
 export const updateLessonOngoing = (lessonOngoingId, newData) => (dispatch, getState) => {
 
@@ -61,7 +62,7 @@ export const createLessonOngoing = (dataBody) => (dispatch, getState) => {
             });
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch(returnErrors(err.response.data, err.response.status, CREATE_LESSON_ONGOING_ERROR));
             dispatch({ type: LESSON_ONGOING_CREATED_FAIL });
         });
 }
