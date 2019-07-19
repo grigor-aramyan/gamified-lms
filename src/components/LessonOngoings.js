@@ -2,10 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import {
+    Container
+} from 'reactstrap';
+
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
+import ListAllLessonOngoings from './ListAllLessonOngoings';
 
 class LessonOngoings extends Component {
     componentDidMount() {
@@ -21,7 +26,7 @@ class LessonOngoings extends Component {
 
         return(
             <div>
-                { (isAuthenticated && isTeacher) ?
+                { /*(isAuthenticated && isTeacher) ?
                     <div>
                         <Header />
                         <Container>
@@ -29,17 +34,17 @@ class LessonOngoings extends Component {
                         </Container>           
                     </div>
                     : null
-                }
+                */}
                 { (isAuthenticated && !isTeacher) ?
                     <div>
                         <Header />
                         <Container>
-                            Learner lesson ongoings
+                            <ListAllLessonOngoings />
                         </Container>           
                     </div>
                     : null
                 }
-                { !isAuthenticated ?
+                { (!isAuthenticated || (isAuthenticated && isTeacher)) ?
                     <NotAuthenticated /> 
                     : null
                 }
