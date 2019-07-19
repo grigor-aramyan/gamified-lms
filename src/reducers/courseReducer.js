@@ -44,9 +44,11 @@ export default function(state = initialState, action) {
         case COURSE_CREATED_FAIL:
             return state;
         case COURSE_CREATED_SUCCESS:
+            const data = [...state.allCourses];
+            data.unshift(action.payload)
             return {
                 ...state,
-                allCourses: state.allCourses.unshift(action.payload)
+                allCourses: data
             };
         default:
             return state;

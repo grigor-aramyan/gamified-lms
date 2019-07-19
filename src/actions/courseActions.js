@@ -15,6 +15,7 @@ import { returnErrors } from './errorActions';
 
 // Constants
 const API_URI = 'http://localhost:4242/api/courses';
+export const CREATE_COURSE_ERROR = 'CREATE_COURSE_ERROR';
 
 export const updateCourse = (courseId, newData) => (dispatch, getState) => {
 
@@ -61,7 +62,7 @@ export const createCourse = (dataBody) => (dispatch, getState) => {
             });
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch(returnErrors(err.response.data, err.response.status, CREATE_COURSE_ERROR));
             dispatch({ type: COURSE_CREATED_FAIL });
         });
 }

@@ -14,6 +14,7 @@ import Header from './Header';
 import AddLesson from './AddLesson';
 import NotAuthenticated from './NotAuthenticated';
 import ListAllLessons from './ListAllLessons';
+import AddCourse from './AddCourse';
 
 class Lessons extends Component {
     componentDidMount() {
@@ -24,6 +25,27 @@ class Lessons extends Component {
     componentDidUpdate() {
         if (this.props.isAuthenticated && !this.props.allLessons) {
             this.props.getLessons();
+        }
+    }
+
+    state = {
+        lessonsForNewCourse: []
+    }
+
+    toggleLessonForNewCourse = (lessonId) => {
+        if (this.state.lessonsForNewCourse.includes(lessonId)) {
+            const data = this.state.lessonsForNewCourse.filter(l => {
+                if (l === lessonId) return false;
+
+                return true;
+            });
+
+            this.setState({ lessonsForNewCourse: data });
+
+        } else {
+            const data = [...this.state.lessonsForNewCourse];
+            data.unshift(lessonId);
+            this.setState({ lessonsForNewCourse: data });
         }
     }
 
@@ -41,6 +63,9 @@ class Lessons extends Component {
                     <div>
                         <Header />
                         <Container>
+                            <AddCourse
+                                lessonsForNewCourse={ this.state.lessonsForNewCourse }
+                                />
                             <AddLesson />
                             <hr />
                             { allLessons ?
@@ -48,6 +73,7 @@ class Lessons extends Component {
                                     allLessons={ allLessons }
                                     isTeacher={ isTeacher }
                                     error={ error }
+                                    toggleLessonForNewCourse={ this.toggleLessonForNewCourse }
                                     />
                                 : null 
                             }

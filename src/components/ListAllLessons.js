@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {
     Container,
     Button,
+    Input,
     Col,
     Row
 } from 'reactstrap';
@@ -44,7 +45,8 @@ class ListAllLessons extends Component {
         const {
             allLessons,
             isTeacher,
-            error
+            error,
+            toggleLessonForNewCourse
         } = this.props;
 
         return(
@@ -70,6 +72,14 @@ class ListAllLessons extends Component {
                                             </Button>
                                         </Col> : null
                                     }
+                                    { isTeacher ?
+                                        <Col xs='2' offset='10'>
+                                            <Input
+                                                type='checkbox'
+                                                onClick={ () => { toggleLessonForNewCourse(l.id) } } />
+                                        </Col>
+                                        : null
+                                    }
                                 </Row>
                             </li>
                         );
@@ -85,7 +95,8 @@ ListAllLessons.propTypes = {
     allLessons: PropTypes.array,
     isTeacher: PropTypes.bool.isRequired,
     createLessonOngoing: PropTypes.func.isRequired,
-    allLessonOngoings: PropTypes.array.isRequired
+    allLessonOngoings: PropTypes.array.isRequired,
+    toggleLessonForNewCourse: PropTypes.func
 }
 
 const mapStateToProps = (state) => ({
