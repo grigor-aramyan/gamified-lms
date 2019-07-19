@@ -4,25 +4,49 @@ import PropTypes from 'prop-types';
 
 import {
     Container,
+    Button,
     Col,
     Row
 } from 'reactstrap';
 
 import { getCourses } from '../actions/courseActions';
+import { createCourseOngoing } from '../actions/courseOngoingActions';
 
 class ListAllCourses extends Component {
     componentDidMount() {
         this.props.getCourses();
+
+        this.setState({ courseOngoingsCount: this.props.allCourseOngoings.length });
+    }
+
+    componentDidUpdate() {
+        if (this.state.courseOngoingsCount < this.props.allCourseOngoings.length) {
+            this.setState({
+                courseOngoingsCount: this.props.allCourseOngoings.length,
+                addCourseOngoingStatus: 'Enrolled'
+            });
+        }
+    }
+
+    state = {
+        courseOngoingsCount: 0,
+        addCourseOngoingStatus: ''
     }
 
     render() {
         const {
-            allCourses
+            allCourses,
+            isTeacher,
+            createCourseOngoing
         } = this.props;
 
         return(
             <Container>
                 <h2>All courses</h2>
+                { (!isTeacher && this.state.addCourseOngoingStatus !== '') ?
+                    <p style={{ color: 'green' }}>{ this.state.addCourseOngoingStatus }</p>
+                    : null
+                }
                 <Row style={{ textAlign: 'center' }}>
                     <Col xs='3'>
                         TITLE
@@ -52,6 +76,15 @@ class ListAllCourses extends Component {
                                     <Col xs='1'>
                                         ${ c.price ? c.price : '0' }
                                     </Col>
+                                    { !isTeacher ?
+                                        <Col xs='2'>
+                                            <Button
+                                                onClick={ () => { createCourseOngoing({ courseId: c.id }) } }>
+                                                Enroll
+                                            </Button>
+                                        </Col>
+                                        : null
+                                    }
                                 </Row>
                             </li>
                         );
@@ -66,14 +99,18 @@ ListAllCourses.propTypes = {
     error: PropTypes.object.isRequired,
     getCourses: PropTypes.func.isRequired,
     allCourses: PropTypes.array.isRequired,
-    isTeacher: PropTypes.bool.isRequired
+    isTeacher: PropTypes.bool.isRequired,
+    createCourseOngoing: PropTypes.func.isRequired,
+    allCourseOngoings: PropTypes.array.isRequired
 }
 
 const mapStateToProps = (state) => ({
     error: state.error,
-    allCourses: state.course.allCourses
+    allCourses: state.course.allCourses,
+    allCourseOngoings: state.courseOngoing.allCourseOngoings
 });
 
 export default connect(mapStateToProps, {
-    getCourses
+    getCourses,
+    createCourseOngoing
 })(ListAllCourses);
