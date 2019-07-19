@@ -18,7 +18,10 @@ class Header extends Component {
     }
 
     render() {
-        const { isAuthenticated } = this.props;
+        const {
+            isAuthenticated,
+            isTeacher
+        } = this.props;
 
         return(
             <div>
@@ -49,13 +52,13 @@ class Header extends Component {
                             </NavItem> :
                             null
                         }
-                        { isAuthenticated ? 
+                        { (isAuthenticated && !isTeacher) ? 
                             <NavItem>
                                 <NavLink href='/lesson_ongoings'>Lesson Ongoings</NavLink>
                             </NavItem> :
                             null
                         }
-                        { isAuthenticated ?
+                        { (isAuthenticated && !isTeacher) ?
                             <NavItem>
                                 <NavLink href='/course_ongoings'>Course Ongoings</NavLink>
                             </NavItem> :
