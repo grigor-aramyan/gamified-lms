@@ -19,7 +19,7 @@ import courseOngoingRoutes from './routes/courseOngoingRoutes';
 
 import App from '../components/App';
 
-const PORT = 4242;
+const PORT = process.env.PORT || 4242;
 
 const server = express();
 
