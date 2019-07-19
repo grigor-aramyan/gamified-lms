@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {
+    Container
+} from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
+import ListAllCourses from './ListAllCourses';
 
 class Courses extends Component {
     componentDidMount() {
@@ -25,7 +29,8 @@ class Courses extends Component {
                     <div>
                         <Header />
                         <Container>
-                            Teacher courses
+                            <ListAllCourses
+                                isTeacher={ isTeacher } />
                         </Container>           
                     </div>
                     : null
@@ -34,7 +39,8 @@ class Courses extends Component {
                     <div>
                         <Header />
                         <Container>
-                            Learner courses
+                            <ListAllCourses
+                                isTeacher={ isTeacher } />
                         </Container>           
                     </div>
                     : null

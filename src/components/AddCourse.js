@@ -6,8 +6,6 @@ import {
     Input,
     Button,
     Container,
-    FormGroup,
-    Row,
     Col
 } from 'reactstrap';
 
