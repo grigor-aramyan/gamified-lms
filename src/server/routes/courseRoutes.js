@@ -159,7 +159,14 @@ router.post('/', auth, function(req, res) {
 
     course.save()
         .then(c => {
-            res.json(c);
+            res.json({
+                id: c._id,
+                title: c.title,
+                description: c.description,
+                authorId: c.author,
+                lessonsId: c.lessons,
+                price: c.price
+            });
         })
         .catch(e => {
             res.status(400).json({ msg: 'Bad request!' });
