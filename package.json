@@ -6,10 +6,10 @@
   "scripts": {
     "dev-server": "nodemon --exec babel-node src/server/server.js --ignore dist/",
     "prod-server": "node --exec babel-node src/server/server.js --ignore dist/",
-    "dev-bundle": "webpack",
+    "dev-bundle": "webpack -wd",
     "dev-start": "concurrently \"npm run dev-bundle\" \"npm run dev-server\"",
     "start2": "node --exec babel-node src/server/server.js --ignore dist/",
-    "start": "node --exec babel-node src/server/server.js --ignore dist/",
+    "start": "nodemon --exec babel-node src/server/server.js --ignore dist/",
     "heroku-postbuild2": "NPM_CONFIG_PRODUCTION=false npm install",
     "heroku-postbuild": "webpack -p"
   },
@@ -46,12 +46,12 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "webpack": "^4.35.0",
-    "webpack-cli": "^3.3.5"
+    "webpack-cli": "^3.3.5",
+    "nodemon": "^1.19.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
     "eslint": "^6.0.1",
-    "eslint-plugin-react": "^7.14.2",
-    "nodemon": "^1.19.1"
+    "eslint-plugin-react": "^7.14.2"
   }
 }
