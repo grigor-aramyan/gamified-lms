@@ -13,7 +13,8 @@ import {
 import { tokenConfig } from './authActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/learners';
+//const API_URI = 'http://localhost:4242/api/learners';
+const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/learners';
 export const CREATE_LEARNER_ERROR = 'CREATE_LEARNER_ERROR';
 
 export const updateLearner = (newData) => (dispatch, getState) => {
