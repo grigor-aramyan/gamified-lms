@@ -6,11 +6,12 @@
   "scripts": {
     "dev-server": "nodemon --exec babel-node src/server/server.js --ignore dist/",
     "prod-server": "node --exec babel-node src/server/server.js --ignore dist/",
-    "dev-bundle": "webpack -wd",
+    "dev-bundle": "webpack",
     "dev-start": "concurrently \"npm run dev-bundle\" \"npm run dev-server\"",
-    "start": "node --exec babel-node src/server/server.js --ignore dist/",
-    "start2": "node src/server/server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install"
+    "start2": "node --exec babel-node src/server/server.js --ignore dist/",
+    "start": "node src/server/server.js",
+    "heroku-postbuild2": "NPM_CONFIG_PRODUCTION=false npm install",
+    "heroku-postbuild": "webpack -p"
   },
   "repository": {
     "type": "git",
