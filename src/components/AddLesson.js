@@ -18,6 +18,10 @@ class AddLesson extends Component {
         description: '',
         content: '',
         price: 0,
+        currentVideoUrl: '',
+        currentImageUrl: '',
+        videoUrls: [],
+        imageUrls: [],
         addLessonError: ''
     }
 
@@ -30,7 +34,9 @@ class AddLesson extends Component {
             title,
             description,
             content,
-            price
+            price,
+            videoUrls,
+            imageUrls
         } = this.state;
 
         if (!(title && description && content)) {
@@ -42,16 +48,69 @@ class AddLesson extends Component {
                 title,
                 description,
                 content,
+                videoUrls,
+                imageUrls,
                 price
             };
 
             this.props.createLesson(newLesson);
-            this.setState({ addLessonError: '' });
+            this.setState({
+                addLessonError: '',
+                currentImageUrl: '',
+                currentVideoUrl: ''
+            });
+        }
+    }
+
+    addToImages = () => {
+        const {
+            currentImageUrl,
+            imageUrls
+        } = this.state;
+
+        if (currentImageUrl && currentImageUrl.startsWith('http://') && currentImageUrl.includes('.')) {
+            let data = imageUrls;
+            data.unshift(currentImageUrl);
+
+            this.setState({
+                currentImageUrl: '',
+                imageUrls: data
+            });
+        } else {
+            this.setState({
+                addLessonError: 'Image Url looks weird. Check, please!'
+            });
+        }
+    }
+
+    addToVideos = () => {
+        const {
+            currentVideoUrl,
+            videoUrls
+        } = this.state;
+
+        if (currentVideoUrl && currentVideoUrl.startsWith('http://') && currentVideoUrl.includes('.')) {
+            let data = videoUrls;
+            data.unshift(currentVideoUrl);
+
+            this.setState({
+                currentVideoUrl: '',
+                videoUrls: data
+            });
+        } else {
+            this.setState({
+                addLessonError: 'Video Url looks weird. Check, please!'
+            });
         }
     }
 
     render() {
         const { error } = this.props;
+
+        const {
+            videoUrls,
+            imageUrls
+        } = this.state;
 
         return(
             <Container>
@@ -88,6 +147,60 @@ class AddLesson extends Component {
                             onChange={this.onChange}
                             className='mb-1' />
                     </FormGroup>
+                    <FormGroup>
+                        <Input
+                            type='url'
+                            name='currentVideoUrl'
+                            placeholder='Add video url...'
+                            value={this.state.currentVideoUrl}
+                            onChange={this.onChange}
+                            className='mb-1 mr-1'
+                            style={{width: '30vw', display: 'inline'}} />
+                        <Button
+                            size='sm'
+                            color='primary'
+                            outline
+                            onClick={this.addToVideos}>
+                                +
+                            </Button>
+                    </FormGroup>
+                    { videoUrls.length > 0 ?
+                        <FormGroup>
+                            <Label for='video-urls'>Video Urls:</Label>
+                            <ul id='video-urls'>
+                                {videoUrls.map(url => {
+                                    return(<li>{url}</li>);
+                                })}
+                            </ul>
+                        </FormGroup>
+                    : null }
+                    <FormGroup>
+                        <Input
+                            type='url'
+                            name='currentImageUrl'
+                            placeholder='Add image url...'
+                            value={this.state.currentImageUrl}
+                            onChange={this.onChange}
+                            className='mb-1 mr-1'
+                            style={{width: '30vw', display: 'inline'}} />
+                        <Button
+                            size='sm'
+                            color='primary'
+                            outline
+                            onClick={this.addToImages}>
+                                +
+                            </Button>
+                    </FormGroup>
+                    { imageUrls.length > 0 ?
+                        <FormGroup>
+                            <Label for='image-urls'>Image Urls:</Label>
+                            <ul id='image-urls'>
+                                {imageUrls.map(url => {
+                                    return(<li>{url}</li>);
+                                })}
+                            </ul>
+                        </FormGroup>
+                    : null }
                     { this.state.addLessonError ?
                         <span style={{
                             display: 'block',
