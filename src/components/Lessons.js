@@ -66,7 +66,14 @@ class Lessons extends Component {
                             <AddCourse
                                 lessonsForNewCourse={ this.state.lessonsForNewCourse }
                                 />
-                            <AddLesson />
+                            { allLessons ?
+                                <AddLesson
+                                    allLessonsCount={ allLessons.length }
+                                    />
+                                : <AddLesson
+                                    allLessonsCount={ 0 }
+                                    />
+                            }
                             <hr />
                             { allLessons ?
                                 <ListAllLessons

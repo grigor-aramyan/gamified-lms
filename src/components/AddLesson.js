@@ -13,6 +13,31 @@ import {
 import { createLesson, CREATE_LESSON_ERROR } from '../actions/lessonActions';
 
 class AddLesson extends Component {
+    componentDidMount() {
+        if (this.props.allLessonsCount > 0) {
+            this.setState({
+                allLessonsCount: this.props.allLessonsCount
+            });
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.allLessonsCount > this.state.allLessonsCount) {
+            this.setState({
+                allLessonsCount: this.props.allLessonsCount,
+                title: '',
+                description: '',
+                content: '',
+                price: 0,
+                currentVideoUrl: '',
+                currentImageUrl: '',
+                videoUrls: [],
+                imageUrls: [],
+                addLessonError: ''
+            });
+        }
+    }
+
     state = {
         title: '',
         description: '',
@@ -22,7 +47,8 @@ class AddLesson extends Component {
         currentImageUrl: '',
         videoUrls: [],
         imageUrls: [],
-        addLessonError: ''
+        addLessonError: '',
+        allLessonsCount: 0
     }
 
     onChange = (e) => {
@@ -89,7 +115,9 @@ class AddLesson extends Component {
             videoUrls
         } = this.state;
 
-        if (currentVideoUrl && currentVideoUrl.startsWith('http://') && currentVideoUrl.includes('.')) {
+        if (currentVideoUrl
+                && currentVideoUrl.startsWith('https://www.youtube.com')
+                && currentVideoUrl.includes('.')) {
             let data = videoUrls;
             data.unshift(currentVideoUrl);
 
@@ -226,11 +254,12 @@ class AddLesson extends Component {
 
 AddLesson.propTypes = {
     error: PropTypes.object.isRequired,
-    createLesson: PropTypes.func.isRequired
+    createLesson: PropTypes.func.isRequired,
+    allLessonsCount: PropTypes.number.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    error: state.error
+    error: state.error,
 });
 
 export default connect(mapStateToProps, { createLesson })(AddLesson);
