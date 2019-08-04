@@ -12,6 +12,7 @@ import LessonOngoings from './components/LessonOngoings';
 import CourseOngoings from './components/CourseOngoings';
 import Learners from './components/Learners';
 import Teachers from './components/Teachers';
+import LessonView from './components/LessonView';
 
 ReactDOM.hydrate(
     <Provider store={store}>
@@ -22,6 +23,7 @@ ReactDOM.hydrate(
                     <Route path='/register' component={Register} />
                     <Route path='/lessons' component={Lessons} />
                     <Route path='/courses' component={Courses} />
+                    <Route path='/lesson_ongoings/lesson/:id' component={LessonView} />
                     <Route path='/lesson_ongoings' component={LessonOngoings} />
                     <Route path='/course_ongoings' component={CourseOngoings} />
                     <Route path='/learners' component={Learners} />

@@ -128,7 +128,7 @@ const mapStateToProps = (state) => ({
     isTeacher: state.auth.isTeacher,
     allLessons: state.lesson.allLessons,
     error: state.error
-})
+});
 
 export default connect(mapStateToProps, {
     loadLocalToken,

@@ -47,7 +47,7 @@ class ListAllLessonOngoings extends Component {
                             <li key={l.id}>
                                 <Row>
                                     <Col xs='4'>
-                                        {l.id}
+                                        <a href={`/lesson_ongoings/lesson/${l.id}`}>{l.id}</a>
                                     </Col>
                                     <Col xs='4'>
                                         {l.lessonId}
