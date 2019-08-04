@@ -8,7 +8,8 @@ import {
     LESSON_ONGOING_UPDATE_SUCCESS,
     LESSON_ONGOING_UPDATE_FAIL,
     LESSON_ONGOING_DELETE_SUCCESS,
-    LESSON_ONGOING_DELETE_FAIL
+    LESSON_ONGOING_DELETE_FAIL,
+    LESSON_ONGOING_GET_LESSON_BY_LO_ID
 } from './types';
 import { returnErrors } from './errorActions';
 import { tokenConfig } from './authActions';
@@ -17,6 +18,22 @@ import { tokenConfig } from './authActions';
 const API_URI = 'http://localhost:4242/api/lesson_ongoings';
 //const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/lesson_ongoings';
 export const CREATE_LESSON_ONGOING_ERROR = 'CREATE_LESSON_ONGOING_ERROR';
+export const GET_LESSON_BY_LESSON_ONGOING_ID_ERROR = 'LESSON_ONGOING_GET_LESSON_BY_LO_ID_ERROR';
+
+export const getLessonByLessonOngoingId = (lessonOngoingId) => (dispatch, getState) => {
+    const uri = `${API_URI}/lesson/${lessonOngoingId}`;
+
+    axios.get(uri, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: LESSON_ONGOING_GET_LESSON_BY_LO_ID,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status, GET_LESSON_BY_LESSON_ONGOING_ID_ERROR));
+        });
+}
 
 export const updateLessonOngoing = (lessonOngoingId, newData) => (dispatch, getState) => {
 

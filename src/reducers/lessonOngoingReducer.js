@@ -6,7 +6,8 @@ import {
     LESSON_ONGOING_UPDATE_SUCCESS,
     LESSON_ONGOING_UPDATE_FAIL,
     LESSON_ONGOING_DELETE_SUCCESS,
-    LESSON_ONGOING_DELETE_FAIL
+    LESSON_ONGOING_DELETE_FAIL,
+    LESSON_ONGOING_GET_LESSON_BY_LO_ID
 } from '../actions/types';
 
 const initialState = {
@@ -17,6 +18,11 @@ const initialState = {
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case LESSON_ONGOING_GET_LESSON_BY_LO_ID:
+            return {
+                ...state,
+                lessonForSelectedOngoing: action.payload
+            };
         case LESSON_ONGOING_UPDATE_SUCCESS:
             return {
                 ...state
