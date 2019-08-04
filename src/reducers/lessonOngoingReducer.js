@@ -11,7 +11,8 @@ import {
 
 const initialState = {
     currentLessonOngoing: null,
-    allLessonOngoings: []
+    allLessonOngoings: [],
+    lessonForSelectedOngoing: null
 };
 
 export default function(state = initialState, action) {

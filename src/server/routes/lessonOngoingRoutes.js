@@ -140,4 +140,37 @@ router.get('/', auth, function(req, res) {
     });
 });
 
+// @route GET api/lesson_ongoings/lesson/:id
+// @desc Get lesson by lesson ongoing id
+// @access Private
+router.get('/lesson/:id', auth, function(req, res) {
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    let lessonOngoingId = null;
+    try {
+        lessonOngoingId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No lesson found with provided credentials' });
+    }
+
+    LessonOngoing.findOne({ _id: lessonOngoingId, learnerId: learnerId }, (err, lessonOngoing) => {
+        if (err || (lessonOngoing == null)) return res.status(400).json({ msg: 'No data found with provided credentials' });
+
+        Lesson.findById(lessonOngoing.lessonId, (err, lesson) => {
+            if (err || (lesson == null)) return res.status(400).json({ msg: 'No lesson found with provided credentials!' });
+
+            res.status(200).json({
+                id: lesson._id,
+                title: lesson.title,
+                description: lesson.description,
+                content: lesson.content,
+                imageUris: lesson.imageUris,
+                videoUris: lesson.videoUris,
+                price: lesson.price,
+                authorId: lesson.author
+            });
+        });
+    });
+});
+
 export default router;
