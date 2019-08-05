@@ -13,17 +13,32 @@ import {
     getLessonOngoings,
     deleteLessonOngoing
 } from '../actions/lessonOngoingActions';
+import {
+    getExtendedLessonsById
+} from '../actions/lessonActions';
 
 class ListAllLessonOngoings extends Component {
     
     componentDidMount() {
         this.props.getLessonOngoings();
     }
+
+    componentDidUpdate() {
+        if ((this.props.allLessonOngoings.length > 0)
+            && !this.props.lessonsExtended
+            && !this.props.fetchingExtendedLessons) {
+            const lessonsIds = this.props.allLessonOngoings.map(lo => {
+                return lo.lessonId;
+            });
+            this.props.getExtendedLessonsById({ lessonsIds });
+        }
+    }
     
     render() {
         const {
             deleteLessonOngoing,
-            allLessonOngoings
+            allLessonOngoings,
+            lessonsExtended
         } = this.props;
 
         return(
@@ -32,27 +47,41 @@ class ListAllLessonOngoings extends Component {
                 <Row
                     style={{ textAlign: 'center' }}>
                     <Col xs='4'>
-                        ID
+                        LESSON TITLE
                     </Col>
-                    <Col xs='4'>
-                        LESSON ID
+                    <Col xs='3' style={{ textAlign: 'center' }}>
+                        AUTHOR
                     </Col>
-                    <Col xs='2'>
+                    <Col xs='2' style={{ textAlign: 'center' }}>
+                        SUBJECT
+                    </Col>
+                    <Col xs='1'>
                         DELETE
                     </Col>
                 </Row>
-                <ul>
+                <hr />
+                <ul style={{ listStyle: 'none', marginLeft: '0px' }}>
                     { allLessonOngoings.map(l => {
+                        let lessonExtended = null;
+                        if (lessonsExtended) {
+                            lessonExtended = lessonsExtended.filter(le => {
+                                return (le.id.toString() === l.lessonId.toString());
+                            })[0];
+                        }
+
                         return(
                             <li key={l.id}>
                                 <Row>
                                     <Col xs='4'>
-                                        <a href={`/lesson_ongoings/lesson/${l.id}`}>{l.id}</a>
+                                        <a href={`/lesson_ongoings/lesson/${l.id}`}>{ lessonExtended ? lessonExtended.title : '' }</a>
                                     </Col>
-                                    <Col xs='4'>
-                                        {l.lessonId}
+                                    <Col xs='3' style={{ textAlign: 'center' }}>
+                                        { lessonExtended ? lessonExtended.authorName : '' }
                                     </Col>
-                                    <Col xs='2'>
+                                    <Col xs='2' style={{ textAlign: 'center' }}>
+                                        { lessonExtended ? lessonExtended.authorSubject : '' }
+                                    </Col>
+                                    <Col xs='1'>
                                         <Button 
                                             onClick={ () => { deleteLessonOngoing(l.id) } }
                                             style={{
@@ -77,15 +106,21 @@ ListAllLessonOngoings.propTypes = {
     error: PropTypes.object.isRequired,
     allLessonOngoings: PropTypes.array.isRequired,
     getLessonOngoings: PropTypes.func.isRequired,
-    deleteLessonOngoing: PropTypes.func.isRequired
+    deleteLessonOngoing: PropTypes.func.isRequired,
+    getExtendedLessonsById: PropTypes.func.isRequired,
+    lessonsExtended: PropTypes.array,
+    fetchingExtendedLessons: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
     error: state.error,
-    allLessonOngoings: state.lessonOngoing.allLessonOngoings
+    allLessonOngoings: state.lessonOngoing.allLessonOngoings,
+    lessonsExtended: state.lesson.extendedLessonsByIds,
+    fetchingExtendedLessons: state.lesson.fetchingExtendedLessons
 });
 
 export default connect(mapStateToProps, {
    getLessonOngoings,
-   deleteLessonOngoing 
+   deleteLessonOngoing,
+   getExtendedLessonsById
 })(ListAllLessonOngoings);

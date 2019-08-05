@@ -8,7 +8,9 @@ import {
     LESSON_UPDATE_SUCCESS,
     LESSON_UPDATE_FAIL,
     LESSON_DELETE_SUCCESS,
-    LESSON_DELETE_FAIL
+    LESSON_DELETE_FAIL,
+    LESSONS_GET_BY_IDS,
+    LESSONS_GET_BY_IDS_INITIATED
 } from '../actions/types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
@@ -16,7 +18,26 @@ import { returnErrors } from './errorActions';
 // Constants
 const API_URI = 'http://localhost:4242/api/lessons';
 //const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/lessons';
+
 export const CREATE_LESSON_ERROR = 'CREATE_LESSON_ERROR';
+export const GET_LESSONS_BY_IDS_ERROR = 'GET_LESSONS_BY_IDS_ERROR';
+
+export const getExtendedLessonsById = (lessonIds) => (dispatch, getState) => {
+    const uri = `${API_URI}/extended`;
+
+    dispatch({ type: LESSONS_GET_BY_IDS_INITIATED });
+
+    axios.post(uri, lessonIds, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: LESSONS_GET_BY_IDS,
+                payload: res.data.lessons
+            });
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status, GET_LESSONS_BY_IDS_ERROR));
+        });
+}
 
 export const updateLesson = (lessonId, newData) => (dispatch, getState) => {
 
