@@ -84,6 +84,52 @@ router.put('/:id', auth, function(req, res) {
     });
 });
 
+// @route POST api/lessons/extended
+// @desc Get extended lessons data for provided ids
+// @access Private
+router.post('/extended', auth, function(req, res) {
+    const lessonsIds = req.body.lessonsIds;
+
+    if (!lessonsIds)
+        return res.status(400).json({ msg: 'Bad request!' });
+
+    Teacher.find({}, (err, teachers) => {
+        if (err || (teachers == null)) return res.status(400).json({ msg: 'No data found for provided credentials' });
+
+        Lesson.find({}, (err, lessons) => {
+            if (err || (lessons == null)) return res.status(400).json({ msg: 'No data found for provided credentials!'});
+
+            const lessonsFiltered = lessons.filter(l => {
+                return lessonsIds.includes(l._id.toString());
+            });
+
+            const lessonsMapped = lessonsFiltered.map(l => {
+                const authorData = teachers.filter(t => {
+                    return (t._id.toString() === l.author.toString());
+                })[0];
+
+                return(
+                    {
+                        id: l._id,
+                        title: l.title,
+                        description: l.description,
+                        content: l.content,
+                        imageUris: l.imageUris,
+                        videoUris: l.videoUris,
+                        price: l.price,
+                        authorId: l.author,
+                        authorSubject: authorData.subject,
+                        authorName: authorData.name,
+                        authorEmail: authorData.email
+                    }
+                );
+            });
+
+            res.status(200).json({ lessons: lessonsMapped });
+        });
+    });
+});
+
 // @route POST api/lessons
 // @desc Add new lesson
 // @access Private
