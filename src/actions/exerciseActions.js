@@ -33,7 +33,7 @@ export const getSATExercisesByLessonId = (lessonId) => (dispatch, getState) => {
         .then(res => {
             dispatch({
                 type: GET_SINGLE_ANSWER_TEST_EXERCISES_BY_LESSON_ID,
-                payload: res.data
+                payload: res.data.exercises
             })
         })
         .catch(err => {
