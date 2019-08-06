@@ -19,8 +19,6 @@ export default function(state = initialState, action) {
                 allSATExercisesForCurrentLesson: action.payload
             };
         default:
-            return{
-                ...state
-            };
+            return state;
     }
 }
