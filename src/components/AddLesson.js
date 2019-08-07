@@ -48,7 +48,65 @@ class AddLesson extends Component {
         videoUrls: [],
         imageUrls: [],
         addLessonError: '',
-        allLessonsCount: 0
+        allLessonsCount: 0,
+        satExercisesAll: [],
+        addSatExerciseError: '',
+        currentSatQuestion: '',
+        currentSatAnswer: '',
+        currentSatAllAnswers: [],
+        currentSatRightAnswerIndex: 0
+    }
+
+    addSatExerciseToAll = () => {
+        const {
+            currentSatQuestion,
+            currentSatAllAnswers,
+            currentSatRightAnswerIndex
+        } = this.state;
+
+        if (!currentSatQuestion) {
+            this.setState({
+                addSatExerciseError: 'Question field required!'
+            });
+        } else if (currentSatAllAnswers.length < 2) {
+            this.setState({
+                addSatExerciseError: 'All SAT questions should have at least 2 answers!'
+            });
+        } else {
+            const o = {
+                question: currentSatQuestion,
+                answers: currentSatAllAnswers,
+                rightAnswerIndex: currentSatRightAnswerIndex
+            }
+
+            let allSats = this.state.satExercisesAll;
+            allSats.unshift(o);
+
+            this.setState({
+                satExercisesAll: allSats,
+                currentSatQuestion: '',
+                currentSatAllAnswers: [],
+                currentSatRightAnswerIndex: 0,
+                addSatExerciseError: ''
+            });
+        }
+    }
+
+    addSatExerciseAnswer = () => {
+        const currentAnswer = this.state.currentSatAnswer;
+        if (currentAnswer) {
+            let answers = this.state.currentSatAllAnswers;
+            answers.unshift(currentAnswer);
+            this.setState({
+                currentSatAllAnswers: answers,
+                currentSatAnswer: '',
+                addSatExerciseError: ''
+            });
+        } else {
+            this.setState({
+                addSatExerciseError: 'SAT can\'t have empty answer'
+            });
+        }
     }
 
     onChange = (e) => {
@@ -137,7 +195,13 @@ class AddLesson extends Component {
 
         const {
             videoUrls,
-            imageUrls
+            imageUrls,
+            currentSatQuestion,
+            currentSatAnswer,
+            currentSatRightAnswerIndex,
+            currentSatAllAnswers,
+            addSatExerciseError,
+            satExercisesAll
         } = this.state;
 
         return(
@@ -229,6 +293,100 @@ class AddLesson extends Component {
                             </ul>
                         </FormGroup>
                     : null }
+                    <FormGroup style={{
+                            border: '1px solid grey',
+                            borderRadius: '2%',
+                            padding: '2%'
+                        }}>
+                        <h2>Add Single Answer Test Question</h2>
+                        <Input
+                            type='text'
+                            name='currentSatQuestion'
+                            placeholder='Add question...'
+                            value={currentSatQuestion}
+                            onChange={this.onChange}
+                            className='mb-1'
+                            style={{width: '30vw'}} />
+                        <br />
+                        <Input
+                            type='text'
+                            name='currentSatAnswer'
+                            placeholder='Add some answer to question...'
+                            value={currentSatAnswer}
+                            onChange={this.onChange}
+                            className='mb-1 mr-1'
+                            style={{width: '30vw', display: 'inline'}} />
+                        <Button
+                            size='sm'
+                            color='primary'
+                            outline
+                            onClick={this.addSatExerciseAnswer}>
+                                +
+                        </Button>
+                        <br />
+                        { currentSatAllAnswers.length > 0 ?
+                            <ul style={{ listStyle: 'none' }}>
+                                { currentSatAllAnswers.map((a, index) => {
+                                    let styles = null;
+                                    if (index == currentSatRightAnswerIndex) {
+                                        styles = {
+                                            border: '1px solid green',
+                                            padding: '1%'
+                                        }
+                                    } else {
+                                        styles = {};
+                                    }
+
+                                    return(
+                                        <li key={index} style={styles}>
+                                            {a}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        : null
+                        }
+                        <FormGroup>
+                            <Label
+                                for='rightAnswerIndexId'
+                                style={{
+                                    display: 'block'
+                                }}>
+                                Right answer index
+                            </Label>
+                            <Input
+                                id='rightAnswerIndexId'
+                                type='number'
+                                name='currentSatRightAnswerIndex'
+                                placeholder='Right answer index (starting from 0)...'
+                                value={currentSatRightAnswerIndex}
+                                onChange={this.onChange}
+                                min={0}
+                                max={ (currentSatAllAnswers.length == 0) ? 0 : (currentSatAllAnswers.length - 1) }
+                                className='mb-1'
+                                style={{width: '30vw', display: 'inline'}} />
+                        </FormGroup>
+                        { addSatExerciseError ?
+                            <span style={{
+                                display: 'block',
+                                color: 'red',
+                                fontSize: '90%',
+                                fontStyle: 'italic'
+                            }}>{addSatExerciseError}</span> 
+                        : null
+                        }
+                        <Button
+                            size='sm'
+                            color='primary'
+                            outline
+                            onClick={this.addSatExerciseToAll}
+                            style={{
+                                display: 'block'
+                            }}>
+                                Add Exercise
+                        </Button>
+                        { (satExercisesAll.length > 0) ? <span>{satExercisesAll.length}</span> : null }
+                    </FormGroup>
                     { this.state.addLessonError ?
                         <span style={{
                             display: 'block',
