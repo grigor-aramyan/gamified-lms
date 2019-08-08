@@ -6,7 +6,7 @@ import ExerciseSchema from './ExerciseSchema';
 const Schema = mongoose.Schema;
 const options = { discriminatorKey: 'kind' };
 
-const singleAnswerTestExercise = new Schema({
+const singleAnswerTestExerciseSchema = new Schema({
     answers: {
         type: Array,
         of: String,
@@ -18,4 +18,4 @@ const singleAnswerTestExercise = new Schema({
     }
 }, options);
 
-export default ExerciseSchema.discriminator('SingleAnswerTestExercise', singleAnswerTestExercise);
+export default ExerciseSchema.discriminator('SingleAnswerTestExercise', singleAnswerTestExerciseSchema);

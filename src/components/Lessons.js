@@ -69,9 +69,11 @@ class Lessons extends Component {
                             { allLessons ?
                                 <AddLesson
                                     allLessonsCount={ allLessons.length }
+                                    lastLesson={ allLessons[0] }
                                     />
                                 : <AddLesson
                                     allLessonsCount={ 0 }
+                                    lastLesson={null}
                                     />
                             }
                             <hr />

@@ -11,10 +11,10 @@ import { tokenConfig } from './authActions';
 const API_URI = 'http://localhost:4242/api/exercises';
 //const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/exercises';
 
-export const createManySATExercises = (exercises) => (dispatch, getState) => {
+export const createManySATExercises = (exercisesData) => (dispatch, getState) => {
     const uri = `${API_URI}/singleAnswerTestQuestion`;
 
-    axios.post(uri, exercises, tokenConfig(getState))
+    axios.post(uri, {exercises: exercisesData}, tokenConfig(getState))
         .then(res => {
             dispatch({
                 type: CREATE_MANY_SINGLE_ANSWER_TEST_EXERCISES,

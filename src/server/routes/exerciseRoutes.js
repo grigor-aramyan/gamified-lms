@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import auth from '../../../middleware/auth';
 
 // Schemas
-import SingleAnswerTestExercise from '../schemas/SingleAnswerTestExercise';
+import SingleAnswerTestExercise from '../schemas/SingleAnswerTestExerciseSchema';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 // @access Private
 router.post('/singleAnswerTestQuestion', auth, function(req, res) {
     const exercises = req.body.exercises;
-
+    
     if (!exercises || (exercises.length == 0)) return res.status(400).json({ msg: 'Bad request!' });
 
     const exercisesWithEmptyAnswers = exercises.filter(e => {

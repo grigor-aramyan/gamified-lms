@@ -11,6 +11,7 @@ import {
 } from 'reactstrap';
 
 import { createLesson, CREATE_LESSON_ERROR } from '../actions/lessonActions';
+import { createManySATExercises } from '../actions/exerciseActions';
 
 class AddLesson extends Component {
     componentDidMount() {
@@ -33,8 +34,30 @@ class AddLesson extends Component {
                 currentImageUrl: '',
                 videoUrls: [],
                 imageUrls: [],
-                addLessonError: ''
+                addLessonError: '',
+                initialLastLesson: this.props.lastLesson
             });
+
+            const lastLessonId = this.props.lastLesson.id;
+            if (this.state.satExercisesAll.length > 0) {
+                const allSats = this.state.satExercisesAll;
+                const allSatsFinished = allSats.map(s => {
+                    return({
+                        ...s,
+                        lessonId: lastLessonId
+                    });
+                });
+
+                this.props.createManySATExercises(allSatsFinished);
+                this.setState({
+                    satExercisesAll: [],
+                    addSatExerciseError: '',
+                    currentSatQuestion: '',
+                    currentSatAnswer: '',
+                    currentSatAllAnswers: [],
+                    currentSatRightAnswerIndex: 0            
+                });
+            }    
         }
     }
 
@@ -54,7 +77,8 @@ class AddLesson extends Component {
         currentSatQuestion: '',
         currentSatAnswer: '',
         currentSatAllAnswers: [],
-        currentSatRightAnswerIndex: 0
+        currentSatRightAnswerIndex: 0,
+        initialLastLesson: null
     }
 
     addSatExerciseToAll = () => {
@@ -385,7 +409,47 @@ class AddLesson extends Component {
                             }}>
                                 Add Exercise
                         </Button>
-                        { (satExercisesAll.length > 0) ? <span>{satExercisesAll.length}</span> : null }
+                        { (satExercisesAll.length > 0) ?
+                            <div>
+                                <h4>All SAT questions</h4>
+                                <ul>
+                                    {satExercisesAll.map((s, index) => {
+                                        return(
+                                            <li key={index} style={{
+                                                border: '1px solid grey',
+                                                padding: '2%'
+                                                }}
+                                                className='mb-1'>
+                                                <span
+                                                    style={{
+                                                        display: 'block',
+                                                        fontStyle: 'italic'
+                                                    }}>{s.question}
+                                                </span>
+                                                <ul>
+                                                    {s.answers.map((an, i) => {
+                                                        let styles2 = null;
+                                                        if (i == s.rightAnswerIndex) {
+                                                            styles2 = {
+                                                                border: '1px solid green',
+                                                                padding: '1%'
+                                                            }
+                                                        } else {
+                                                            styles2 = {};
+                                                        }
+                                                        return(
+                                                            <li key={i} style={styles2}>
+                                                                {an}
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                        : null }
                     </FormGroup>
                     { this.state.addLessonError ?
                         <span style={{
@@ -413,11 +477,16 @@ class AddLesson extends Component {
 AddLesson.propTypes = {
     error: PropTypes.object.isRequired,
     createLesson: PropTypes.func.isRequired,
-    allLessonsCount: PropTypes.number.isRequired
+    allLessonsCount: PropTypes.number.isRequired,
+    lastLesson: PropTypes.object,
+    createManySATExercises: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     error: state.error,
 });
 
-export default connect(mapStateToProps, { createLesson })(AddLesson);
+export default connect(mapStateToProps, {
+    createLesson,
+    createManySATExercises
+})(AddLesson);
