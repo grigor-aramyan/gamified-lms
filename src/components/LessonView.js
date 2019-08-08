@@ -13,6 +13,7 @@ import {
 
 import { getLessonByLessonOngoingId } from '../actions/lessonOngoingActions';
 import { loadLocalToken, loadUser } from '../actions/authActions';
+import { getSATExercisesByLessonId } from '../actions/exerciseActions';
 
 // Statics
 import GET_LESSON_BY_LESSON_ONGOING_ID_ERROR from '../actions/lessonOngoingActions';
@@ -32,6 +33,17 @@ class LessonView extends Component {
             const parts = href.split('/');
             const lessonOngoingId = parts[parts.length - 1];
             this.props.getLessonByLessonOngoingId(lessonOngoingId);
+        }
+        console.log('updating');
+        if (((this.props.currentLesson != null)
+            && (this.props.allSatsForLesson.length > 0)
+            && (this.props.allSatsForLesson[0].id != this.props.currentLesson.id)
+            && !this.props.gettingSats)
+                || ((this.props.currentLesson != null)
+                    && (this.props.allSatsForLesson.length == 0)
+                    && !this.props.gettingSats)) {
+                console.log('getting sats');
+                this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
         }
     }
 
@@ -122,7 +134,8 @@ class LessonView extends Component {
             isAuthenticated,
             isTeacher,
             currentLesson,
-            error
+            error,
+            allSatsForLesson
         } = this.props;
 
         let imageHrefs = [];
@@ -229,6 +242,7 @@ class LessonView extends Component {
                                     </Carousel>
                                 : null
                                 }
+                                { allSatsForLesson ? <h1>{allSatsForLesson.length}</h1> : null }
                             </div>
                         : null 
                         }
@@ -247,17 +261,23 @@ LessonView.propTypes = {
     getLessonByLessonOngoingId: PropTypes.func.isRequired,
     loadLocalToken: PropTypes.func.isRequired,
     loadUser: PropTypes.func.isRequired,
-    currentLesson: PropTypes.object
+    currentLesson: PropTypes.object,
+    getSATExercisesByLessonId: PropTypes.func.isRequired,
+    allSatsForLesson: PropTypes.array.isRequired,
+    gettingSats: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
     error: state.error,
     isAuthenticated: state.auth.isAuthenticated,
     isTeacher: state.auth.isTeacher,
-    currentLesson: state.lessonOngoing.lessonForSelectedOngoing
+    currentLesson: state.lessonOngoing.lessonForSelectedOngoing,
+    allSatsForLesson: state.exercise.allSATExercisesForCurrentLesson,
+    gettingSats: state.exercise.gettingSATExercises
 });
 
 export default connect(mapStateToProps, {
+    getSATExercisesByLessonId,
     getLessonByLessonOngoingId,
     loadLocalToken,
     loadUser
