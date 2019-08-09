@@ -35,30 +35,14 @@ class LessonView extends Component {
             const lessonOngoingId = parts[parts.length - 1];
             this.props.getLessonByLessonOngoingId(lessonOngoingId);
         }
-
-        /*if ((this.props.currentLesson != null)
-            && !this.props.gettingSats) {
-            this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
-        }*/
-
-        /*console.log('updating');
-        if (((this.props.currentLesson != null)
-            && (this.props.allSatsForLesson.length > 0)
-            && (this.props.allSatsForLesson[0].id != this.props.currentLesson.id)
-            && !this.props.gettingSats)
-                || ((this.props.currentLesson != null)
-                    && (this.props.allSatsForLesson.length == 0)
-                    && !this.props.gettingSats)) {
-                console.log('getting sats');
-                this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
-        }*/
     }
 
     state = {
         imagesActiveIndex: 0,
         imagesAnimating: false,
         videosActiveIndex: 0,
-        videosAnimating: false
+        videosAnimating: false,
+        satsVisible: false
     }
 
     onExitingImages = () => {
@@ -139,6 +123,9 @@ class LessonView extends Component {
     onGetSatsForCurrentLesson = () => {
         if(!this.props.gettingSats) {
             this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
+            this.setState({
+                satsVisible: true
+            });
         }
     }
 
@@ -160,7 +147,8 @@ class LessonView extends Component {
 
         const {
             imagesActiveIndex,
-            videosActiveIndex
+            videosActiveIndex,
+            satsVisible
         } = this.state;
 
         const images = imageHrefs.map((i, index) => {
@@ -256,10 +244,49 @@ class LessonView extends Component {
                                 : null
                                 }
                                 <Button
-                                    onClick={this.onGetSatsForCurrentLesson}>
-                                    Get Exercises        
-                                </Button>    
-                                { allSatsForLesson ? <h1>{allSatsForLesson.length}</h1> : null }
+                                    onClick={this.onGetSatsForCurrentLesson}
+                                    className='btn btn-info'>
+                                    Get Exercises
+                                </Button>
+                                { (allSatsForLesson && satsVisible) ?
+                                    <div>
+                                        <h4>SAT Questions</h4>
+                                        { allSatsForLesson.length > 0 ?
+                                            <ul>
+                                                { allSatsForLesson.map((s, index) => {
+                                                    const rightAnswerIndex = s.rightAnswerIndex;
+                                                    return(
+                                                        <li key={index}>
+                                                            <p>{s.question}</p>
+                                                            <ul style={{ listStyle: 'none' }}>
+                                                                {s.answers.map((a, i) => {
+                                                                    return(
+                                                                        <li key={i}>
+                                                                            <input
+                                                                                type='radio'
+                                                                                name='answer'
+                                                                                id='sat-answer'
+                                                                                value={i}
+                                                                                className='mr-1' />
+                                                                            <label
+                                                                                for='sat-answer'>
+                                                                                {a}
+                                                                            </label>
+                                                                        </li>
+                                                                    );
+                                                                })}
+                                                            </ul>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        : <span style={{ fontStyle: 'italic' }}>
+                                            No SAT questions for this lesson!
+                                        </span>
+                                        }
+                                    </div>
+                                : null
+                                }
                             </div>
                         : null 
                         }
