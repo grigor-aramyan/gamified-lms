@@ -8,7 +8,8 @@ import {
     CarouselItem,
     CarouselControl,
     CarouselIndicators,
-    CarouselCaption
+    CarouselCaption,
+    Button
 } from 'reactstrap';
 
 import { getLessonByLessonOngoingId } from '../actions/lessonOngoingActions';
@@ -34,7 +35,13 @@ class LessonView extends Component {
             const lessonOngoingId = parts[parts.length - 1];
             this.props.getLessonByLessonOngoingId(lessonOngoingId);
         }
-        console.log('updating');
+
+        /*if ((this.props.currentLesson != null)
+            && !this.props.gettingSats) {
+            this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
+        }*/
+
+        /*console.log('updating');
         if (((this.props.currentLesson != null)
             && (this.props.allSatsForLesson.length > 0)
             && (this.props.allSatsForLesson[0].id != this.props.currentLesson.id)
@@ -44,7 +51,7 @@ class LessonView extends Component {
                     && !this.props.gettingSats)) {
                 console.log('getting sats');
                 this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
-        }
+        }*/
     }
 
     state = {
@@ -127,6 +134,12 @@ class LessonView extends Component {
     goToVideoIndex = (newIndex) => {
         if (this.state.videosAnimating) return;
         this.setState({ videosActiveIndex: newIndex });
+    }
+
+    onGetSatsForCurrentLesson = () => {
+        if(!this.props.gettingSats) {
+            this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
+        }
     }
 
     render() {
@@ -242,6 +255,10 @@ class LessonView extends Component {
                                     </Carousel>
                                 : null
                                 }
+                                <Button
+                                    onClick={this.onGetSatsForCurrentLesson}>
+                                    Get Exercises        
+                                </Button>    
                                 { allSatsForLesson ? <h1>{allSatsForLesson.length}</h1> : null }
                             </div>
                         : null 

@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
-// Schemas
-import ExerciseSchema from './ExerciseSchema';
-
 const Schema = mongoose.Schema;
-const options = { discriminatorKey: 'kind' };
 
 const singleAnswerTestExerciseSchema = new Schema({
     answers: {
@@ -15,7 +11,15 @@ const singleAnswerTestExerciseSchema = new Schema({
     rightAnswerIndex: {
         type: Number,
         required: true
+    },
+    lessonId: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
+    question: {
+        type: String,
+        required: true
     }
-}, options);
+});
 
-export default ExerciseSchema.discriminator('SingleAnswerTestExercise', singleAnswerTestExerciseSchema);
+export default mongoose.model('SingleAnswerTestExercise', singleAnswerTestExerciseSchema);

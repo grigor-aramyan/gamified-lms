@@ -31,7 +31,7 @@ export const getSATExercisesByLessonId = (lessonId) => (dispatch, getState) => {
     const uri = `${API_URI}/singleAnswerTestQuestion/${lessonId}`;
 
     dispatch({ type: GET_SAT_EXERCISES_INITIATE });
-
+    
     axios.get(uri, tokenConfig(getState))
         .then(res => {
             dispatch({

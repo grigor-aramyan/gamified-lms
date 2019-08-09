@@ -90,10 +90,10 @@ router.get('/singleAnswerTestQuestion/:id', auth, function(req, res) {
     } catch(e) {
         return res.status(400).json({ msg: 'Bad request' });
     }
-
+    
     SingleAnswerTestExercise.find({ lessonId: lessonId }, (err, exercises) => {
         if (err || (exercises == null)) return res.status(400).json({ msg: 'No exercises found for this lesson!' });
-
+        
         const exercisesMapped = exercises.map(e => {
             return({
                 lessonId: e.lessonId,
