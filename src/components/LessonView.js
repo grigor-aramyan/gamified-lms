@@ -42,7 +42,74 @@ class LessonView extends Component {
         imagesAnimating: false,
         videosActiveIndex: 0,
         videosAnimating: false,
-        satsVisible: false
+        satsVisible: false,
+        satsWithSingleAttempt: [],
+        satsWithSecondAttempt: [],
+        satsWithThirdAttempt: [],
+        // item: satId:::answerIndex
+        satAnswers: []
+    }
+
+    onSelectSatAnswer = (satId, answerIndex) => {
+        const {
+            satsWithSingleAttempt,
+            satsWithSecondAttempt,
+            satsWithThirdAttempt,
+            satAnswers
+        } = this.state;
+
+        if (satsWithSingleAttempt.includes(satId)) {
+            const updatedSatsWithSingleAttempt = satsWithSingleAttempt.filter(s => {
+                return(s !== satId);
+            });
+
+            const dumbData = satsWithSecondAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = satAnswers.filter(a => {
+                return(a.split(':::')[0] != satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                satsWithSingleAttempt: updatedSatsWithSingleAttempt,
+                satsWithSecondAttempt: dumbData,
+                satAnswers: filteredAnswers
+            });
+        } else if(satsWithSecondAttempt.includes(satId)) {
+            const updatedSatsWithSecondAttempt = satsWithSecondAttempt.filter(s => {
+                return(s !== satId);
+            });
+
+            const dumbData = satsWithThirdAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = satAnswers.filter(a => {
+                return(a.split(':::')[0] !== satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                satsWithSecondAttempt: updatedSatsWithSecondAttempt,
+                satsWithThirdAttempt: dumbData,
+                satAnswers: filteredAnswers
+            });
+        } else if(satsWithThirdAttempt.includes(satId)) {
+            
+        } else {
+            const dumbData = satsWithSingleAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = satAnswers.filter(a => {
+                return(a.split(':::')[0] !== satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                satsWithSingleAttempt: dumbData,
+                satAnswers: filteredAnswers
+            });
+        }
     }
 
     onExitingImages = () => {
@@ -148,7 +215,8 @@ class LessonView extends Component {
         const {
             imagesActiveIndex,
             videosActiveIndex,
-            satsVisible
+            satsVisible,
+            satAnswers
         } = this.state;
 
         const images = imageHrefs.map((i, index) => {
@@ -255,21 +323,44 @@ class LessonView extends Component {
                                             <ul>
                                                 { allSatsForLesson.map((s, index) => {
                                                     const rightAnswerIndex = s.rightAnswerIndex;
+                                                    const selectedAnswer = satAnswers.filter(a => {
+                                                        return(a.split(':::')[0] == s.id);
+                                                    });
+                                                    let selectedAnswerIndex = null;
+                                                    if (selectedAnswer.length > 0) {
+                                                        selectedAnswerIndex = selectedAnswer[0].split(':::')[1];
+                                                    }
+
+                                                    const inputName = `answer-${s.id}`;
+
                                                     return(
                                                         <li key={index}>
                                                             <p>{s.question}</p>
                                                             <ul style={{ listStyle: 'none' }}>
                                                                 {s.answers.map((a, i) => {
+                                                                    let styles = null;
+                                                                    if ((rightAnswerIndex == i) &&
+                                                                        (selectedAnswerIndex == i)) {
+                                                                        styles = {
+                                                                            border: '1px solid green',
+                                                                            padding: '1%'
+                                                                        }
+                                                                    } else {
+                                                                        styles = {};
+                                                                    }
+                                                                    
                                                                     return(
-                                                                        <li key={i}>
+                                                                        <li key={i} style={styles} className='mb-1'>
                                                                             <input
                                                                                 type='radio'
-                                                                                name='answer'
+                                                                                name={inputName}
                                                                                 id='sat-answer'
                                                                                 value={i}
-                                                                                className='mr-1' />
+                                                                                className='mr-1'
+                                                                                onClick={() => {this.onSelectSatAnswer(s.id, i)}}
+                                                                                 />
                                                                             <label
-                                                                                for='sat-answer'>
+                                                                                htmlFor='sat-answer'>
                                                                                 {a}
                                                                             </label>
                                                                         </li>
