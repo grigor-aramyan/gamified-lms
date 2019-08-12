@@ -69,6 +69,7 @@ router.post('/singleAnswerTestQuestion', auth, function(req, res) {
 
         const exercisesDataFiltered = satExercises.ops.map(e => {
             return({
+                id: e._id.toString(),
                 lessonId: e.lessonId,
                 question: e.question,
                 answers: e.answers,
@@ -96,6 +97,7 @@ router.get('/singleAnswerTestQuestion/:id', auth, function(req, res) {
         
         const exercisesMapped = exercises.map(e => {
             return({
+                id: e._id.toString(),
                 lessonId: e.lessonId,
                 question: e.question,
                 answers: e.answers,
