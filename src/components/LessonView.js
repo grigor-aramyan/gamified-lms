@@ -14,7 +14,7 @@ import {
 
 import {
     getLessonByLessonOngoingId,
-    updateLessonOngoing
+    updateLessonOngoingByLearningLearner
 } from '../actions/lessonOngoingActions';
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getSATExercisesByLessonId } from '../actions/exerciseActions';
@@ -32,7 +32,10 @@ class LessonView extends Component {
     }
 
     componentDidUpdate() {
-        if ((this.props.currentLesson == null) && this.props.isAuthenticated && !this.props.isTeacher) {
+        if ((this.props.currentLesson == null)
+            && this.props.isAuthenticated
+            && !this.props.isTeacher
+            && this.state.currentLessonOngoingId == null) {
             const href = window.location.href;
             const parts = href.split('/');
             const lessonOngoingId = parts[parts.length - 1];
@@ -65,13 +68,19 @@ class LessonView extends Component {
                 lessonSubmitError: 'Should get and answer all exercises before submitting!'
             });
         } else {
-            const { allSatsForLesson } = this.props;
+            const {
+                allSatsForLesson,
+                updateLessonOngoingByLearningLearner
+            } = this.props;
+
             const {
                 satsWithSingleAttempt,
                 satsWithSecondAttempt,
                 satsWithThirdAttempt,
-                satAnswers
+                satAnswers,
+                currentLessonOngoingId
             } = this.state;
+
             const totalPoints = satAnswers.reduce((acc, answer) => {
                 const satId = answer.split(':::')[0];
                 const answerIndex = answer.split(':::')[1];
@@ -95,7 +104,15 @@ class LessonView extends Component {
                 }
             }, 0);
 
-            
+            const body = {
+                completed: true,
+                completionPoint: totalPoints
+            };
+
+            updateLessonOngoingByLearningLearner(currentLessonOngoingId, body);
+            this.setState({
+                lessonSubmitError: ''
+            });
         }
     }
 
@@ -464,7 +481,7 @@ LessonView.propTypes = {
     getSATExercisesByLessonId: PropTypes.func.isRequired,
     allSatsForLesson: PropTypes.array.isRequired,
     gettingSats: PropTypes.bool.isRequired,
-    updateLessonOngoing: PropTypes.func.isRequired
+    updateLessonOngoingByLearningLearner: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -477,7 +494,7 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-    updateLessonOngoing,
+    updateLessonOngoingByLearningLearner,
     getSATExercisesByLessonId,
     getLessonByLessonOngoingId,
     loadLocalToken,
