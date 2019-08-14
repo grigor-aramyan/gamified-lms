@@ -12,7 +12,10 @@ import {
     Button
 } from 'reactstrap';
 
-import { getLessonByLessonOngoingId } from '../actions/lessonOngoingActions';
+import {
+    getLessonByLessonOngoingId,
+    updateLessonOngoing
+} from '../actions/lessonOngoingActions';
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getSATExercisesByLessonId } from '../actions/exerciseActions';
 
@@ -33,6 +36,9 @@ class LessonView extends Component {
             const href = window.location.href;
             const parts = href.split('/');
             const lessonOngoingId = parts[parts.length - 1];
+            this.setState({
+                currentLessonOngoingId: lessonOngoingId
+            });
             this.props.getLessonByLessonOngoingId(lessonOngoingId);
         }
     }
@@ -47,7 +53,50 @@ class LessonView extends Component {
         satsWithSecondAttempt: [],
         satsWithThirdAttempt: [],
         // item: satId:::answerIndex
-        satAnswers: []
+        satAnswers: [],
+        lessonSubmitError: '',
+        currentLessonOngoingId: null
+    }
+
+    onLessonSubmit = () => {
+        if ((this.props.allSatsForLesson.length == 0) ||
+            (this.props.allSatsForLesson.length > this.state.satAnswers.length)) {
+            this.setState({
+                lessonSubmitError: 'Should get and answer all exercises before submitting!'
+            });
+        } else {
+            const { allSatsForLesson } = this.props;
+            const {
+                satsWithSingleAttempt,
+                satsWithSecondAttempt,
+                satsWithThirdAttempt,
+                satAnswers
+            } = this.state;
+            const totalPoints = satAnswers.reduce((acc, answer) => {
+                const satId = answer.split(':::')[0];
+                const answerIndex = answer.split(':::')[1];
+
+                const currentSatData = allSatsForLesson.filter(sat => {
+                    return(sat.id == satId);
+                })[0];
+                if (answerIndex != currentSatData.rightAnswerIndex) {
+                    return acc;
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (satsWithSingleAttempt.includes(satId))) {
+                    return (acc + 3);
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (satsWithSecondAttempt.includes(satId))) {
+                    return (acc + 2);
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (satsWithThirdAttempt.includes(satId))) {
+                    return (acc + 1);
+                } else {
+                    return acc;
+                }
+            }, 0);
+
+            
+        }
     }
 
     onSelectSatAnswer = (satId, answerIndex) => {
@@ -378,6 +427,21 @@ class LessonView extends Component {
                                     </div>
                                 : null
                                 }
+                                <hr />
+                                { this.state.lessonSubmitError ?
+                                    <span style={{
+                                        display: 'block',
+                                        color: 'red',
+                                        fontSize: '90%',
+                                        fontStyle: 'italic'
+                                    }}>{this.state.lessonSubmitError}</span>
+                                : null
+                                }
+                                <Button
+                                    onClick={this.onLessonSubmit}
+                                    className='btn btn-primary mb-2'>
+                                    Submit
+                                </Button>
                             </div>
                         : null 
                         }
@@ -399,7 +463,8 @@ LessonView.propTypes = {
     currentLesson: PropTypes.object,
     getSATExercisesByLessonId: PropTypes.func.isRequired,
     allSatsForLesson: PropTypes.array.isRequired,
-    gettingSats: PropTypes.bool.isRequired
+    gettingSats: PropTypes.bool.isRequired,
+    updateLessonOngoing: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -412,6 +477,7 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
+    updateLessonOngoing,
     getSATExercisesByLessonId,
     getLessonByLessonOngoingId,
     loadLocalToken,
