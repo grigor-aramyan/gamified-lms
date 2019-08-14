@@ -10,6 +10,41 @@ import Lesson from '../schemas/LessonSchema';
 
 const router = express.Router();
 
+// @route UPDATE api/lesson_ongoings/learner/:id
+// @desc Update lesson ongoing by learner learning it
+// @access Private
+router.put('/learner/:id', auth, function(req, res) {
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    const dataObject = req.body;
+
+    let lessonOngoingId = null;
+    try {
+        lessonOngoingId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No data found to update!' });
+    }
+
+    Learner.findById(learnerId, (err, learner) => {
+        if (err || (learner == null)) return res.status(400).json({ msg: 'No learner found with provided credentials' });
+
+        LessonOngoing.findById(lessonOngoingId, (err, lo) => {
+            if (err || (lo == null)) return res.status(400).json({ msg: 'No data found to update!' });
+
+            if (lo.learnerId.toString() === learnerId.toString()) {
+                LessonOngoing.updateOne({ _id: lessonOngoingId }, dataObject, (err, affected, resp) => {
+                    if (err) return res.status(500).json({ msg: 'Internal error! Try later or contact with us, please.' });
+
+                    return res.status(200).json({ msg: 'success' });
+                });
+            } else {
+                return res.status(400).json({ msg: 'Only learner of this ongoing lesson can complete it!' });
+            }
+
+        });
+    });
+});
+
 // @route UPDATE api/lesson_ongoings/:id
 // @desc Update lesson ongoing of learner by logged in teacher
 // @access Private
