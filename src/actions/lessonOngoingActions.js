@@ -53,6 +53,24 @@ export const updateLessonOngoing = (lessonOngoingId, newData) => (dispatch, getS
         });
 }
 
+export const updateLessonOngoingByLearningLearner = (lessonOngoingId, newData) => (dispatch, getState) => {
+
+    const uri = `${API_URI}/learner/${lessonOngoingId}`;
+
+    axios.put(uri, newData, tokenConfig(getState))
+        .then(res => {
+            // TODO if success, send 'newData' as payload to apply to learner in reducer
+            dispatch({
+                type: LESSON_ONGOING_UPDATE_SUCCESS,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch({ type: LESSON_ONGOING_UPDATE_FAIL });
+        });
+}
+
 export const deleteLessonOngoing = (lessonOngoingId) => (dispatch, getState) => {
 
     const uri = `${API_URI}/${lessonOngoingId}`;
