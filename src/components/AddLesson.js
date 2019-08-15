@@ -144,13 +144,16 @@ class AddLesson extends Component {
             content,
             price,
             videoUrls,
-            imageUrls
+            imageUrls,
+            satExercisesAll
         } = this.state;
 
         if (!(title && description && content)) {
             this.setState({ addLessonError: 'Title, description and content required!' });
         } else if (price < 0) {
             this.setState({ addLessonError: 'Price can\'t be less then 0' });
+        } else if (satExercisesAll.length == 0) {
+            this.setState({ addLessonError: 'All lessons should have at least 1 question!' });
         } else {
             const newLesson = {
                 title,
