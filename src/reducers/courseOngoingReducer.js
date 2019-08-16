@@ -6,16 +6,23 @@ import {
     COURSE_ONGOING_UPDATE_SUCCESS,
     COURSE_ONGOING_UPDATE_FAIL,
     COURSE_ONGOING_DELETE_SUCCESS,
-    COURSE_ONGOING_DELETE_FAIL
+    COURSE_ONGOING_DELETE_FAIL,
+    COURSE_ONGOING_GET_COURSE_BY_CO_ID
 } from '../actions/types';
 
 const initialState = {
     currentCourseOngoing: null,
-    allCourseOngoings: []
+    allCourseOngoings: [],
+    courseForSelectedOngoing: null
 };
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case COURSE_ONGOING_GET_COURSE_BY_CO_ID:
+            return {
+                ...state,
+                courseForSelectedOngoing: action.payload
+            };
         case COURSE_ONGOING_UPDATE_SUCCESS:
             return {
                 ...state
