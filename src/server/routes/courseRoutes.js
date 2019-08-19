@@ -5,6 +5,7 @@ import auth from '../../../middleware/auth';
 // Schemas
 import Course from '../schemas/CourseSchema';
 import Teacher from '../schemas/TeacherSchema';
+import Lesson from '../schemas/LessonSchema';
 
 const router = express.Router();
 
@@ -27,6 +28,56 @@ router.get('/', auth, function(req, res) {
         });
 
         res.status(200).json({ courses: coursesFiltered });
+    });
+});
+
+// @route POST api/courses/extended
+// @desc Get extended courses data for provided ids
+// @access Private
+router.post('/extended', auth, function(req, res) {
+    const coursesIds = req.body.coursesIds;
+
+    if (!coursesIds)
+        return res.status(400).json({ msg: 'Bad request!' });
+
+    Course.find({}, (err, courses) => {
+        if (err || (courses == null)) return res.status(400).json({ msg: 'Bad request!' });
+
+        Lesson.find({}, (err, lessons) => {
+            if (err || (lessons == null)) return res.status(400).json({ msg: 'No data found for provided credentials' });
+        
+            const coursesFiltered = courses.filter(c => {
+                return(coursesIds.includes(c._id.toString()));
+            });
+
+            const coursesMapped = coursesFiltered.map(c => {
+                const courseLessonsIdStr = c.lessons.map(l => {
+                    return(l._id.toString());
+                });
+
+                const lessonsOfCurrentCourse = lessons.filter(l => {
+                    return(courseLessonsIdStr.includes(l._id.toString()));
+                });
+
+                const lessondsOfCurrentCourseMapped = lessonsOfCurrentCourse.map(l => {
+                    return({
+                        id: l._id.toString(),
+                        title: l.title
+                    });
+                });
+
+                return {
+                    id: c._id,
+                    title: c.title,
+                    description: c.description,
+                    authorId: c.author,
+                    lessons: lessondsOfCurrentCourseMapped,
+                    price: c.price
+                };
+            });
+    
+            res.status(200).json({ courses: coursesMapped }); 
+        });
     });
 });
 
