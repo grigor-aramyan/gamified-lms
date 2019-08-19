@@ -8,7 +8,9 @@ import {
     COURSE_UPDATE_SUCCESS,
     COURSE_UPDATE_FAIL,
     COURSE_DELETE_SUCCESS,
-    COURSE_DELETE_FAIL
+    COURSE_DELETE_FAIL,
+    COURSES_GET_BY_IDS,
+    COURSES_GET_BY_IDS_INITIATED
 } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
@@ -17,6 +19,24 @@ import { returnErrors } from './errorActions';
 const API_URI = 'http://localhost:4242/api/courses';
 //const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/courses';
 export const CREATE_COURSE_ERROR = 'CREATE_COURSE_ERROR';
+export const GET_COURSES_BY_IDS_ERROR = 'GET_COURSES_BY_IDS_ERROR';
+
+export const getExtendedCoursessById = (coursesIds) => (dispatch, getState) => {
+    const uri = `${API_URI}/extended`;
+
+    dispatch({ type: COURSES_GET_BY_IDS_INITIATED });
+
+    axios.post(uri, coursesIds, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: COURSES_GET_BY_IDS,
+                payload: res.data.courses
+            });
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status, GET_COURSES_BY_IDS_ERROR));
+        });
+}
 
 export const updateCourse = (courseId, newData) => (dispatch, getState) => {
 
