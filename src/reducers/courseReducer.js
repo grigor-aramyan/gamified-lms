@@ -6,16 +6,31 @@ import {
     COURSE_UPDATE_SUCCESS,
     COURSE_UPDATE_FAIL,
     COURSE_DELETE_SUCCESS,
-    COURSE_DELETE_FAIL
+    COURSE_DELETE_FAIL,
+    COURSES_GET_BY_IDS,
+    COURSES_GET_BY_IDS_INITIATED
 } from '../actions/types';
 
 const initialState = {
     currentCourse: null,
-    allCourses: []
+    allCourses: [],
+    extendedCoursesByIds: null,
+    fetchingExtendedCourses: false
 };
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case COURSES_GET_BY_IDS:
+            return {
+                ...state,
+                extendedCoursesByIds: action.payload,
+                fetchingExtendedCourses: false
+            }
+        case COURSES_GET_BY_IDS_INITIATED:
+            return {
+                ...state,
+                fetchingExtendedCourses: true
+            }
         case COURSE_UPDATE_SUCCESS:
             return {
                 ...state
