@@ -9,7 +9,8 @@ import {
     COURSE_ONGOING_UPDATE_FAIL,
     COURSE_ONGOING_DELETE_SUCCESS,
     COURSE_ONGOING_DELETE_FAIL,
-    COURSE_ONGOING_GET_COURSE_BY_CO_ID
+    COURSE_ONGOING_GET_COURSE_BY_CO_ID,
+    COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID
 } from './types';
 import { returnErrors } from './errorActions';
 import { tokenConfig } from './authActions';
@@ -19,6 +20,22 @@ const API_URI = 'http://localhost:4242/api/course_ongoings';
 //const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/course_ongoings';
 export const CREATE_COURSE_ONGOING_ERROR = 'CREATE_COURSE_ONGOING_ERROR';
 export const GET_COURSE_BY_COURSE_ONGOING_ID_ERROR = 'COURSE_ONGOING_GET_COURSE_BY_CO_ID_ERROR';
+export const COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID_ERROR = 'COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID_ERROR';
+
+export const getExtendedCourseByCourseOngoingId = (courseOngoingId) => (dispatch, getState) => {
+    const uri = `${API_URI}/course_extended/${courseOngoingId}`;
+
+    axios.get(uri, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status, COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID_ERROR));
+        });
+}
 
 export const getCourseByCourseOngoingId = (courseOngoingId) => (dispatch, getState) => {
     const uri = `${API_URI}/course/${courseOngoingId}`;
