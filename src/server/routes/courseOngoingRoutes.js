@@ -155,7 +155,7 @@ router.post('/', auth, function(req, res) {
     });
 });
 
-// @route GET api/course_ongoings
+// @route GET api/course_ongoings/course/:id
 // @desc Get course by course ongoing id
 // @access Private
 router.get('/course/:id', auth, function(req, res) {
@@ -184,6 +184,60 @@ router.get('/course/:id', auth, function(req, res) {
                     authorId: c.author,
                     lessonsId: c.lessons,
                     price: c.price
+                });
+            });
+        });
+    });
+});
+
+// @route GET api/course_ongoings/course_extended/:id
+// @desc Get extended course by course ongoing id
+// @access Private
+router.get('/course_extended/:id', auth, function(req, res) {
+    const learnerId = mongoose.Types.ObjectId(req.user.id);
+
+    let courseOngoingId = null;
+    try {
+        courseOngoingId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'No course found with provided credentials' });
+    }
+
+    Learner.findById(learnerId, (err, learner) => {
+        if (err || (learner == null)) return res.status(400).json({ msg: 'No learner found with provided credentials' });
+
+        CourseOngoing.findOne({ _id: courseOngoingId, learnerId: learner._id }, (err, courseOngoing) => {
+            if (err || (courseOngoing == null)) return res.status(400).json({ msg: 'No data found with provided credentials' });
+
+            Course.findById(courseOngoing.courseId, (err, c) => {
+                if (err || (c == null)) return res.status(400).json({ msg: 'No course found with provided credentials!' });
+            
+                Lesson.find({}, (err, lessons) => {
+                    if (err || (lessons == null)) return res.status(500).json({ msg: 'Internal server error!' });
+
+                    const courseLessonsIdsStr = c.lessons.map(i => {
+                        return(i.toString());
+                    });
+
+                    const courseLessons = lessons.filter(l => {
+                        return(courseLessonsIdsStr.includes(l._id.toString()));
+                    });
+
+                    const lessondsOfCurrentCourseMapped = courseLessons.map(l => {
+                        return({
+                            id: l._id.toString(),
+                            title: l.title
+                        });
+                    });
+
+                    res.status(200).json({
+                        id: c._id,
+                        title: c.title,
+                        description: c.description,
+                        authorId: c.author,
+                        lessons: lessondsOfCurrentCourseMapped,
+                        price: c.price
+                    });
                 });
             });
         });
