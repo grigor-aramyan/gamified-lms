@@ -7,6 +7,7 @@ import {
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
+import { getExtendedCourseByCourseOngoingId } from '../actions/courseOngoingActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -17,10 +18,30 @@ class CourseView extends Component {
         this.props.loadUser();
     }
 
+    componentDidUpdate() {
+        if ((this.props.extendedCourse == null)
+            && this.props.isAuthenticated
+            && !this.props.isTeacher
+            && this.state.currentCourseOngoingId == null) {
+            const href = window.location.href;
+            const parts = href.split('/');
+            const courseOngoingId = parts[parts.length - 1];
+            this.setState({
+                currentCourseOngoingId: courseOngoingId
+            });
+            this.props.getExtendedCourseByCourseOngoingId(courseOngoingId);
+        }
+    }
+
+    state = {
+        currentCourseOngoingId: null
+    }
+
     render() {
         const {
             isAuthenticated,
             isTeacher,
+            extendedCourse,
             error
         } = this.props;
 
@@ -29,7 +50,20 @@ class CourseView extends Component {
                 <Header />
                 { isAuthenticated && !isTeacher ?
                     <Container>
-                        Course View goes here!
+                        { extendedCourse ?
+                            <div>
+                                <ol>
+                                    { extendedCourse.lessons.map(l => {
+                                        return(
+                                            <li key={l.id}>
+                                                {l.title}
+                                            </li>
+                                        );
+                                    })}
+                                </ol>
+                            </div>
+                        : null
+                        }
                     </Container>
                 : <NotAuthenticated />
                 }
@@ -43,16 +77,20 @@ CourseView.propTypes = {
     isAuthenticated: PropTypes.bool,
     isTeacher: PropTypes.bool.isRequired,
     loadLocalToken: PropTypes.func.isRequired,
-    loadUser: PropTypes.func.isRequired
+    loadUser: PropTypes.func.isRequired,
+    getExtendedCourseByCourseOngoingId: PropTypes.func.isRequired,
+    extendedCourse: PropTypes.object
 }
 
 const mapStateToProps = (state) => ({
     error: state.error,
     isAuthenticated: state.auth.isAuthenticated,
-    isTeacher: state.auth.isTeacher
+    isTeacher: state.auth.isTeacher,
+    extendedCourse: state.courseOngoing.extendedCourseForSelectedOngoing
 });
 
 export default connect(mapStateToProps, {
     loadLocalToken,
-    loadUser
+    loadUser,
+    getExtendedCourseByCourseOngoingId
 })(CourseView);
