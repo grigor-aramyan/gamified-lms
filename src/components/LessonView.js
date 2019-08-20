@@ -8,7 +8,6 @@ import {
     CarouselItem,
     CarouselControl,
     CarouselIndicators,
-    CarouselCaption,
     Button
 } from 'reactstrap';
 

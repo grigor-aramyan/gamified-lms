@@ -73,7 +73,7 @@ class ListAllCourseOngoings extends Component {
                             <li key={c.id}>
                                 <Row>
                                     <Col xs='4'>
-                                        <a href='#'>{ courseExtended ? courseExtended.title : '' }</a>
+                                        <a href={`/course_ongoings/course/${c.id}`}>{ courseExtended ? courseExtended.title : '' }</a>
                                     </Col>
                                     <Col xs='4'>
                                         <ol>
