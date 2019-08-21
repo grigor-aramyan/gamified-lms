@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
-    Container
+    Container,
+    Row,
+    Col
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
@@ -11,6 +13,7 @@ import { getExtendedCourseByCourseOngoingId } from '../actions/courseOngoingActi
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
+import CourseSingleLesson from './CourseSingleLesson';
 
 class CourseView extends Component {
     componentDidMount() {
@@ -34,7 +37,15 @@ class CourseView extends Component {
     }
 
     state = {
-        currentCourseOngoingId: null
+        currentCourseOngoingId: null,
+        currentlySelectedCourseLessonId: null
+    }
+
+    onSelectNewLesson = (lessonId) => {
+
+        this.setState({
+            currentlySelectedCourseLessonId: lessonId
+        });
     }
 
     render() {
@@ -45,22 +56,55 @@ class CourseView extends Component {
             error
         } = this.props;
 
+        const labelsStyle = {
+            color: 'deepskyblue'
+        }
+
         return(
             <div>
                 <Header />
                 { isAuthenticated && !isTeacher ?
                     <Container>
+                        <h2>Selected course</h2>
+                        <Row style={{ textAlign: 'center' }}>
+                            <Col xs='4' style={labelsStyle}>
+                                TITLE
+                            </Col>
+                            <Col xs='4' style={labelsStyle}>
+                                LESSONS
+                            </Col>
+                            <Col xs='1' style={labelsStyle}>
+                                PRICE
+                            </Col>
+                        </Row>
+                        <hr />
                         { extendedCourse ?
                             <div>
-                                <ol>
-                                    { extendedCourse.lessons.map(l => {
-                                        return(
-                                            <li key={l.id}>
-                                                {l.title}
-                                            </li>
-                                        );
-                                    })}
-                                </ol>
+                                <Row>
+                                    <Col xs='4' style={{ textAlign: 'center' }}>
+                                        {extendedCourse.title}
+                                    </Col>
+                                    <Col xs='4'>
+                                        <ol>
+                                            { extendedCourse.lessons.map(l => {
+                                                return(
+                                                    <li key={l.id}>
+                                                        <a href='#'
+                                                            onClick={() => this.onSelectNewLesson(l.id)}>
+                                                            {l.title}
+                                                        </a>
+                                                    </li>
+                                                );
+                                            }) }
+                                        </ol>
+                                    </Col>
+                                    <Col xs='1'>
+                                        {`$${extendedCourse.price}`}
+                                    </Col>
+                                </Row>
+                                <h3>Selected course lesson</h3>
+                                <CourseSingleLesson
+                                    selectedLessonId={this.state.currentlySelectedCourseLessonId} />
                             </div>
                         : null
                         }
