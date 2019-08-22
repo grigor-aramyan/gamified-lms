@@ -137,7 +137,8 @@ router.post('/', auth, function(req, res) {
 
             const courseOngoing = new CourseOngoing({
                 learnerId: learner._id,
-                courseId: course._id
+                courseId: course._id,
+                completionPoints: {}
             });
 
             courseOngoing.save()
@@ -236,7 +237,8 @@ router.get('/course_extended/:id', auth, function(req, res) {
                         description: c.description,
                         authorId: c.author,
                         lessons: lessondsOfCurrentCourseMapped,
-                        price: c.price
+                        price: c.price,
+                        completionPoints: courseOngoing.completionPoints
                     });
                 });
             });
