@@ -8,7 +8,8 @@ import {
     COURSE_ONGOING_DELETE_SUCCESS,
     COURSE_ONGOING_DELETE_FAIL,
     COURSE_ONGOING_GET_COURSE_BY_CO_ID,
-    COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID
+    COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID,
+    COURSE_ONGOING_UPDATE_COMPLETION_POINTS_OF_EXTENDED_COURSE_BY_CO_ID
 } from '../actions/types';
 
 const initialState = {
@@ -20,6 +21,7 @@ const initialState = {
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case COURSE_ONGOING_UPDATE_COMPLETION_POINTS_OF_EXTENDED_COURSE_BY_CO_ID:
         case COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID:
             return {
                 ...state,
