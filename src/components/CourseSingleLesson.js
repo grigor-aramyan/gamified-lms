@@ -11,21 +11,425 @@ import {
     Button
 } from 'reactstrap';
 
-import {} from '../actions/lessonActions';
+import { getExtendedLessonById } from '../actions/lessonActions';
 import { getSATExercisesByLessonId } from '../actions/exerciseActions';
 
 class CourseSingleLesson extends Component {
+    componentDidMount() {
+        const {
+            selectedLessonId,
+            getExtendedLessonById            
+        } = this.props;
+
+        getExtendedLessonById(selectedLessonId);
+    }
+
+    state = {
+        imagesActiveIndex: 0,
+        imagesAnimating: false,
+        videosActiveIndex: 0,
+        videosAnimating: false,
+        satsVisible: false,
+        satsWithSingleAttempt: [],
+        satsWithSecondAttempt: [],
+        satsWithThirdAttempt: [],
+        // item: satId:::answerIndex
+        satAnswers: [],
+        lessonSubmitError: ''
+    }
+
+    onLessonSubmit = () => {
+        if ((this.props.allSatsForLesson.length == 0) ||
+            (this.props.allSatsForLesson.length > this.state.satAnswers.length)) {
+            this.setState({
+                lessonSubmitError: 'Should get and answer all exercises before submitting!'
+            });
+        } else {
+            const {
+                allSatsForLesson,
+                updateCompletionPointsOfCourse
+            } = this.props;
+
+            const {
+                satsWithSingleAttempt,
+                satsWithSecondAttempt,
+                satsWithThirdAttempt,
+                satAnswers
+            } = this.state;
+
+            const totalPoints = satAnswers.reduce((acc, answer) => {
+                const satId = answer.split(':::')[0];
+                const answerIndex = answer.split(':::')[1];
+
+                const currentSatData = allSatsForLesson.filter(sat => {
+                    return(sat.id == satId);
+                })[0];
+                if (answerIndex != currentSatData.rightAnswerIndex) {
+                    return acc;
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (satsWithSingleAttempt.includes(satId))) {
+                    return (acc + 3);
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (satsWithSecondAttempt.includes(satId))) {
+                    return (acc + 2);
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (satsWithThirdAttempt.includes(satId))) {
+                    return (acc + 1);
+                } else {
+                    return acc;
+                }
+            }, 0);
+
+            updateCompletionPointsOfCourse(totalPoints);
+            this.setState({
+                lessonSubmitError: ''
+            });
+        }
+    }
+
+    onSelectSatAnswer = (satId, answerIndex) => {
+        const {
+            satsWithSingleAttempt,
+            satsWithSecondAttempt,
+            satsWithThirdAttempt,
+            satAnswers
+        } = this.state;
+
+        if (satsWithSingleAttempt.includes(satId)) {
+            const updatedSatsWithSingleAttempt = satsWithSingleAttempt.filter(s => {
+                return(s !== satId);
+            });
+
+            const dumbData = satsWithSecondAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = satAnswers.filter(a => {
+                return(a.split(':::')[0] != satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                satsWithSingleAttempt: updatedSatsWithSingleAttempt,
+                satsWithSecondAttempt: dumbData,
+                satAnswers: filteredAnswers
+            });
+        } else if(satsWithSecondAttempt.includes(satId)) {
+            const updatedSatsWithSecondAttempt = satsWithSecondAttempt.filter(s => {
+                return(s !== satId);
+            });
+
+            const dumbData = satsWithThirdAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = satAnswers.filter(a => {
+                return(a.split(':::')[0] !== satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                satsWithSecondAttempt: updatedSatsWithSecondAttempt,
+                satsWithThirdAttempt: dumbData,
+                satAnswers: filteredAnswers
+            });
+        } else if(satsWithThirdAttempt.includes(satId)) {
+            
+        } else {
+            const dumbData = satsWithSingleAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = satAnswers.filter(a => {
+                return(a.split(':::')[0] !== satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                satsWithSingleAttempt: dumbData,
+                satAnswers: filteredAnswers
+            });
+        }
+    }
+
+    onExitingImages = () => {
+        this.setState({
+            imagesAnimating: true
+        });
+    }
+    
+    onExitedImages = () => {
+        this.setState({
+            imagesAnimating: false
+        });
+    }
+    
+    nextImage = () => {
+        const {
+            currentLesson
+        } = this.props;
+
+        if (this.state.imagesAnimating) return;
+        const nextIndex = this.state.imagesActiveIndex === currentLesson.imageUris.length - 1 ? 0 : this.state.imagesActiveIndex + 1;
+        this.setState({ imagesActiveIndex: nextIndex });
+    }
+    
+    previousImage = () => {
+        const {
+            currentLesson
+        } = this.props;
+
+        if (this.state.imagesAnimating) return;
+        const nextIndex = this.state.imagesActiveIndex === 0 ? currentLesson.imageUris.length - 1 : this.state.imagesActiveIndex - 1;
+        this.setState({ imagesActiveIndex: nextIndex });
+    }
+    
+    goToImagesIndex = (newIndex) => {
+        if (this.state.imagesAnimating) return;
+        this.setState({ imagesActiveIndex: newIndex });
+    }
+
+    /////////////////////////
+    onExitingVideos = () => {
+        this.setState({
+            videosAnimating: true
+        });
+    }
+    
+    onExitedVideos = () => {
+        this.setState({
+            videosAnimating: false
+        });
+    }
+    
+    nextVideo = () => {
+        const {
+            currentLesson
+        } = this.props;
+
+        if (this.state.videosAnimating) return;
+        const nextIndex = this.state.videosActiveIndex === currentLesson.videoUris.length - 1 ? 0 : this.state.videosActiveIndex + 1;
+        this.setState({ videosActiveIndex: nextIndex });
+    }
+    
+    previousVideo = () => {
+        const {
+            currentLesson
+        } = this.props;
+
+        if (this.state.videosAnimating) return;
+        const nextIndex = this.state.videosActiveIndex === 0 ? currentLesson.videoUris.length - 1 : this.state.videosActiveIndex - 1;
+        this.setState({ videosActiveIndex: nextIndex });
+    }
+    
+    goToVideoIndex = (newIndex) => {
+        if (this.state.videosAnimating) return;
+        this.setState({ videosActiveIndex: newIndex });
+    }
+
+    onGetSatsForCurrentLesson = () => {
+        if(!this.props.gettingSats) {
+            this.props.getSATExercisesByLessonId(this.props.selectedLessonId);
+            this.setState({
+                satsVisible: true
+            });
+        }
+    }
+
     render() {
         
         const {
-            updateCompletionPointsOfCourse
+            currentLesson,
+            error,
+            allSatsForLesson
         } = this.props;
 
+        let imageHrefs = [];
+        let videoHrefs = [];
+        if (currentLesson) {
+            imageHrefs = currentLesson.imageUris;
+            videoHrefs = currentLesson.videoUris;
+        }
+
+        const {
+            imagesActiveIndex,
+            videosActiveIndex,
+            satsVisible,
+            satAnswers
+        } = this.state;
+
+        const images = imageHrefs.map((i, index) => {
+            return(
+                <CarouselItem
+                    onExiting={this.onExitingImages}
+                    onExited={this.onExitedImages}
+                    key={index}
+                    >
+                    <img
+                        src={i}
+                        width="560"
+                        height="315"
+                        />
+                </CarouselItem>
+            );
+        });
+
+        const videos = videoHrefs.map((v, index) => {
+            return(
+                <CarouselItem
+                    onExiting={this.onExitingVideos}
+                    onExited={this.onExitedVideos}
+                    key={index}
+                    >
+                    <iframe
+                        width="560"
+                        height="315"
+                        src={v}
+                        frameBorder="0"
+                        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen>
+                    </iframe>
+                </CarouselItem>
+            );
+        });
+
         return(
-            <div>
-                Single lesson component goes here!
-                <p>Current lesson id {this.props.selectedLessonId}</p>
-            </div>
+            <Container>
+                { currentLesson ?
+                    <div>
+                        <h2
+                            style={{
+                                textAlign: 'center'
+                            }}>
+                            {currentLesson.title}
+                        </h2>
+                        <p 
+                            style={{
+                                fontStyle: 'italic',
+                                textAlign: 'center'
+                            }}
+                            className='mb-2'>
+                            {currentLesson.description}
+                        </p>
+                        { videos.length > 0 ?
+                            <Carousel
+                                activeIndex={videosActiveIndex}
+                                next={this.nextVideo}
+                                previous={this.previousVideo}
+                                className='mb-2'
+                                >
+                                <CarouselIndicators items={videos} activeIndex={videosActiveIndex} onClickHandler={this.goToVideoIndex} />
+                                {videos}
+                                <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previousVideo} />
+                                <CarouselControl direction="next" directionText="Next" onClickHandler={this.nextVideo} />
+                            </Carousel>
+                        : null
+                        }
+                        <p
+                            style={{
+                                border: '1px solid grey',
+                                borderRadius: '5%',
+                                padding: '10%'
+                            }}>
+                            {currentLesson.content}
+                        </p>
+                        { images.length > 0 ?
+                            <Carousel
+                                activeIndex={imagesActiveIndex}
+                                next={this.nextImage}
+                                previous={this.previousImage}
+                                className='mt-2 mb-2'
+                                >
+                                <CarouselIndicators items={images} activeIndex={imagesActiveIndex} onClickHandler={this.goToImagesIndex} />
+                                {images}
+                                <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previousImage} />
+                                <CarouselControl direction="next" directionText="Next" onClickHandler={this.nextImage} />
+                            </Carousel>
+                        : null
+                        }
+                        <Button
+                            onClick={this.onGetSatsForCurrentLesson}
+                            className='btn btn-info'>
+                            Get Exercises
+                        </Button>
+                        { (allSatsForLesson && satsVisible) ?
+                            <div>
+                                <h4>SAT Questions</h4>
+                                { allSatsForLesson.length > 0 ?
+                                    <ul>
+                                        { allSatsForLesson.map((s, index) => {
+                                            const rightAnswerIndex = s.rightAnswerIndex;
+                                            const selectedAnswer = satAnswers.filter(a => {
+                                                return(a.split(':::')[0] == s.id);
+                                            });
+                                            let selectedAnswerIndex = null;
+                                            if (selectedAnswer.length > 0) {
+                                                selectedAnswerIndex = selectedAnswer[0].split(':::')[1];
+                                            }
+
+                                            const inputName = `answer-${s.id}`;
+
+                                            return(
+                                                <li key={index}>
+                                                    <p>{s.question}</p>
+                                                    <ul style={{ listStyle: 'none' }}>
+                                                        {s.answers.map((a, i) => {
+                                                            let styles = null;
+                                                            if ((rightAnswerIndex == i) &&
+                                                                (selectedAnswerIndex == i)) {
+                                                                styles = {
+                                                                    border: '1px solid green',
+                                                                    padding: '1%'
+                                                                }
+                                                            } else {
+                                                                styles = {};
+                                                            }
+                                                            
+                                                            return(
+                                                                <li key={i} style={styles} className='mb-1'>
+                                                                    <input
+                                                                        type='radio'
+                                                                        name={inputName}
+                                                                        id='sat-answer'
+                                                                        value={i}
+                                                                        className='mr-1'
+                                                                        onClick={() => {this.onSelectSatAnswer(s.id, i)}}
+                                                                            />
+                                                                    <label
+                                                                        htmlFor='sat-answer'>
+                                                                        {a}
+                                                                    </label>
+                                                                </li>
+                                                            );
+                                                        })}
+                                                    </ul>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                : <span style={{ fontStyle: 'italic' }}>
+                                    No SAT questions for this lesson!
+                                </span>
+                                }
+                            </div>
+                        : null
+                        }
+                        <hr />
+                        { this.state.lessonSubmitError ?
+                            <span style={{
+                                display: 'block',
+                                color: 'red',
+                                fontSize: '90%',
+                                fontStyle: 'italic'
+                            }}>{this.state.lessonSubmitError}</span>
+                        : null
+                        }
+                        <Button
+                            onClick={this.onLessonSubmit}
+                            className='btn btn-primary mb-2'>
+                            Submit
+                        </Button>
+                    </div>
+                : null 
+                }
+            </Container>
         );
     }
 }
@@ -33,13 +437,22 @@ class CourseSingleLesson extends Component {
 CourseSingleLesson.propTypes = {
     error: PropTypes.object,
     selectedLessonId: PropTypes.string,
-    updateCompletionPointsOfCourse: PropTypes.func.isRequired
+    updateCompletionPointsOfCourse: PropTypes.func.isRequired,
+    getExtendedLessonById: PropTypes.func.isRequired,
+    getSATExercisesByLessonId: PropTypes.func.isRequired,
+    currentLesson: PropTypes.object,
+    allSatsForLesson: PropTypes.array.isRequired,
+    gettingSats: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    error: state.error
+    error: state.error,
+    currentLesson: state.lesson.extendedLessonById,
+    allSatsForLesson: state.exercise.allSATExercisesForCurrentLesson,
+    gettingSats: state.exercise.gettingSATExercises
 });
 
 export default connect(mapStateToProps, {
-
+    getExtendedLessonById,
+    getSATExercisesByLessonId
 })(CourseSingleLesson);
