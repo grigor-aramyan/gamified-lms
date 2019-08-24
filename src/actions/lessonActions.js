@@ -10,7 +10,9 @@ import {
     LESSON_DELETE_SUCCESS,
     LESSON_DELETE_FAIL,
     LESSONS_GET_BY_IDS,
-    LESSONS_GET_BY_IDS_INITIATED
+    LESSONS_GET_BY_IDS_INITIATED,
+    LESSON_GET_BY_ID,
+    LESSON_GET_BY_ID_INITIATED
 } from '../actions/types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
@@ -21,6 +23,7 @@ const API_URI = 'http://localhost:4242/api/lessons';
 
 export const CREATE_LESSON_ERROR = 'CREATE_LESSON_ERROR';
 export const GET_LESSONS_BY_IDS_ERROR = 'GET_LESSONS_BY_IDS_ERROR';
+export const GET_LESSON_BY_ID_ERROR = 'GET_LESSON_BY_ID_ERROR';
 
 export const getExtendedLessonsById = (lessonIds) => (dispatch, getState) => {
     const uri = `${API_URI}/extended`;
@@ -36,6 +39,27 @@ export const getExtendedLessonsById = (lessonIds) => (dispatch, getState) => {
         })
         .catch(err => {
             dispatch(returnErrors(err.response.data, err.response.status, GET_LESSONS_BY_IDS_ERROR));
+        });
+}
+
+export const getExtendedLessonById = (lessonId) => (dispatch, getState) => {
+    const uri = `${API_URI}/extended`;
+
+    dispatch({ type: LESSON_GET_BY_ID_INITIATED });
+
+    const body = {
+        lessonsIds: [ lessonId ]
+    }
+
+    axios.post(uri, body, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: LESSON_GET_BY_ID,
+                payload: res.data.lessons[0]
+            });
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status, GET_LESSON_BY_ID_ERROR));
         });
 }
 

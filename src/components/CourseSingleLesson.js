@@ -3,10 +3,16 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
-    Container
+    Container,
+    Carousel,
+    CarouselItem,
+    CarouselControl,
+    CarouselIndicators,
+    Button
 } from 'reactstrap';
 
 import {} from '../actions/lessonActions';
+import { getSATExercisesByLessonId } from '../actions/exerciseActions';
 
 class CourseSingleLesson extends Component {
     render() {
