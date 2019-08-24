@@ -8,18 +8,28 @@ import {
     LESSON_DELETE_SUCCESS,
     LESSON_DELETE_FAIL,
     LESSONS_GET_BY_IDS,
-    LESSONS_GET_BY_IDS_INITIATED
+    LESSONS_GET_BY_IDS_INITIATED,
+    LESSON_GET_BY_ID,
+    LESSON_GET_BY_ID_INITIATED
 } from '../actions/types';
 
 const initialState = {
     currentLesson: null,
     allLessons: null,
     extendedLessonsByIds: null,
-    fetchingExtendedLessons: false
+    fetchingExtendedLessons: false,
+    extendedLessonById: null
 };
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case LESSON_GET_BY_ID:
+            return {
+                ...state,
+                extendedLessonById: action.payload,
+                fetchingExtendedLessons: false
+            }
+        case LESSON_GET_BY_ID_INITIATED:
         case LESSONS_GET_BY_IDS_INITIATED:
             return {
                 ...state,
