@@ -9,7 +9,10 @@ import {
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
-import { getExtendedCourseByCourseOngoingId } from '../actions/courseOngoingActions';
+import {
+    getExtendedCourseByCourseOngoingId,
+    updateCompletionPointsOfExtendedCourseByCourseOngoingId
+} from '../actions/courseOngoingActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -34,6 +37,24 @@ class CourseView extends Component {
             });
             this.props.getExtendedCourseByCourseOngoingId(courseOngoingId);
         }
+
+        if (this.props.extendedCourse &&
+            ((this.state.currentlySelectedCourseLessonId in this.props.extendedCourse.completionPoints) || (this.state.currentlySelectedCourseLessonId == null))) {
+            
+                const filteredLesson = this.props.extendedCourse.lessons.filter(l => {
+                    return(!(l.id in this.props.extendedCourse.completionPoints));
+                })[0];
+
+                if (filteredLesson != undefined) {
+                    this.setState({
+                        currentlySelectedCourseLessonId: filteredLesson.id
+                    });
+                } else {
+                    this.setState({
+                        currentlySelectedCourseLessonId: 0
+                    });
+                }
+        }
     }
 
     state = {
@@ -46,6 +67,15 @@ class CourseView extends Component {
         this.setState({
             currentlySelectedCourseLessonId: lessonId
         });
+    }
+
+    updateCompletionPointsOfCourse = (completionPoint) => {
+        const {
+            currentCourseOngoingId,
+            currentlySelectedCourseLessonId
+        } = this.state;
+
+        this.props.updateCompletionPointsOfExtendedCourseByCourseOngoingId(currentCourseOngoingId, currentlySelectedCourseLessonId, completionPoint);
     }
 
     render() {
@@ -87,12 +117,25 @@ class CourseView extends Component {
                                     <Col xs='4'>
                                         <ol>
                                             { extendedCourse.lessons.map(l => {
-                                                return(
-                                                    <li key={l.id}>
-                                                        <a href='#'
+                                                let listItem = null;
+                                                if (l.id in extendedCourse.completionPoints) {
+                                                    listItem = 
+                                                        (<span style={{
+                                                            border: '1px solid lime',
+                                                            padding: '0.2em'
+                                                        }}>
+                                                            {l.title} ({extendedCourse.completionPoints[l.id]})
+                                                        </span>)
+                                                } else {
+                                                    listItem =
+                                                        (<a href='#'
                                                             onClick={() => this.onSelectNewLesson(l.id)}>
                                                             {l.title}
-                                                        </a>
+                                                        </a>)
+                                                }
+                                                return(
+                                                    <li key={l.id}>
+                                                        {listItem}
                                                     </li>
                                                 );
                                             }) }
@@ -102,9 +145,16 @@ class CourseView extends Component {
                                         {`$${extendedCourse.price}`}
                                     </Col>
                                 </Row>
-                                <h3>Selected course lesson</h3>
-                                <CourseSingleLesson
-                                    selectedLessonId={this.state.currentlySelectedCourseLessonId} />
+                                { this.state.currentlySelectedCourseLessonId ?
+                                    <div>
+                                        <h3>Selected course lesson</h3>
+                                        <CourseSingleLesson
+                                            selectedLessonId={this.state.currentlySelectedCourseLessonId}
+                                            updateCompletionPointsOfCourse={this.updateCompletionPointsOfCourse} />
+                                    </div>
+                                : null
+                                }
+                                
                             </div>
                         : null
                         }
@@ -123,6 +173,7 @@ CourseView.propTypes = {
     loadLocalToken: PropTypes.func.isRequired,
     loadUser: PropTypes.func.isRequired,
     getExtendedCourseByCourseOngoingId: PropTypes.func.isRequired,
+    updateCompletionPointsOfExtendedCourseByCourseOngoingId: PropTypes.func.isRequired,
     extendedCourse: PropTypes.object
 }
 
@@ -136,5 +187,6 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
     loadLocalToken,
     loadUser,
-    getExtendedCourseByCourseOngoingId
+    getExtendedCourseByCourseOngoingId,
+    updateCompletionPointsOfExtendedCourseByCourseOngoingId
 })(CourseView);

@@ -10,6 +10,11 @@ import {} from '../actions/lessonActions';
 
 class CourseSingleLesson extends Component {
     render() {
+        
+        const {
+            updateCompletionPointsOfCourse
+        } = this.props;
+
         return(
             <div>
                 Single lesson component goes here!
@@ -21,7 +26,8 @@ class CourseSingleLesson extends Component {
 
 CourseSingleLesson.propTypes = {
     error: PropTypes.object,
-    selectedLessonId: PropTypes.string
+    selectedLessonId: PropTypes.string,
+    updateCompletionPointsOfCourse: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
