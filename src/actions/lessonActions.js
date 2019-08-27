@@ -18,8 +18,8 @@ import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/lessons';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/lessons';
+//const API_URI = 'http://localhost:4242/api/lessons';
+const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/lessons';
 
 export const CREATE_LESSON_ERROR = 'CREATE_LESSON_ERROR';
 export const GET_LESSONS_BY_IDS_ERROR = 'GET_LESSONS_BY_IDS_ERROR';

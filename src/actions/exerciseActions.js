@@ -9,8 +9,8 @@ import {
 import { tokenConfig } from './authActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/exercises';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/exercises';
+//const API_URI = 'http://localhost:4242/api/exercises';
+const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/exercises';
 
 export const createManySATExercises = (exercisesData) => (dispatch, getState) => {
     const uri = `${API_URI}/singleAnswerTestQuestion`;
