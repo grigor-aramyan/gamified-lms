@@ -15,8 +15,8 @@ import { returnErrors } from './errorActions';
 import { tokenConfig } from './authActions';
 
 // Constants
-//const API_URI = 'http://localhost:4242/api/lesson_ongoings';
-const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/lesson_ongoings';
+const API_URI = 'http://localhost:4242/api/lesson_ongoings';
+//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/lesson_ongoings';
 export const CREATE_LESSON_ONGOING_ERROR = 'CREATE_LESSON_ONGOING_ERROR';
 export const GET_LESSON_BY_LESSON_ONGOING_ID_ERROR = 'LESSON_ONGOING_GET_LESSON_BY_LO_ID_ERROR';
 

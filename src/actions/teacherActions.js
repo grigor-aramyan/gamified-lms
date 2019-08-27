@@ -13,8 +13,8 @@ import { returnErrors } from './errorActions';
 import { tokenConfig } from './authActions';
 
 // Constants
-//const API_URI = 'http://localhost:4242/api/teachers';
-const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/teachers';
+const API_URI = 'http://localhost:4242/api/teachers';
+//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/teachers';
 export const CREATE_TEACHER_ERROR = 'CREATE_TEACHER_ERROR';
 
 export const updateTeacher = (newData) => (dispatch, getState) => {
