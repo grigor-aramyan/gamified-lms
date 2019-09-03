@@ -1,11 +1,31 @@
-@media only screen and (max-width: 479px) {
+.main-menu {
+    position: absolute;
+    height: 90vh;
+    background-color: black;
+    transition: margin .5s;
+}
 
+.main-menu.menu-opened {
+    margin-left: 0;
+}
+
+@media only screen and (max-width: 479px) {
+    .main-menu {
+        width: 93vw;
+        margin-left: -93vw;
+    }
 }
 
 @media only screen and (min-width: 480px) {
-
+    .main-menu {
+        width: 50vw;
+        margin-left: -50vw;
+    }
 }
 
 @media only screen and (min-width: 768px) {
-    
+    .main-menu {
+        width: 20vw;
+        margin-left: -20vw;
+    }
 }
