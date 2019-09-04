@@ -11,9 +11,14 @@ import {
 import { logoutInit } from '../actions/authActions';
 
 class Header extends Component {
+    
     toggle = () => {
         const mainMenu = document.getElementById('menu');
         mainMenu.classList.toggle('menu-opened');
+    }
+
+    onSignOut = () => {
+        this.props.logoutInit();
     }
 
     render() {
@@ -21,6 +26,12 @@ class Header extends Component {
             isAuthenticated,
             isTeacher
         } = this.props;
+
+        const icon_style = {
+            borderRadius: '10%',
+            border: '2px solid orange',
+            marginBottom: '5px'
+        };
 
         return(
             <div>
@@ -35,7 +46,98 @@ class Header extends Component {
                     </a>
                 </Navbar>
                 <div id='menu' className='main-menu'>
-                    
+                    { !isAuthenticated ?
+                        <div>
+                            <a href='/'>
+                                <img
+                                    src='/images/login_icon.png'
+                                    style={icon_style}
+                                    className='main-menu-icon-style'
+                                />
+                            </a>
+                            <br />
+                        </div> :
+                        null
+                    }
+                    { !isAuthenticated ?
+                        <div>
+                            <a href='/register'>
+                                <img
+                                    src='/images/register_icon.png'
+                                    style={icon_style}
+                                    className='main-menu-icon-style'
+                                />
+                            </a>
+                            <br />
+                        </div> :
+                        null
+                    }
+
+                    { isAuthenticated ?
+                        <div>
+                            <a href='/lessons'>
+                                <img
+                                    src='/images/lessons_icon.png'
+                                    style={icon_style}
+                                    className='main-menu-icon-style'
+                                />
+                            </a>
+                            <br />
+                        </div> :
+                        null
+                    }
+                    { isAuthenticated ?
+                        <div>
+                            <a href='/courses'>
+                                <img
+                                    src='/images/courses_icon.jpg'
+                                    style={icon_style}
+                                    className='main-menu-icon-style'
+                                />
+                            </a>
+                            <br />
+                        </div> :
+                        null
+                    }
+                    { (isAuthenticated && !isTeacher) ?
+                        <div>
+                            <a href='/lesson_ongoings'>
+                                <img
+                                    src='/images/lesson_ongoing_icon.png'
+                                    style={icon_style}
+                                    className='main-menu-icon-style'
+                                />
+                            </a>
+                            <br />
+                        </div> :
+                        null
+                    }
+                    { (isAuthenticated && !isTeacher) ?
+                        <div>
+                            <a href='/course_ongoings'>
+                                <img
+                                    src='/images/course_ongoing_icon.png'
+                                    style={icon_style}
+                                    className='main-menu-icon-style'
+                                />
+                            </a>
+                            <br />
+                        </div> :
+                        null
+                    }
+                    { isAuthenticated ?
+                        <div>
+                            <a href='/' onClick={this.onSignOut}>
+                                <img
+                                    src='/images/logout_icon.png'
+                                    style={icon_style}
+                                    className='main-menu-icon-style'
+                                />
+                            </a>
+                            <br />
+                        </div> :
+                        null
+                    }
                 </div>
             </div>
         );
