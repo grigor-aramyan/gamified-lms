@@ -24,8 +24,19 @@ class Header extends Component {
     render() {
         const {
             isAuthenticated,
-            isTeacher
+            isTeacher,
+            learner,
+            teacher
         } = this.props;
+
+        let userName = null;
+        if (isAuthenticated) {
+            if (isTeacher) {
+                userName = teacher.name;
+            } else {
+                userName = learner.name;
+            }
+        }
 
         const icon_style = {
             borderRadius: '10%',
@@ -46,6 +57,10 @@ class Header extends Component {
                     </a>
                 </Navbar>
                 <div id='menu' className='main-menu'>
+                    <h4 style={{
+                        color: 'grey',
+                        fontStyle: 'italic'
+                    }} className='mb-1'>Hello, { userName ? userName : 'guest' }</h4>
                     { !isAuthenticated ?
                         <div>
                             <a href='/'>
@@ -147,12 +162,16 @@ class Header extends Component {
 Header.propTypes = {
     isAuthenticated: PropTypes.bool,
     isTeacher: PropTypes.bool.isRequired,
-    logoutInit: PropTypes.func.isRequired
+    logoutInit: PropTypes.func.isRequired,
+    learner: PropTypes.object,
+    teacher: PropTypes.object
 }
 
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
-    isTeacher: state.auth.isTeacher
+    isTeacher: state.auth.isTeacher,
+    learner: state.auth.learner,
+    teacher: state.auth.teacher
 });
 
 export default connect(mapStateToProps, {
