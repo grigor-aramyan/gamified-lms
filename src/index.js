@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 
 import App from './components/App';
+import LoginView from './components/LoginView';
 import Register from './components/Register';
 import Lessons from './components/Lessons';
 import Courses from './components/Courses';
@@ -21,6 +22,7 @@ ReactDOM.hydrate(
             <Route path='/'>
                 <Switch>
                     <Route exact path='/' component={App} />
+                    <Route path='/login' component={LoginView} />
                     <Route path='/register' component={Register} />
                     <Route path='/lessons' component={Lessons} />
                     <Route path='/courses' component={Courses} />
