@@ -63,7 +63,7 @@ class Header extends Component {
                     }} className='mb-1'>Hello, { userName ? userName : 'guest' }</h4>
                     { !isAuthenticated ?
                         <div>
-                            <a href='/'>
+                            <a href='/login'>
                                 <img
                                     src='/images/login_icon.png'
                                     style={icon_style}
