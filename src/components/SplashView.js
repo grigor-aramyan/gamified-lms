@@ -5,6 +5,11 @@ import {
 } from 'reactstrap';
 
 export default class SplashView extends Component {
+    componentDidMount() {
+        setTimeout(() => {
+            window.location.replace('/');
+        }, 3000);
+    }
 
     render() {
         return(

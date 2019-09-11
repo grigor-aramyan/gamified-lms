@@ -19,6 +19,7 @@ import courseOngoingRoutes from './routes/courseOngoingRoutes';
 import exerciseRoutes from './routes/exerciseRoutes';
 
 import App from '../components/App';
+import SplashView from '../components/SplashView';
 
 const PORT = process.env.PORT || 4242;
 
@@ -45,7 +46,7 @@ server.get('/*', (req, res) => {
     const initialMarkup = ReactDOMServer.renderToString(
         <Provider store={store}>
             <StaticRouter location={req.url} context={{}}>
-                <App />
+                { (req.url === '/preparing') ? <SplashView /> : <App /> }
             </StaticRouter>
         </Provider>
     );
@@ -53,7 +54,7 @@ server.get('/*', (req, res) => {
     res.send(`
         <html>
             <head>
-                <title>Gamified LMS</title>
+                <title>${config.get('appName')}</title>
                 <link rel="stylesheet"
                     href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
                     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"

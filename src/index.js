@@ -15,6 +15,7 @@ import Learners from './components/Learners';
 import Teachers from './components/Teachers';
 import LessonView from './components/LessonView';
 import CourseView from './components/CourseView';
+import SplashView from './components/SplashView';
 
 ReactDOM.hydrate(
     <Provider store={store}>
@@ -22,6 +23,7 @@ ReactDOM.hydrate(
             <Route path='/'>
                 <Switch>
                     <Route exact path='/' component={App} />
+                    <Route path='/preparing' component={SplashView} />
                     <Route path='/login' component={LoginView} />
                     <Route path='/register' component={Register} />
                     <Route path='/lessons' component={Lessons} />
