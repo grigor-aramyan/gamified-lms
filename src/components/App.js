@@ -16,6 +16,7 @@ import {
 
 // Components
 import Header from './Header';
+import Footer from './Footer';
 
 class App extends Component {
     componentDidMount() {
@@ -45,6 +46,7 @@ class App extends Component {
                         </CardBody>
                     </Card>
                 </Container>
+                <Footer />
             </div>
         );
     }
