@@ -87,23 +87,22 @@ class LoginView extends Component {
             error
         } = this.props;
 
-        let userName = null;
+        /*let userName = null;
         if (isAuthenticated) {
             if (isTeacher) {
                 userName = teacher.name;
             } else {
                 userName = learner.name;
             }
-        }
+        }*/
 
         return(
             <div>
                 <Header />
-                <Container>
-                    <h2>Hello, { userName ? userName : 'guest' }</h2>
+                <Container className='mt-2'>
                     { !isAuthenticated ?
-                        <div>
-                            <span>Login as: { this.state.loginAsTeacher ? 'Teacher' : 'Learner' }</span>
+                        <div className='login-form'>
+                            <span>Login as: </span>
                             <Button style={{ backgroundColor: 'pink', color: 'blue' }} className='ml-1' onClick={ () => {
                                 this.setState({ loginAsTeacher: true});
                                 this.props.swtchToTeacherLogin();
@@ -164,7 +163,11 @@ class LoginView extends Component {
                                         null }
                                 <Button
                                     onClick={this.onLogin}
-                                    className='mt-2'>
+                                    className='mt-2'
+                                    style={{
+                                        backgroundColor: 'deepskyblue',
+                                        border: 'none'
+                                    }}>
                                         Login as: { this.state.loginAsTeacher ? 'Teacher' : 'Learner' }
                                 </Button>
                             </Form>

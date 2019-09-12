@@ -20,6 +20,7 @@ import exerciseRoutes from './routes/exerciseRoutes';
 
 import App from '../components/App';
 import SplashView from '../components/SplashView';
+import LoginView from '../components/LoginView';
 
 const PORT = process.env.PORT || 4242;
 
@@ -43,10 +44,19 @@ server.use('/api/exercises', exerciseRoutes);
 server.get('/*', (req, res) => {
     const store = createStore(reducers);
 
+    let comp = null;
+    if (req.url === '/preparing') {
+        comp = <SplashView />;
+    } else if (req.url === '/login') {
+        comp = <LoginView />;
+    } else {
+        comp = <App />;
+    }
+
     const initialMarkup = ReactDOMServer.renderToString(
         <Provider store={store}>
             <StaticRouter location={req.url} context={{}}>
-                { (req.url === '/preparing') ? <SplashView /> : <App /> }
+                { comp }
             </StaticRouter>
         </Provider>
     );
