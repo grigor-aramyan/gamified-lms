@@ -103,86 +103,95 @@ class Register extends Component {
             <div>
                 <Header />
                 <Container>
-                    <h2>Register as: { this.state.registerAsTeacher ? 'Teacher' : 'Learner' }</h2>
-                    <span>Register as: </span>
-                    <Button style={{ backgroundColor: 'pink', color: 'blue' }} className='ml-1' onClick={ () => this.setState({ registerAsTeacher: true })}>Teacher</Button>
-                    <Button style={{ backgroundColor: 'grey', color: 'lime' }} className='ml-1' onClick={ () => this.setState({ registerAsTeacher: false })}>Learner</Button>
-                    <br />
-                    <Form className='mt-3'>
-                        <Input
-                            type='text'
-                            name={ this.state.registerAsTeacher ? 'teacherName' : 'learnerName' }
-                            placeholder='Name'
-                            onChange={this.onChange}
-                            className='mb-1' />
-                        <Input
-                            type='email'
-                            name={ this.state.registerAsTeacher ? 'teacherEmail' : 'learnerEmail' }
-                            placeholder='Email'
-                            onChange={this.onChange}
-                            className='mb-1' />
-                        <Input
-                            type='password'
-                            name={ this.state.registerAsTeacher ? 'teacherPassword' : 'learnerPassword' }
-                            placeholder='Password'
-                            onChange={this.onChange}
-                            className='mb-1' />
-                        { this.state.registerAsTeacher ?
-                            <FormGroup>
-                                <Label for='teacherSubjectId'>Select your Subject</Label>
-                                <Input
-                                    type='select'
-                                    name='teacherSubject'
-                                    id='teacherSubjectId'
-                                    onChange={this.onChange}>
-                                    <option></option>
-                                    <option>Math</option>
-                                    <option>Art</option>
-                                    <option>Physics</option>
-                                    <option>Piano</option>
-                                    <option>English</option>
-                                </Input>
-                            </FormGroup> :
-                            null
-                        }
-                        { (this.state.registerAsTeacher && (this.state.teacherError !== '')) ?
-                            <span style={{
-                                display: 'block',
-                                color: 'red',
-                                fontSize: '90%',
-                                fontStyle: 'italic'
-                            }}>{ this.state.teacherError }</span> :
-                            null }
-                        { (!this.state.registerAsTeacher && (this.state.learnerError !== '')) ?
-                            <span style={{
-                                display: 'block',
-                                color: 'red',
-                                fontSize: '90%',
-                                fontStyle: 'italic'
-                            }}>{ this.state.learnerError }</span> :
-                            null }
-                        
-                        { (this.state.registerAsTeacher && (error.id === CREATE_TEACHER_ERROR)) ?
-                            <span style={{
-                                display: 'block',
-                                color: 'red',
-                                fontSize: '90%',
-                                fontStyle: 'italic'
-                            }}>{ error.msg.msg }</span> :
-                            null }
-                        { (!this.state.registerAsTeacher && (error.id === CREATE_LEARNER_ERROR)) ?
-                            <span style={{
-                                display: 'block',
-                                color: 'red',
-                                fontSize: '90%',
-                                fontStyle: 'italic'
-                            }}>{ error.msg.msg }</span> :
-                            null }
+                    <div
+                        className='login-form'
+                        style={{
+                            marginTop: '10%'
+                        }}>
+                        <span>Register as: </span>
+                        <Button style={{ backgroundColor: 'pink', color: 'blue' }} className='ml-1' onClick={ () => this.setState({ registerAsTeacher: true })}>Teacher</Button>
+                        <Button style={{ backgroundColor: 'grey', color: 'lime' }} className='ml-1' onClick={ () => this.setState({ registerAsTeacher: false })}>Learner</Button>
+                        <br />
+                        <Form className='mt-3'>
+                            <Input
+                                type='text'
+                                name={ this.state.registerAsTeacher ? 'teacherName' : 'learnerName' }
+                                placeholder='Name'
+                                onChange={this.onChange}
+                                className='mb-1' />
+                            <Input
+                                type='email'
+                                name={ this.state.registerAsTeacher ? 'teacherEmail' : 'learnerEmail' }
+                                placeholder='Email'
+                                onChange={this.onChange}
+                                className='mb-1' />
+                            <Input
+                                type='password'
+                                name={ this.state.registerAsTeacher ? 'teacherPassword' : 'learnerPassword' }
+                                placeholder='Password'
+                                onChange={this.onChange}
+                                className='mb-1' />
+                            { this.state.registerAsTeacher ?
+                                <FormGroup>
+                                    <Label for='teacherSubjectId'>Select your Subject</Label>
+                                    <Input
+                                        type='select'
+                                        name='teacherSubject'
+                                        id='teacherSubjectId'
+                                        onChange={this.onChange}>
+                                        <option></option>
+                                        <option>Math</option>
+                                        <option>Art</option>
+                                        <option>Physics</option>
+                                        <option>Piano</option>
+                                        <option>English</option>
+                                    </Input>
+                                </FormGroup> :
+                                null
+                            }
+                            { (this.state.registerAsTeacher && (this.state.teacherError !== '')) ?
+                                <span style={{
+                                    display: 'block',
+                                    color: 'red',
+                                    fontSize: '90%',
+                                    fontStyle: 'italic'
+                                }}>{ this.state.teacherError }</span> :
+                                null }
+                            { (!this.state.registerAsTeacher && (this.state.learnerError !== '')) ?
+                                <span style={{
+                                    display: 'block',
+                                    color: 'red',
+                                    fontSize: '90%',
+                                    fontStyle: 'italic'
+                                }}>{ this.state.learnerError }</span> :
+                                null }
+                            
+                            { (this.state.registerAsTeacher && (error.id === CREATE_TEACHER_ERROR)) ?
+                                <span style={{
+                                    display: 'block',
+                                    color: 'red',
+                                    fontSize: '90%',
+                                    fontStyle: 'italic'
+                                }}>{ error.msg.msg }</span> :
+                                null }
+                            { (!this.state.registerAsTeacher && (error.id === CREATE_LEARNER_ERROR)) ?
+                                <span style={{
+                                    display: 'block',
+                                    color: 'red',
+                                    fontSize: '90%',
+                                    fontStyle: 'italic'
+                                }}>{ error.msg.msg }</span> :
+                                null }
 
-                        <Button
-                            className='mt-1'
-                            onClick={this.onRegister}>Register as { this.state.registerAsTeacher ? 'Teacher' : 'Learner' }</Button>
-                    </Form>
+                            <Button
+                                className='mt-1'
+                                style={{
+                                    backgroundColor: 'deepskyblue',
+                                    border: 'none'
+                                }}
+                                onClick={this.onRegister}>Register as { this.state.registerAsTeacher ? 'Teacher' : 'Learner' }</Button>
+                        </Form>
+                    </div>
                 </Container>
             </div>
         );

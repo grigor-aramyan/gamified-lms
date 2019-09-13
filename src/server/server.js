@@ -18,9 +18,11 @@ import lessonOngoingRoutes from './routes/lessonOngoingRoutes';
 import courseOngoingRoutes from './routes/courseOngoingRoutes';
 import exerciseRoutes from './routes/exerciseRoutes';
 
+// components
 import App from '../components/App';
 import SplashView from '../components/SplashView';
 import LoginView from '../components/LoginView';
+import Register from '../components/Register';
 
 const PORT = process.env.PORT || 4242;
 
@@ -49,6 +51,8 @@ server.get('/*', (req, res) => {
         comp = <SplashView />;
     } else if (req.url === '/login') {
         comp = <LoginView />;
+    } else if (req.url === '/register') {
+        comp = <Register />;
     } else {
         comp = <App />;
     }
