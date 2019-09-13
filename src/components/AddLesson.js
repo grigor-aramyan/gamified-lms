@@ -231,99 +231,142 @@ class AddLesson extends Component {
             satExercisesAll
         } = this.state;
 
+        const inputsStyle = {
+            width: '40vw'
+        };
+
+        const mainContentLeftMargin = '20vw';
+
         return(
             <Container>
-                <h2>New Lesson</h2>
+                <h2
+                    style={{
+                        marginLeft: mainContentLeftMargin
+                    }}>-- New Lesson --</h2>
                 <Form>
-                    <Input
-                        type='text'
-                        name='title'
-                        placeholder='Lesson title'
-                        value={this.state.title}
-                        onChange={this.onChange}
-                        className='mb-1' />
-                    <Input
-                        type='text'
-                        name='description'
-                        placeholder='Lesson description'
-                        value={this.state.description}
-                        onChange={this.onChange}
-                        className='mb-1' />
-                    <Input
-                        type='textarea'
-                        name='content'
-                        placeholder='Lesson content'
-                        value={this.state.content}
-                        onChange={this.onChange}
-                        className='mb-1' />
-                    <FormGroup>
-                        <Label for='lesson-price'>Lesson price</Label>
+                    <div
+                        style={{
+                            marginLeft: mainContentLeftMargin
+                        }}>
                         <Input
-                            id='lesson-price'
-                            type='number'
-                            name='price'
-                            value={this.state.price}
+                            type='text'
+                            name='title'
+                            placeholder='Lesson title'
+                            value={this.state.title}
                             onChange={this.onChange}
-                            className='mb-1' />
-                    </FormGroup>
-                    <FormGroup>
+                            className='mb-1'
+                            style={inputsStyle} />
                         <Input
-                            type='url'
-                            name='currentVideoUrl'
-                            placeholder='Add video url...'
-                            value={this.state.currentVideoUrl}
+                            type='text'
+                            name='description'
+                            placeholder='Lesson description'
+                            value={this.state.description}
                             onChange={this.onChange}
-                            className='mb-1 mr-1'
-                            style={{width: '30vw', display: 'inline'}} />
-                        <Button
-                            size='sm'
-                            color='primary'
-                            outline
-                            onClick={this.addToVideos}>
-                                +
-                            </Button>
-                    </FormGroup>
-                    { videoUrls.length > 0 ?
+                            className='mb-1'
+                            style={inputsStyle} />
+                        <Input
+                            type='textarea'
+                            name='content'
+                            placeholder='Lesson content'
+                            value={this.state.content}
+                            onChange={this.onChange}
+                            className='mb-1'
+                            style={inputsStyle} />
                         <FormGroup>
-                            <Label for='video-urls'>Video Urls:</Label>
-                            <ul id='video-urls'>
-                                {videoUrls.map(url => {
-                                    return(<li>{url}</li>);
-                                })}
-                            </ul>
+                            <Label for='lesson-price'>Lesson price</Label>
+                            <Input
+                                id='lesson-price'
+                                type='number'
+                                name='price'
+                                value={this.state.price}
+                                onChange={this.onChange}
+                                className='mb-1'
+                                style={inputsStyle} />
                         </FormGroup>
-                    : null }
-                    <FormGroup>
-                        <Input
-                            type='url'
-                            name='currentImageUrl'
-                            placeholder='Add image url...'
-                            value={this.state.currentImageUrl}
-                            onChange={this.onChange}
-                            className='mb-1 mr-1'
-                            style={{width: '30vw', display: 'inline'}} />
-                        <Button
-                            size='sm'
-                            color='primary'
-                            outline
-                            onClick={this.addToImages}>
-                                +
-                            </Button>
-                    </FormGroup>
-                    { imageUrls.length > 0 ?
                         <FormGroup>
-                            <Label for='image-urls'>Image Urls:</Label>
-                            <ul id='image-urls'>
-                                {imageUrls.map(url => {
-                                    return(<li>{url}</li>);
-                                })}
-                            </ul>
+                            <Input
+                                type='url'
+                                name='currentVideoUrl'
+                                placeholder='Add video url...'
+                                value={this.state.currentVideoUrl}
+                                onChange={this.onChange}
+                                className='mb-1 mr-1'
+                                style={{width: '30vw', display: 'inline'}} />
+                            <Button
+                                size='sm'
+                                color='primary'
+                                outline
+                                onClick={this.addToVideos}>
+                                    +
+                                </Button>
                         </FormGroup>
-                    : null }
+                        { videoUrls.length > 0 ?
+                            <FormGroup>
+                                <Label for='video-urls'>Video Urls:</Label>
+                                <ul
+                                    style={{
+                                        listStyleType: 'none'
+                                    }}
+                                    id='video-urls'>
+                                    {videoUrls.map((url, index) => {
+                                        return(
+                                            <li
+                                                key={index}
+                                                style={{
+                                                    borderBottom: '1px solid deepskyblue'
+                                                }}>
+                                                {url}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </FormGroup>
+                        : null }
+                        <FormGroup>
+                            <Input
+                                type='url'
+                                name='currentImageUrl'
+                                placeholder='Add image url...'
+                                value={this.state.currentImageUrl}
+                                onChange={this.onChange}
+                                className='mb-1 mr-1'
+                                style={{width: '30vw', display: 'inline'}} />
+                            <Button
+                                size='sm'
+                                color='primary'
+                                outline
+                                onClick={this.addToImages}>
+                                    +
+                                </Button>
+                        </FormGroup>
+                        { imageUrls.length > 0 ?
+                            <FormGroup>
+                                <Label for='image-urls'>Image Urls:</Label>
+                                <ul
+                                    style={{
+                                        listStyleType: 'none'
+                                    }}
+                                    id='image-urls'>
+                                    {imageUrls.map((url, index) => {
+                                        return(
+                                            <li
+                                                key={index}
+                                                style={{
+                                                    borderBottom: '1px solid deepskyblue'
+                                                }}>
+                                                {url}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </FormGroup>
+                        : null }
+                    </div>
                     <FormGroup style={{
                             border: '1px solid grey',
                             borderRadius: '2%',
-                            padding: '2%'
+                            padding: '2%',
+                            width: '40vw'
                         }}>
                         <h2>Add Single Answer Test Question</h2>
                         <Input
@@ -470,7 +513,13 @@ class AddLesson extends Component {
                             fontStyle: 'italic'
                         }}>{error.msg.msg}</span> : null
                     }
-                    <Button onClick={this.onAddLesson}>Add lesson</Button>
+                    <Button
+                        style={{
+                            backgroundColor: 'gold',
+                            border: 'none',
+                            color: 'grey'
+                        }}
+                        onClick={this.onAddLesson}>Add lesson</Button>
                 </Form>
             </Container>
         );
