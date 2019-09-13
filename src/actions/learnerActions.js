@@ -10,11 +10,10 @@ import {
     LEARNER_DELETE_SUCCESS,
     LEARNER_DELETE_FAIL
 } from './types';
-import { tokenConfig } from './authActions';
+import { tokenConfig, baseUri } from './authActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/learners';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/learners';
+const API_URI = baseUri + '/api/learners';
 export const CREATE_LEARNER_ERROR = 'CREATE_LEARNER_ERROR';
 
 export const updateLearner = (newData) => (dispatch, getState) => {

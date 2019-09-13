@@ -14,11 +14,10 @@ import {
     COURSE_ONGOING_UPDATE_COMPLETION_POINTS_OF_EXTENDED_COURSE_BY_CO_ID
 } from './types';
 import { returnErrors } from './errorActions';
-import { tokenConfig } from './authActions';
+import { tokenConfig, baseUri } from './authActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/course_ongoings';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/course_ongoings';
+const API_URI = baseUri + '/api/course_ongoings';
 export const CREATE_COURSE_ONGOING_ERROR = 'CREATE_COURSE_ONGOING_ERROR';
 export const GET_COURSE_BY_COURSE_ONGOING_ID_ERROR = 'COURSE_ONGOING_GET_COURSE_BY_CO_ID_ERROR';
 export const COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID_ERROR = 'COURSE_ONGOING_GET_EXTENDED_COURSE_BY_CO_ID_ERROR';

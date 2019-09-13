@@ -6,11 +6,10 @@ import {
     GET_SINGLE_ANSWER_TEST_EXERCISES_BY_LESSON_ID,
     GET_SAT_EXERCISES_INITIATE
 } from './types';
-import { tokenConfig } from './authActions';
+import { tokenConfig, baseUri } from './authActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/exercises';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/exercises';
+const API_URI = baseUri + '/api/exercises';
 
 export const createManySATExercises = (exercisesData) => (dispatch, getState) => {
     const uri = `${API_URI}/singleAnswerTestQuestion`;

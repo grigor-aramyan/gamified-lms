@@ -12,12 +12,11 @@ import {
     COURSES_GET_BY_IDS,
     COURSES_GET_BY_IDS_INITIATED
 } from './types';
-import { tokenConfig } from './authActions';
+import { tokenConfig, baseUri } from './authActions';
 import { returnErrors } from './errorActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/courses';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/courses';
+const API_URI = baseUri + '/api/courses';
 export const CREATE_COURSE_ERROR = 'CREATE_COURSE_ERROR';
 export const GET_COURSES_BY_IDS_ERROR = 'GET_COURSES_BY_IDS_ERROR';
 

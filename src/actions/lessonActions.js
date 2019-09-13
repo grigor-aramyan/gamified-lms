@@ -14,12 +14,11 @@ import {
     LESSON_GET_BY_ID,
     LESSON_GET_BY_ID_INITIATED
 } from '../actions/types';
-import { tokenConfig } from './authActions';
+import { tokenConfig, baseUri } from './authActions';
 import { returnErrors } from './errorActions';
 
 // Constants
-const API_URI = 'http://localhost:4242/api/lessons';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api/lessons';
+const API_URI = baseUri + '/api/lessons';
 
 export const CREATE_LESSON_ERROR = 'CREATE_LESSON_ERROR';
 export const GET_LESSONS_BY_IDS_ERROR = 'GET_LESSONS_BY_IDS_ERROR';

@@ -13,8 +13,9 @@ import {
 } from './types';
 
 // Constants
-const API_URI = 'http://localhost:4242/api';
-//const API_URI = 'https://boiling-shelf-37150.herokuapp.com/api';
+export const baseUri = 'http://localhost:4242';
+//export const baseUri = 'https://boiling-shelf-37150.herokuapp.com';
+const API_URI = baseUri + '/api';
 export const TEACHER_LOGIN_ERROR = 'TEACHER_LOGIN_ERROR';
 export const LEARNER_LOGIN_ERROR = 'LEARNER_LOGIN_ERROR';
 
