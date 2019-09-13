@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
-    Container
+    Container,
+    Button
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
@@ -29,7 +30,8 @@ class Lessons extends Component {
     }
 
     state = {
-        lessonsForNewCourse: []
+        lessonsForNewCourse: [],
+        addContentVisible: false
     }
 
     toggleLessonForNewCourse = (lessonId) => {
@@ -57,27 +59,61 @@ class Lessons extends Component {
             error
         } = this.props;
 
+        const {
+            addContentVisible
+        } = this.state;
+
+        const switcherStyle = {
+            backgroundColor: 'deepskyblue',
+            border: 'none'
+        };
+
         return(
             <div>
                 { (isAuthenticated && isTeacher) ?
                     <div>
                         <Header />
                         <Container>
-                            <AddCourse
-                                lessonsForNewCourse={ this.state.lessonsForNewCourse }
-                                />
-                            { allLessons ?
-                                <AddLesson
-                                    allLessonsCount={ allLessons.length }
-                                    lastLesson={ allLessons[0] }
-                                    />
-                                : <AddLesson
-                                    allLessonsCount={ 0 }
-                                    lastLesson={null}
-                                    />
+                            { addContentVisible ?
+                                <div>
+                                    <Button
+                                        className='ml-4 mt-2'
+                                        style={switcherStyle}
+                                        onClick={() => { this.setState({ addContentVisible: false }); }}>
+                                            All Lessons
+                                    </Button>
+                                    <hr />
+                                </div>
+                            : <div>
+                                <Button
+                                    className='ml-4 mt-2'
+                                    style={switcherStyle}
+                                    onClick={() => { this.setState({ addContentVisible: true }); }}>
+                                        Add Lesson
+                                </Button>
+                                <hr />
+                            </div>
+                            }
+                            { !addContentVisible ?
+                                <AddCourse
+                                    lessonsForNewCourse={ this.state.lessonsForNewCourse }
+                                /> : null
+                            }
+                            { addContentVisible ?
+                                (allLessons ?
+                                    <AddLesson
+                                        allLessonsCount={ allLessons.length }
+                                        lastLesson={ allLessons[0] }
+                                        />
+                                    : <AddLesson
+                                        allLessonsCount={ 0 }
+                                        lastLesson={null}
+                                        />)
+                                : null
+                                
                             }
                             <hr />
-                            { allLessons ?
+                            { (allLessons && !addContentVisible) ?
                                 <ListAllLessons
                                     allLessons={ allLessons }
                                     isTeacher={ isTeacher }

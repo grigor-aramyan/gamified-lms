@@ -51,15 +51,48 @@ class ListAllLessons extends Component {
 
         return(
             <Container>
-                <h2>All Lessons</h2>
+                <h2>-- All Lessons --</h2>
                 { (!isTeacher && this.state.addLessonOngoingStatus !== '') ?
                     <p style={{ color: 'green' }}>{ this.state.addLessonOngoingStatus }</p>
                     : null
                 }
-                <ul >
+                <Row
+                    style={{
+                        border: '2px solid gold',
+                        borderRadius: '10%',
+                        padding: '4px',
+                        fontStyle: 'italic',
+                        textAlign: 'center'
+                    }}
+                    className='mb-2'>
+                    <Col xs='3'>
+                        TITLE
+                    </Col>
+                    <Col xs='6'>
+                        DESCRIPTION
+                    </Col>
+                    <Col xs='1'>
+                        PRICE?
+                    </Col>
+                    { isTeacher ?
+                        <Col xs='2'>
+                            ADD TO COURSE
+                        </Col>
+                    : null
+                    }
+                </Row>
+                <ul style={{
+                    listStyleType: 'none'
+                }}>
                     { allLessons.map(l => {
                         return(
-                            <li key={l.id} style={{ border: '1px solid orange'}} className='mb-1 pl-1'>
+                            <li key={l.id}
+                                style={{
+                                    border: '2px solid deepskyblue',
+                                    borderRadius: '10%',
+                                    padding: '4px'
+                                }} 
+                                className='mb-1 pl-1'>
                                 <Row>
                                     <Col xs='3'>{l.title}</Col>
                                     <Col xs='6'>{l.description}</Col>

@@ -89,14 +89,21 @@ class AddCourse extends Component {
         } = this.props;
 
         return(
-            <Container>
-                <h2>Add Course</h2>
+            <Container
+                style={{
+                    textAlign: 'center'
+                }}>
+                <h2>-- Add Course --</h2>
                 <br />
                 { (this.state.addCourseStatus !== '') ?
                     <p style={{ color: 'green' }}>{ this.state.addCourseStatus }</p>
                     : null
                 }
-                <Form>
+                <Form
+                    style={{
+                        width: '25vw',
+                        marginLeft: '25vw'
+                    }}>
                     <Input
                         type='text'
                         name='title'
@@ -133,10 +140,17 @@ class AddCourse extends Component {
                             fontStyle: 'italic'
                         }}>{error.msg.msg}</span> : null
                     }
-                    <ul>
+                    <ul
+                        style={{
+                            listStyleType: 'none'
+                        }}>
                         { lessonsForNewCourse.map(l => {
                             return(
-                                <li key={l.id}>
+                                <li
+                                    key={l.id}
+                                    style={{
+                                        borderBottom: '1px solid deepskyblue'
+                                    }}>
                                     <Col xs='6' offset='5'>
                                         { l }
                                     </Col>
@@ -144,7 +158,13 @@ class AddCourse extends Component {
                             );
                         }) }
                     </ul>
-                    <Button onClick={this.onCreateCourse}>Add course</Button>
+                    <Button
+                        style={{
+                            backgroundColor: 'gold',
+                            border: 'none',
+                            color: 'grey'
+                        }}
+                        onClick={this.onCreateCourse}>Add course</Button>
                 </Form>
             </Container>
         );
