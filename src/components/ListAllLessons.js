@@ -72,7 +72,7 @@ class ListAllLessons extends Component {
                         DESCRIPTION
                     </Col>
                     <Col xs='1'>
-                        PRICE?
+                        PRICE
                     </Col>
                     { isTeacher ?
                         <Col xs='2'>
@@ -96,10 +96,15 @@ class ListAllLessons extends Component {
                                 <Row>
                                     <Col xs='3'>{l.title}</Col>
                                     <Col xs='6'>{l.description}</Col>
-                                    { l.price ? <Col xs='1'>${l.price}</Col> : null }
+                                    { l.price ? <Col xs='1'>${l.price}</Col> : <Col xs='1'>$0</Col> }
                                     { !isTeacher ?
                                         <Col xs='2' offset='10'>
                                             <Button
+                                                style={{
+                                                    backgroundColor: 'gold',
+                                                    color: 'grey',
+                                                    border: 'none'
+                                                }}
                                                 onClick={ () => { this.onCreateLessonOngoing(l.id) } }>
                                                     Enroll
                                             </Button>
