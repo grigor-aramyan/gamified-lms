@@ -43,9 +43,16 @@ class ListAllLessonOngoings extends Component {
 
         return(
             <Container>
-                <h2>My ongoing lessons</h2>
+                <h2>-- My ongoing lessons --</h2>
                 <Row
-                    style={{ textAlign: 'center' }}>
+                    style={{
+                        border: '2px solid gold',
+                        borderRadius: '10%',
+                        padding: '4px',
+                        fontStyle: 'italic',
+                        textAlign: 'center'
+                    }}
+                    className='mb-2'>
                     <Col xs='4'>
                         LESSON TITLE
                     </Col>
@@ -59,7 +66,6 @@ class ListAllLessonOngoings extends Component {
                         DELETE
                     </Col>
                 </Row>
-                <hr />
                 <ul style={{ listStyle: 'none', marginLeft: '0px' }}>
                     { allLessonOngoings.map(l => {
                         let lessonExtended = null;
@@ -70,7 +76,13 @@ class ListAllLessonOngoings extends Component {
                         }
 
                         return(
-                            <li key={l.id}>
+                            <li key={l.id}
+                                style={{
+                                    border: '2px solid deepskyblue',
+                                    borderRadius: '10%',
+                                    padding: '4px'
+                                }} 
+                                className='mb-1 pl-1'>
                                 <Row>
                                     <Col xs='4'>
                                         <a href={`/lesson_ongoings/lesson/${l.id}`}>{ lessonExtended ? lessonExtended.title : '' }</a>
