@@ -42,12 +42,20 @@ class ListAllCourses extends Component {
 
         return(
             <Container>
-                <h2>All courses</h2>
+                <h2>-- All courses --</h2>
                 { (!isTeacher && this.state.addCourseOngoingStatus !== '') ?
                     <p style={{ color: 'green' }}>{ this.state.addCourseOngoingStatus }</p>
                     : null
                 }
-                <Row style={{ textAlign: 'center' }}>
+                <Row
+                    style={{
+                        border: '2px solid gold',
+                        borderRadius: '10%',
+                        padding: '4px',
+                        fontStyle: 'italic',
+                        textAlign: 'center'
+                    }}
+                    className='mb-2'>
                     <Col xs='3'>
                         TITLE
                     </Col>
@@ -58,15 +66,19 @@ class ListAllCourses extends Component {
                         PRICE
                     </Col>
                 </Row>
-                <ul>
+                <ul style={{
+                    listStyleType: 'none'
+                }}>
                     { allCourses.map(c => {
                         return(
-                            <li key={c.id}>
-                                <Row style={{
-                                    border: '2px solid orange',
-                                    marginBottom: '2px',
-                                    borderRadius: '10%'
-                                    }}>
+                            <li key={c.id}
+                                style={{
+                                    border: '2px solid deepskyblue',
+                                    borderRadius: '10%',
+                                    padding: '4px'
+                                }} 
+                                className='mb-1 pl-1'>
+                                <Row>
                                     <Col xs='3'>
                                         { c.title }
                                     </Col>
@@ -79,6 +91,11 @@ class ListAllCourses extends Component {
                                     { !isTeacher ?
                                         <Col xs='2'>
                                             <Button
+                                                style={{
+                                                    backgroundColor: 'gold',
+                                                    color: 'grey',
+                                                    border: 'none'
+                                                }}
                                                 onClick={ () => { createCourseOngoing({ courseId: c.id }) } }>
                                                 Enroll
                                             </Button>
