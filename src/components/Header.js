@@ -47,7 +47,7 @@ class Header extends Component {
         return(
             <div>
                 <Navbar color='dark' dark>
-                    <NavbarBrand href='/'>Nidha Learning</NavbarBrand>
+                    <NavbarBrand href='/'>Nida Learning</NavbarBrand>
                     <a onClick={this.toggle} href='#'>
                         <img src='/images/hamburger_menu.png'
                             style={{
