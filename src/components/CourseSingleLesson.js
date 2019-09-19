@@ -350,10 +350,17 @@ class CourseSingleLesson extends Component {
                             Get Exercises
                         </Button>
                         { (allSatsForLesson && satsVisible) ?
-                            <div>
+                            <div
+                                style={{
+                                    border: '1px solid grey',
+                                    borderRadius: '2%',
+                                    padding: '2%',
+                                    width: '40vw'
+                                }}
+                                className='mt-1'>
                                 <h4>SAT Questions</h4>
                                 { allSatsForLesson.length > 0 ?
-                                    <ul>
+                                    <ol>
                                         { allSatsForLesson.map((s, index) => {
                                             const rightAnswerIndex = s.rightAnswerIndex;
                                             const selectedAnswer = satAnswers.filter(a => {
@@ -368,7 +375,9 @@ class CourseSingleLesson extends Component {
 
                                             return(
                                                 <li key={index}>
-                                                    <p>{s.question}</p>
+                                                    <p style={{
+                                                        fontStyle: 'italic'
+                                                    }}>{s.question}</p>
                                                     <ul style={{ listStyle: 'none' }}>
                                                         {s.answers.map((a, i) => {
                                                             let styles = null;
@@ -400,10 +409,11 @@ class CourseSingleLesson extends Component {
                                                             );
                                                         })}
                                                     </ul>
+                                                    <hr />
                                                 </li>
                                             );
                                         })}
-                                    </ul>
+                                    </ol>
                                 : <span style={{ fontStyle: 'italic' }}>
                                     No SAT questions for this lesson!
                                 </span>
@@ -422,6 +432,11 @@ class CourseSingleLesson extends Component {
                         : null
                         }
                         <Button
+                            style={{
+                                border: 'none',
+                                backgroundColor: 'gold',
+                                color: 'grey'
+                            }}
                             onClick={this.onLessonSubmit}
                             className='btn btn-primary mb-2'>
                             Submit
