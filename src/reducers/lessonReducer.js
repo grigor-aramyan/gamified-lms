@@ -10,7 +10,8 @@ import {
     LESSONS_GET_BY_IDS,
     LESSONS_GET_BY_IDS_INITIATED,
     LESSON_GET_BY_ID,
-    LESSON_GET_BY_ID_INITIATED
+    LESSON_GET_BY_ID_INITIATED,
+    LESSON_FOR_TEACHER_GET_BY_ID
 } from '../actions/types';
 
 const initialState = {
@@ -18,23 +19,29 @@ const initialState = {
     allLessons: null,
     extendedLessonsByIds: null,
     fetchingExtendedLessons: false,
-    extendedLessonById: null
+    extendedLessonById: null,
+    currentLessonForTeacher: null
 };
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case LESSON_FOR_TEACHER_GET_BY_ID:
+            return {
+                ...state,
+                currentLessonForTeacher: action.payload
+            };
         case LESSON_GET_BY_ID:
             return {
                 ...state,
                 extendedLessonById: action.payload,
                 fetchingExtendedLessons: false
-            }
+            };
         case LESSON_GET_BY_ID_INITIATED:
         case LESSONS_GET_BY_IDS_INITIATED:
             return {
                 ...state,
                 fetchingExtendedLessons: true
-            }
+            };
         case LESSONS_GET_BY_IDS:
             return {
                 ...state,
