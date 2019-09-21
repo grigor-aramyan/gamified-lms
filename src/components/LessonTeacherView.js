@@ -16,10 +16,34 @@ class LessonTeacherView extends Component {
         this.props.loadUser();
     }
 
+    componentDidUpdate() {
+        const href = window.location.href;
+        const parts = href.split('/');
+        const lessonId = parts[parts.length - 1];
+        this.setState({
+            currentLessonId: lessonId
+        });
+    }
+
+    state = {
+        currentLessonId: null
+    }
+
     render() {
+        const {
+            isAuthenticated,
+            isTeacher
+        } = this.props;
+
         return(
             <div>
-                Lesson Teacher View
+                <Header />
+                { isAuthenticated && isTeacher ?
+                    <Container>
+                        Lesson teacher view
+                    </Container>
+                : <NotAuthenticated />
+                }
             </div>
         );
     }
