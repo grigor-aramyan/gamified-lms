@@ -8,6 +8,33 @@ import Teacher from '../schemas/TeacherSchema';
 
 const router = express.Router();
 
+// @route GET api/lessons/:id
+// @desc Get lesson by lesson id
+// @access Private
+router.post('/:id', auth, function(req, res) {
+    let lessonId = null;
+    try {
+        lessonId = mongoose.Types.ObjectId(req.params.id);
+    } catch(e) {
+        return res.status(400).json({ msg: 'Bad request!' });
+    }
+
+    Lesson.findById(lessonId, (err, lesson) => {
+        if (err || (lesson == null)) return res.status(400).json({ msg: 'No lesson with given id!' });
+
+        res.status(200).json({
+            id: lesson._id,
+            title: lesson.title,
+            description: lesson.description,
+            content: lesson.content,
+            imageUris: lesson.imageUris,
+            videoUris: lesson.videoUris,
+            price: lesson.price,
+            authorId: lesson.author
+        });
+    });
+});
+
 // @route GET api/lessons
 // @desc Get lessons
 // @access Private
