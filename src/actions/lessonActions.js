@@ -29,7 +29,7 @@ export const GET_LESSON_FOR_TEACHER_BY_ID_ERROR = 'GET_LESSON_FOR_TEACHER_BY_ID_
 export const getLessonForTeacherById = (lessonId) => (dispatch, getState) => {
     const uri = `${API_URI}/${lessonId}`;
 
-    axios.post(uri, {}, tokenConfig(getState))
+    axios.get(uri, tokenConfig(getState))
         .then(res => {
             dispatch({
                 type: LESSON_FOR_TEACHER_GET_BY_ID,
@@ -39,7 +39,7 @@ export const getLessonForTeacherById = (lessonId) => (dispatch, getState) => {
         .catch(err => {
             dispatch(returnErrors(err.response.data, err.response.status, GET_LESSON_FOR_TEACHER_BY_ID_ERROR));
         });
-};
+}
 
 export const getExtendedLessonsById = (lessonIds) => (dispatch, getState) => {
     const uri = `${API_URI}/extended`;

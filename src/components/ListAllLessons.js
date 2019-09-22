@@ -94,7 +94,7 @@ class ListAllLessons extends Component {
                                 }} 
                                 className='mb-1 pl-1'>
                                 <Row>
-                                    <Col xs='3'>{l.title}</Col>
+                                    <Col xs='3'><a href={`/lessons/${l.id}`}>{l.title}</a></Col>
                                     <Col xs='6'>{l.description}</Col>
                                     { l.price ? <Col xs='1'>${l.price}</Col> : <Col xs='1'>$0</Col> }
                                     { !isTeacher ?

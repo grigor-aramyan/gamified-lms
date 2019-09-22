@@ -42,7 +42,6 @@ server.use('/api/lesson_ongoings', lessonOngoingRoutes);
 server.use('/api/course_ongoings', courseOngoingRoutes);
 server.use('/api/exercises', exerciseRoutes);
 
-
 server.get('/*', (req, res) => {
     const store = createStore(reducers);
 

@@ -6,6 +6,7 @@ import {
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
+import { getLessonForTeacherById } from '../actions/lessonActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -17,12 +18,18 @@ class LessonTeacherView extends Component {
     }
 
     componentDidUpdate() {
-        const href = window.location.href;
-        const parts = href.split('/');
-        const lessonId = parts[parts.length - 1];
-        this.setState({
-            currentLessonId: lessonId
-        });
+        if ((this.props.currentLessonForTeacher == null)
+            && this.props.isAuthenticated
+            //&& this.props.isTeacher
+            && this.state.currentLessonId == null) {
+            const href = window.location.href;
+            const parts = href.split('/');
+            const lessonId = parts[parts.length - 1];
+            this.setState({
+                currentLessonId: lessonId
+            });
+            this.props.getLessonForTeacherById(lessonId);
+        }
     }
 
     state = {
@@ -32,15 +39,18 @@ class LessonTeacherView extends Component {
     render() {
         const {
             isAuthenticated,
-            isTeacher
+            isTeacher,
+            currentLessonForTeacher,
+            currentTeacher
         } = this.props;
 
         return(
             <div>
                 <Header />
-                { isAuthenticated && isTeacher ?
+                { isAuthenticated ?
                     <Container>
-                        Lesson teacher view
+                        <p>Lesson teacher view</p>
+                        Current lesson id: { currentLessonForTeacher ? currentLessonForTeacher.title : '' }
                     </Container>
                 : <NotAuthenticated />
                 }
@@ -54,16 +64,22 @@ LessonTeacherView.propTypes = {
     loadLocalToken: PropTypes.func.isRequired,
     loadUser: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool,
-    isTeacher: PropTypes.bool.isRequired
+    isTeacher: PropTypes.bool.isRequired,
+    currentLessonForTeacher: PropTypes.object,
+    currentTeacher: PropTypes.object,
+    getLessonForTeacherById: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     error: state.error,
     isAuthenticated: state.auth.isAuthenticated,
-    isTeacher: state.auth.isTeacher
+    isTeacher: state.auth.isTeacher,
+    currentLessonForTeacher: state.lesson.currentLessonForTeacher,
+    currentTeacher: state.auth.teacher
 });
 
 export default connect(mapStateToProps, {
     loadLocalToken,
-    loadUser
+    loadUser,
+    getLessonForTeacherById
 })(LessonTeacherView);

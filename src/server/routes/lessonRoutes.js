@@ -11,7 +11,7 @@ const router = express.Router();
 // @route GET api/lessons/:id
 // @desc Get lesson by lesson id
 // @access Private
-router.post('/:id', auth, function(req, res) {
+router.get('/:id', auth, function(req, res) {
     let lessonId = null;
     try {
         lessonId = mongoose.Types.ObjectId(req.params.id);
