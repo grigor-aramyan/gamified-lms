@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
-    Container
+    Container,
+    Button
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
@@ -30,10 +31,27 @@ class LessonTeacherView extends Component {
             });
             this.props.getLessonForTeacherById(lessonId);
         }
+
+        if (this.props.currentLessonForTeacher && !this.state.currentLessonTitle) {
+            this.setState({
+                currentLessonTitle: this.props.currentLessonForTeacher.title,
+                currentLessonDesc: this.props.currentLessonForTeacher.description,
+                currentLessonContent: this.props.currentLessonForTeacher.content,
+                currentLessonPrice: this.props.currentLessonForTeacher.price
+            });
+        }
     }
 
     state = {
-        currentLessonId: null
+        currentLessonId: null,
+        currentLessonTitle: '',
+        currentLessonDesc: '',
+        currentLessonContent: '',
+        currentLessonPrice: null
+    }
+
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
     }
 
     render() {
@@ -44,13 +62,181 @@ class LessonTeacherView extends Component {
             currentTeacher
         } = this.props;
 
+        const {
+            currentLessonTitle,
+            currentLessonDesc,
+            currentLessonContent,
+            currentLessonPrice
+        } = this.state;
+
+        let contentInput = null;
+        if (currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId === currentTeacher.id)) {
+            contentInput =
+                <input
+                    style={{
+                        border: '1px solid grey',
+                        borderRadius: '10%',
+                        padding: '3vw',
+                        width: '100%',
+                        backgroundColor: 'white'
+                    }}
+                    onChange={this.onChange}
+                    name='currentLessonContent'
+                    value={ currentLessonContent ? currentLessonContent : '' }
+                    placeholder='Lesson content' />
+        } else {
+            contentInput =
+                <input
+                    style={{
+                        border: '1px solid grey',
+                        borderRadius: '10%',
+                        padding: '3vw',
+                        width: '100%',
+                        backgroundColor: 'white'
+                    }}
+                    onChange={this.onChange}
+                    name='currentLessonContent'
+                    onChange={this.onChange}
+                    value={ currentLessonContent ? currentLessonContent : '' }
+                    placeholder='Lesson content'
+                    disabled />
+        }
+
+        let descInput = null;
+        if (currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId === currentTeacher.id)) {
+            descInput =
+                <input style={{
+                    fontStyle: 'italic',
+                    textAlign: 'center',
+                    border: 'none',
+                    width: '100%',
+                    backgroundColor: 'white'
+                }}
+                onChange={this.onChange}
+                name='currentLessonDesc'
+                value={ currentLessonDesc ? currentLessonDesc : '' }
+                placeholder='Lesson description' />
+        } else {
+            descInput =
+                <input style={{
+                    fontStyle: 'italic',
+                    textAlign: 'center',
+                    border: 'none',
+                    width: '100%',
+                    backgroundColor: 'white'
+                }}
+                onChange={this.onChange}
+                name='currentLessonDesc'
+                value={ currentLessonDesc ? currentLessonDesc : '' }
+                placeholder='Lesson description'
+                disabled />
+        }
+
+        let titleInput = null;
+        if (currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId === currentTeacher.id)) {
+            titleInput =
+                <input
+                style={{
+                    textAlign: 'center',
+                    border: 'none',
+                    borderRadius: '5%',
+                    width: '100%',
+                    backgroundColor: 'white'
+                }}
+                onChange={this.onChange}
+                name='currentLessonTitle'
+                className='h2'
+                value={ currentLessonTitle ? currentLessonTitle : '' }
+                placeholder='Lesson title' />
+        } else {
+            titleInput =
+                <input
+                    style={{
+                        textAlign: 'center',
+                        border: 'none',
+                        borderRadius: '5%',
+                        width: '100%',
+                        backgroundColor: 'white'
+                    }}
+                    onChange={this.onChange}
+                    name='currentLessonTitle'
+                    className='h2'
+                    value={ currentLessonTitle ? currentLessonTitle : '' }
+                    placeholder='Lesson title'
+                    disabled />
+        }
+
+        let priceInput = null;
+        if (!currentLessonForTeacher || (isAuthenticated && !isTeacher)) {
+            priceInput = null;
+        } else if (isAuthenticated && isTeacher && currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId === currentTeacher.id)) {
+            priceInput =
+                <input
+                    style={{
+                        width: '10vw',
+                        display: 'block'
+                    }}
+                    className='mt-1'
+                    value={currentLessonPrice ? currentLessonPrice : 0}
+                    min={0}
+                    type='number'
+                    name='currentLessonPrice'
+                    onChange={this.onChange}
+                />
+        } else if (isAuthenticated && isTeacher && currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId !== currentTeacher.id)) {
+            priceInput =
+                <input
+                    style={{
+                        width: '10vw',
+                        display: 'block'
+                    }}
+                    className='mt-1'
+                    value={currentLessonPrice ? currentLessonPrice : 0}
+                    min={0}
+                    type='number'
+                    name='currentLessonPrice'
+                    onChange={this.onChange}
+                    disabled
+                />
+        } else {
+            priceInput = null;
+        }
+
         return(
             <div>
                 <Header />
                 { isAuthenticated ?
                     <Container>
-                        <p>Lesson teacher view</p>
-                        Current lesson id: { currentLessonForTeacher ? currentLessonForTeacher.title : '' }
+                        { titleInput }
+                        { descInput }
+                        { contentInput }
+                        { priceInput }
+                        { (isAuthenticated && !isTeacher) ?
+                            <div>
+                                <Button
+                                    style={{
+                                        backgroundColor: 'gold',
+                                        color: 'grey',
+                                        border: 'none'
+                                    }}
+                                    className='mr-2 mt-2'>
+                                    Enroll
+                                </Button>
+                                { currentLessonForTeacher ? '$' + currentLessonForTeacher.price : '$0' }
+                            </div>
+                        : null
+                        }
+                        { (isAuthenticated && isTeacher) ?
+                            <Button
+                                style={{
+                                    backgroundColor: 'deepskyblue',
+                                    border: 'none'
+                                }}
+                                className='mt-2'>
+                                Save changes
+                            </Button>
+                        : null
+                        }
                     </Container>
                 : <NotAuthenticated />
                 }
