@@ -8,6 +8,7 @@ import {
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getLessonForTeacherById, updateLesson } from '../actions/lessonActions';
+import { createLessonOngoing } from '../actions/lessonOngoingActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -70,6 +71,10 @@ class LessonTeacherView extends Component {
                 });
             }
         }
+
+        if (this.props.allLessonOngoings.length > this.state.allLessonOngoingsCount) {
+            window.open('/lesson_ongoings', '_self');
+        }
     }
 
     state = {
@@ -79,7 +84,8 @@ class LessonTeacherView extends Component {
         currentLessonContent: '',
         currentLessonPrice: null,
         saveChangesError: '',
-        serverClientSynched: false
+        serverClientSynched: false,
+        allLessonOngoingsCount: 0
     }
 
     onSaveChanges = () => {
@@ -116,7 +122,15 @@ class LessonTeacherView extends Component {
     }
 
     onEnroll = () => {
+        const {
+            currentLessonId
+        } = this.state;
 
+        const body = {
+            lessonId: currentLessonId
+        }
+
+        this.props.createLessonOngoing(body);
     }
 
     onChange = (e) => {
@@ -364,7 +378,9 @@ LessonTeacherView.propTypes = {
     currentLessonForTeacher: PropTypes.object,
     currentTeacher: PropTypes.object,
     getLessonForTeacherById: PropTypes.func.isRequired,
-    updateLesson: PropTypes.func.isRequired
+    updateLesson: PropTypes.func.isRequired,
+    createLessonOngoing: PropTypes.func.isRequired,
+    allLessonOngoings: PropTypes.array.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -372,12 +388,14 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     isTeacher: state.auth.isTeacher,
     currentLessonForTeacher: state.lesson.currentLessonForTeacher,
-    currentTeacher: state.auth.teacher
+    currentTeacher: state.auth.teacher,
+    allLessonOngoings: state.lessonOngoing.allLessonOngoings
 });
 
 export default connect(mapStateToProps, {
     loadLocalToken,
     loadUser,
     getLessonForTeacherById,
-    updateLesson
+    updateLesson,
+    createLessonOngoing
 })(LessonTeacherView);
