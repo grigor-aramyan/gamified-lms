@@ -50,7 +50,8 @@ export default function(state = initialState, action) {
             };
         case LESSON_UPDATE_SUCCESS:
             return {
-                ...state
+                ...state,
+                currentLessonForTeacher: action.payload
             };
         case LESSON_DELETE_SUCCESS:
             const deletedLessonId = action.payload.id;

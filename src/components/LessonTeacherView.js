@@ -7,7 +7,7 @@ import {
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
-import { getLessonForTeacherById } from '../actions/lessonActions';
+import { getLessonForTeacherById, updateLesson } from '../actions/lessonActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -40,6 +40,36 @@ class LessonTeacherView extends Component {
                 currentLessonPrice: this.props.currentLessonForTeacher.price
             });
         }
+
+        if (this.props.currentLessonForTeacher) {
+            let title, description, content, price;
+            
+            title = this.props.currentLessonForTeacher.title;
+            description = this.props.currentLessonForTeacher.description;
+            content = this.props.currentLessonForTeacher.content;
+            price = this.props.currentLessonForTeacher.price;
+        
+            const {
+                currentLessonTitle,
+                currentLessonDesc,
+                currentLessonContent,
+                currentLessonPrice
+            } = this.state;
+    
+            if (title == currentLessonTitle && description == currentLessonDesc
+                && content == currentLessonContent && price == currentLessonPrice
+                && !this.state.serverClientSynched) {
+                    this.setState({
+                        serverClientSynched: true
+                    });
+            } else if ((title != currentLessonTitle || description != currentLessonDesc
+                || content != currentLessonContent || price != currentLessonPrice)
+                && this.state.serverClientSynched) {
+                this.setState({
+                    serverClientSynched: false
+                });
+            }
+        }
     }
 
     state = {
@@ -47,7 +77,46 @@ class LessonTeacherView extends Component {
         currentLessonTitle: '',
         currentLessonDesc: '',
         currentLessonContent: '',
-        currentLessonPrice: null
+        currentLessonPrice: null,
+        saveChangesError: '',
+        serverClientSynched: false
+    }
+
+    onSaveChanges = () => {
+        const {
+            currentLessonId,
+            currentLessonTitle,
+            currentLessonDesc,
+            currentLessonContent,
+            currentLessonPrice,
+            saveChangesError
+        } = this.state;
+
+        if (!currentLessonTitle) {
+            this.setState({
+                saveChangesError: 'Lesson title is mandatory!'
+            });
+        } else if (!currentLessonDesc) {
+            this.setState({
+                saveChangesError: 'Lesson description is mandatory!'
+            });
+        } else if (!currentLessonContent) {
+            this.setState({
+                saveChangesError: 'Lesson content is mandatory!'
+            });
+        } else {
+            const body = {
+                title: currentLessonTitle,
+                description: currentLessonDesc,
+                content: currentLessonContent,
+                price: currentLessonPrice
+            };
+            this.props.updateLesson(currentLessonId, body);
+        }
+    }
+
+    onEnroll = () => {
+
     }
 
     onChange = (e) => {
@@ -66,7 +135,9 @@ class LessonTeacherView extends Component {
             currentLessonTitle,
             currentLessonDesc,
             currentLessonContent,
-            currentLessonPrice
+            currentLessonPrice,
+            saveChangesError,
+            serverClientSynched
         } = this.state;
 
         let contentInput = null;
@@ -213,7 +284,9 @@ class LessonTeacherView extends Component {
                         { priceInput }
                         { (isAuthenticated && !isTeacher) ?
                             <div>
+                                <hr />
                                 <Button
+                                    onClick={this.onEnroll}
                                     style={{
                                         backgroundColor: 'gold',
                                         color: 'grey',
@@ -222,19 +295,56 @@ class LessonTeacherView extends Component {
                                     className='mr-2 mt-2'>
                                     Enroll
                                 </Button>
-                                { currentLessonForTeacher ? '$' + currentLessonForTeacher.price : '$0' }
+                                { currentLessonForTeacher ?
+                                    <span
+                                        style={{
+                                            border: '1px solid grey',
+                                            borderRadius: '30%',
+                                            padding: '0.3em'
+                                        }}>
+                                            { '$' + currentLessonForTeacher.price }
+                                    </span>
+                                : '$0'
+                                }
                             </div>
                         : null
                         }
                         { (isAuthenticated && isTeacher) ?
-                            <Button
-                                style={{
-                                    backgroundColor: 'deepskyblue',
-                                    border: 'none'
-                                }}
-                                className='mt-2'>
-                                Save changes
-                            </Button>
+                            <div>
+                                { saveChangesError ?
+                                    <span style={{
+                                        display: 'block',
+                                        color: 'red',
+                                        fontSize: '90%',
+                                        fontStyle: 'italic'
+                                    }}>{saveChangesError}</span> : null
+                                }
+                                { serverClientSynched ?
+                                    <div>
+                                        <br />
+                                        <span 
+                                            style={{
+                                                padding: '0.3em',
+                                                color: 'green',
+                                                border: '1px solid green',
+                                                borderRadius: '20%',
+                                                fontSize: '90%',
+                                                fontStyle: 'italic'
+                                            }}
+                                            className='mb-1'>Lesson data is up to date!</span>
+                                    </div>
+                                : null
+                                }
+                                <Button
+                                    onClick={this.onSaveChanges}
+                                    style={{
+                                        backgroundColor: 'deepskyblue',
+                                        border: 'none'
+                                    }}
+                                    className='mt-2'>
+                                    Save changes
+                                </Button>
+                            </div>
                         : null
                         }
                     </Container>
@@ -253,7 +363,8 @@ LessonTeacherView.propTypes = {
     isTeacher: PropTypes.bool.isRequired,
     currentLessonForTeacher: PropTypes.object,
     currentTeacher: PropTypes.object,
-    getLessonForTeacherById: PropTypes.func.isRequired
+    getLessonForTeacherById: PropTypes.func.isRequired,
+    updateLesson: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -267,5 +378,6 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
     loadLocalToken,
     loadUser,
-    getLessonForTeacherById
+    getLessonForTeacherById,
+    updateLesson
 })(LessonTeacherView);

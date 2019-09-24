@@ -105,7 +105,20 @@ router.put('/:id', auth, function(req, res) {
             Lesson.updateOne({ _id: lesson._id }, dataObject, (err, affected, resp) => {
                 if (err) return res.status(500).json({ msg: 'Internal error. Try later, please' });
 
-                res.status(200).json({ msg: 'success' });
+                Lesson.findById(lessonId, (err, l) => {
+                    if (err || (l == null)) return res.status(500).json({ msg: 'Internal server error! Contact with us, please' });
+                
+                    res.status(200).json({
+                        id: l._id,
+                        title: l.title,
+                        description: l.description,
+                        content: l.content,
+                        imageUris: l.imageUris,
+                        videoUris: l.videoUris,
+                        price: l.price,
+                        authorId: l.author
+                    });
+                });
             });
         });
     });
