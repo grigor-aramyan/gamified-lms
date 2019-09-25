@@ -9,6 +9,7 @@ import {
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getLessonForTeacherById, updateLesson } from '../actions/lessonActions';
 import { createLessonOngoing } from '../actions/lessonOngoingActions';
+import { getSATExercisesByLessonId } from '../actions/exerciseActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -85,7 +86,8 @@ class LessonTeacherView extends Component {
         currentLessonPrice: null,
         saveChangesError: '',
         serverClientSynched: false,
-        allLessonOngoingsCount: 0
+        allLessonOngoingsCount: 0,
+        satsOpened: false
     }
 
     onSaveChanges = () => {
@@ -133,6 +135,13 @@ class LessonTeacherView extends Component {
         this.props.createLessonOngoing(body);
     }
 
+    onGetSatExercises = () => {
+        this.props.getSATExercisesByLessonId(this.state.currentLessonId);
+        this.setState({
+            satsOpened: true
+        });
+    }
+
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
@@ -142,7 +151,8 @@ class LessonTeacherView extends Component {
             isAuthenticated,
             isTeacher,
             currentLessonForTeacher,
-            currentTeacher
+            currentTeacher,
+            allSats
         } = this.props;
 
         const {
@@ -151,7 +161,8 @@ class LessonTeacherView extends Component {
             currentLessonContent,
             currentLessonPrice,
             saveChangesError,
-            serverClientSynched
+            serverClientSynched,
+            satsOpened
         } = this.state;
 
         let contentInput = null;
@@ -256,33 +267,39 @@ class LessonTeacherView extends Component {
             priceInput = null;
         } else if (isAuthenticated && isTeacher && currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId === currentTeacher.id)) {
             priceInput =
-                <input
-                    style={{
-                        width: '10vw',
-                        display: 'block'
-                    }}
-                    className='mt-1'
-                    value={currentLessonPrice ? currentLessonPrice : 0}
-                    min={0}
-                    type='number'
-                    name='currentLessonPrice'
-                    onChange={this.onChange}
-                />
+                <div>
+                    $
+                    <input
+                        style={{
+                            width: '10vw'
+                        }}
+                        className='mt-1'
+                        value={currentLessonPrice ? currentLessonPrice : 0}
+                        min={0}
+                        type='number'
+                        name='currentLessonPrice'
+                        onChange={this.onChange}
+                    />
+                </div>
         } else if (isAuthenticated && isTeacher && currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId !== currentTeacher.id)) {
             priceInput =
-                <input
-                    style={{
-                        width: '10vw',
-                        display: 'block'
-                    }}
-                    className='mt-1'
-                    value={currentLessonPrice ? currentLessonPrice : 0}
-                    min={0}
-                    type='number'
-                    name='currentLessonPrice'
-                    onChange={this.onChange}
-                    disabled
-                />
+                <div>
+                    $
+                    <input
+                        style={{
+                            width: '10vw',
+                            backgroundColor: 'white',
+                            border: 'none'
+                        }}
+                        className='mt-1'
+                        value={currentLessonPrice ? currentLessonPrice : 0}
+                        min={0}
+                        type='number'
+                        name='currentLessonPrice'
+                        onChange={this.onChange}
+                        disabled
+                    />
+                </div>
         } else {
             priceInput = null;
         }
@@ -323,7 +340,7 @@ class LessonTeacherView extends Component {
                             </div>
                         : null
                         }
-                        { (isAuthenticated && isTeacher) ?
+                        { (isAuthenticated && isTeacher && currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId === currentTeacher.id)) ?
                             <div>
                                 { saveChangesError ?
                                     <span style={{
@@ -358,6 +375,25 @@ class LessonTeacherView extends Component {
                                     className='mt-2'>
                                     Save changes
                                 </Button>
+                                <br />
+                                <Button
+                                    onClick={this.onGetSatExercises}
+                                    style={{
+                                        backgroundColor: 'gold',
+                                        color: 'grey',
+                                        border: 'none'
+                                    }}
+                                    className='mt-2'>
+                                    Get Exercises
+                                </Button>
+                                { satsOpened ?
+                                    (allSats.length > 0) ?
+                                        <div>
+                                            sats goes here
+                                        </div>
+                                    : <p style={{ color: 'info' }}>No SATs for this lesson!</p>
+                                : null
+                                }
                             </div>
                         : null
                         }
@@ -380,7 +416,9 @@ LessonTeacherView.propTypes = {
     getLessonForTeacherById: PropTypes.func.isRequired,
     updateLesson: PropTypes.func.isRequired,
     createLessonOngoing: PropTypes.func.isRequired,
-    allLessonOngoings: PropTypes.array.isRequired
+    allLessonOngoings: PropTypes.array.isRequired,
+    getSATExercisesByLessonId: PropTypes.func.isRequired,
+    allSats: PropTypes.array.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -389,7 +427,8 @@ const mapStateToProps = (state) => ({
     isTeacher: state.auth.isTeacher,
     currentLessonForTeacher: state.lesson.currentLessonForTeacher,
     currentTeacher: state.auth.teacher,
-    allLessonOngoings: state.lessonOngoing.allLessonOngoings
+    allLessonOngoings: state.lessonOngoing.allLessonOngoings,
+    allSats: state.exercise.allSATExercisesForCurrentLesson
 });
 
 export default connect(mapStateToProps, {
@@ -397,5 +436,6 @@ export default connect(mapStateToProps, {
     loadUser,
     getLessonForTeacherById,
     updateLesson,
-    createLessonOngoing
+    createLessonOngoing,
+    getSATExercisesByLessonId
 })(LessonTeacherView);
