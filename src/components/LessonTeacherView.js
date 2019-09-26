@@ -389,7 +389,84 @@ class LessonTeacherView extends Component {
                                 { satsOpened ?
                                     (allSats.length > 0) ?
                                         <div>
-                                            sats goes here
+                                            <h4>-- SAT Questions --</h4>
+                                            <ol>
+                                                { allSats.map(s => {
+                                                    const rightAnswerIndex = s.rightAnswerIndex;
+
+                                                    return(
+                                                        <li key={s.id}>
+                                                            <p style={{
+                                                                fontStyle: 'italic'
+                                                            }}>{s.question}</p>
+                                                            <ul>
+                                                                { s.answers.map((a, i) => {
+
+                                                                    let liStyles = {};
+                                                                    if (rightAnswerIndex == i) {
+                                                                        liStyles = {
+                                                                            textDecoration: 'underline',
+                                                                            textDecorationColor: 'green',
+                                                                            padding: '0.3em'
+                                                                        };
+                                                                    }
+
+                                                                    return(
+                                                                        <li key={i}
+                                                                            style={ liStyles }
+                                                                            className='mb-1'>
+                                                                            <span
+                                                                                className='mb-1 mr-2'>
+                                                                                { a }
+                                                                            </span>
+                                                                            <Button
+                                                                                style={{
+                                                                                    fontWeight: 'bold',
+                                                                                    border: '1px solid grey',
+                                                                                    borderRadius: '30%',
+                                                                                    color: 'red',
+                                                                                    backgroundColor: 'white',
+                                                                                    fontSize: '70%'
+                                                                                }}>
+                                                                                X
+                                                                            </Button>
+                                                                        </li>
+                                                                    );
+                                                                }) }
+                                                            </ul>
+                                                            <p>Right answer index:
+                                                                <Button
+                                                                    className='ml-2 mr-1'>
+                                                                    &#x21D1;
+                                                                </Button>
+                                                                <Button>
+                                                                    &#x21D3;
+                                                                </Button>
+                                                            </p>
+                                                            <p>
+                                                                <input
+                                                                    style={{
+                                                                        padding: '0.3em',
+                                                                        width: '15vw',
+                                                                        border: 'none',
+                                                                        borderBottom: '3px dotted gold'
+                                                                    }}
+                                                                    placeholder='Add new answer...' />
+                                                                <Button
+                                                                    className='ml-1'
+                                                                    style={{
+                                                                        backgroundColor: 'white',
+                                                                        border: '1px solid deepskyblue',
+                                                                        borderRadius: '50%',
+                                                                        color: 'deepskyblue'
+                                                                    }}>
+                                                                    +
+                                                                </Button>
+                                                            </p>
+                                                        </li>
+                                                    );
+                                                }) }
+                                            </ol>
                                         </div>
                                     : <p style={{ color: 'info' }}>No SATs for this lesson!</p>
                                 : null
