@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
     Container,
-    Button
+    Button,
+    FormGroup,
+    Input,
+    Label
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
@@ -87,7 +90,14 @@ class LessonTeacherView extends Component {
         saveChangesError: '',
         serverClientSynched: false,
         allLessonOngoingsCount: 0,
-        satsOpened: false
+        satsOpened: false,
+        deletedQuestionIds: [],
+        currentSatQuestion: '',
+        currentSatAnswer: '',
+        currentSatAllAnswers: [],
+        addSatExerciseError: '',
+        currentSatRightAnswerIndex: 0,
+        satExercisesAll: []
     }
 
     onSaveChanges = () => {
@@ -142,6 +152,66 @@ class LessonTeacherView extends Component {
         });
     }
 
+    onDeleteQuestion = (questionId) => {
+        let intermediateList = this.state.deletedQuestionIds;
+        intermediateList.push(questionId);
+        this.setState({
+            deletedQuestionIds: intermediateList
+        });
+    }
+
+    addSatExerciseAnswer = () => {
+        const currentAnswer = this.state.currentSatAnswer;
+        if (currentAnswer) {
+            let answers = this.state.currentSatAllAnswers;
+            answers.unshift(currentAnswer);
+            this.setState({
+                currentSatAllAnswers: answers,
+                currentSatAnswer: '',
+                addSatExerciseError: ''
+            });
+        } else {
+            this.setState({
+                addSatExerciseError: 'SAT can\'t have empty answer'
+            });
+        }
+    }
+
+    addSatExerciseToAll = () => {
+        const {
+            currentSatQuestion,
+            currentSatAllAnswers,
+            currentSatRightAnswerIndex
+        } = this.state;
+
+        if (!currentSatQuestion) {
+            this.setState({
+                addSatExerciseError: 'Question field required!'
+            });
+        } else if (currentSatAllAnswers.length < 2) {
+            this.setState({
+                addSatExerciseError: 'All SAT questions should have at least 2 answers!'
+            });
+        } else {
+            const o = {
+                question: currentSatQuestion,
+                answers: currentSatAllAnswers,
+                rightAnswerIndex: currentSatRightAnswerIndex
+            }
+
+            let allSats = this.state.satExercisesAll;
+            allSats.unshift(o);
+
+            this.setState({
+                satExercisesAll: allSats,
+                currentSatQuestion: '',
+                currentSatAllAnswers: [],
+                currentSatRightAnswerIndex: 0,
+                addSatExerciseError: ''
+            });
+        }
+    }
+
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
@@ -162,7 +232,14 @@ class LessonTeacherView extends Component {
             currentLessonPrice,
             saveChangesError,
             serverClientSynched,
-            satsOpened
+            satsOpened,
+            deletedQuestionIds,
+            currentSatQuestion,
+            currentSatAnswer,
+            currentSatAllAnswers,
+            currentSatRightAnswerIndex,
+            addSatExerciseError,
+            satExercisesAll
         } = this.state;
 
         let contentInput = null;
@@ -394,6 +471,25 @@ class LessonTeacherView extends Component {
                                                 { allSats.map(s => {
                                                     const rightAnswerIndex = s.rightAnswerIndex;
 
+                                                    if (deletedQuestionIds.includes(s.id)) {
+                                                        return(
+                                                            <p
+                                                                style={{
+                                                                    color: 'red',
+                                                                    fontStyle: 'italic'
+                                                                }}>
+                                                                    Deleted:
+                                                                <span
+                                                                    className='ml-1'
+                                                                    style={{
+                                                                        color: 'grey'
+                                                                    }}>
+                                                                    { s.question }
+                                                                </span>
+                                                            </p>
+                                                        );
+                                                    }
+
                                                     return(
                                                         <li key={s.id}>
                                                             <p style={{
@@ -419,48 +515,26 @@ class LessonTeacherView extends Component {
                                                                                 className='mb-1 mr-2'>
                                                                                 { a }
                                                                             </span>
-                                                                            <Button
-                                                                                style={{
-                                                                                    fontWeight: 'bold',
-                                                                                    border: '1px solid grey',
-                                                                                    borderRadius: '30%',
-                                                                                    color: 'red',
-                                                                                    backgroundColor: 'white',
-                                                                                    fontSize: '70%'
-                                                                                }}>
-                                                                                X
-                                                                            </Button>
                                                                         </li>
                                                                     );
                                                                 }) }
                                                             </ul>
-                                                            <p>Right answer index:
+                                                            <p
+                                                                style={{
+                                                                    fontStyle: 'italic',
+                                                                    color: 'red'
+                                                                }}>Delete this question:
                                                                 <Button
-                                                                    className='ml-2 mr-1'>
-                                                                    &#x21D1;
-                                                                </Button>
-                                                                <Button>
-                                                                    &#x21D3;
-                                                                </Button>
-                                                            </p>
-                                                            <p>
-                                                                <input
+                                                                    onClick={ () => this.onDeleteQuestion(s.id) }
                                                                     style={{
-                                                                        padding: '0.3em',
-                                                                        width: '15vw',
-                                                                        border: 'none',
-                                                                        borderBottom: '3px dotted gold'
-                                                                    }}
-                                                                    placeholder='Add new answer...' />
-                                                                <Button
-                                                                    className='ml-1'
-                                                                    style={{
+                                                                        color: 'red',
+                                                                        fontWeight: 'bold',
+                                                                        border: '1px solid grey',
                                                                         backgroundColor: 'white',
-                                                                        border: '1px solid deepskyblue',
-                                                                        borderRadius: '50%',
-                                                                        color: 'deepskyblue'
-                                                                    }}>
-                                                                    +
+                                                                        fontSize: '80%'
+                                                                    }}
+                                                                    className='ml-1'>
+                                                                    X
                                                                 </Button>
                                                             </p>
                                                         </li>
@@ -469,6 +543,144 @@ class LessonTeacherView extends Component {
                                             </ol>
                                         </div>
                                     : <p style={{ color: 'info' }}>No SATs for this lesson!</p>
+                                : null
+                                }
+                                { satsOpened ?
+                                    <FormGroup style={{
+                                        border: '1px solid grey',
+                                        borderRadius: '2%',
+                                        padding: '2%',
+                                        width: '40vw'
+                                    }}>
+                                        <h2>Add Single Answer Test Question</h2>
+                                        <Input
+                                            type='text'
+                                            name='currentSatQuestion'
+                                            placeholder='Add question...'
+                                            value={currentSatQuestion}
+                                            onChange={this.onChange}
+                                            className='mb-1'
+                                            style={{width: '30vw'}} />
+                                        <br />
+                                        <Input
+                                            type='text'
+                                            name='currentSatAnswer'
+                                            placeholder='Add some answer to question...'
+                                            value={currentSatAnswer}
+                                            onChange={this.onChange}
+                                            className='mb-1 mr-1'
+                                            style={{width: '30vw', display: 'inline'}} />
+                                        <Button
+                                            size='sm'
+                                            color='primary'
+                                            outline
+                                            onClick={this.addSatExerciseAnswer}>
+                                                +
+                                        </Button>
+                                        <br />
+                                        { currentSatAllAnswers.length > 0 ?
+                                            <ul style={{ listStyle: 'none' }}>
+                                                { currentSatAllAnswers.map((a, index) => {
+                                                    let styles = null;
+                                                    if (index == currentSatRightAnswerIndex) {
+                                                        styles = {
+                                                            border: '1px solid green',
+                                                            padding: '1%'
+                                                        }
+                                                    } else {
+                                                        styles = {};
+                                                    }
+                
+                                                    return(
+                                                        <li key={index} style={styles}>
+                                                            {a}
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        : null
+                                        }
+                                        <FormGroup>
+                                            <Label
+                                                for='rightAnswerIndexId'
+                                                style={{
+                                                    display: 'block'
+                                                }}>
+                                                Right answer index
+                                            </Label>
+                                            <Input
+                                                id='rightAnswerIndexId'
+                                                type='number'
+                                                name='currentSatRightAnswerIndex'
+                                                placeholder='Right answer index (starting from 0)...'
+                                                value={currentSatRightAnswerIndex}
+                                                onChange={this.onChange}
+                                                min={0}
+                                                max={ (currentSatAllAnswers.length == 0) ? 0 : (currentSatAllAnswers.length - 1) }
+                                                className='mb-1'
+                                                style={{width: '30vw', display: 'inline'}} />
+                                        </FormGroup>
+                                        { addSatExerciseError ?
+                                            <span style={{
+                                                display: 'block',
+                                                color: 'red',
+                                                fontSize: '90%',
+                                                fontStyle: 'italic'
+                                            }}>{addSatExerciseError}</span> 
+                                        : null
+                                        }
+                                        <Button
+                                            size='sm'
+                                            color='primary'
+                                            outline
+                                            onClick={this.addSatExerciseToAll}
+                                            style={{
+                                                display: 'block'
+                                            }}>
+                                                Add Exercise
+                                        </Button>
+                                        { (satExercisesAll.length > 0) ?
+                                            <div>
+                                                <h4>All SAT questions</h4>
+                                                <ul>
+                                                    {satExercisesAll.map((s, index) => {
+                                                        return(
+                                                            <li key={index} style={{
+                                                                border: '1px solid grey',
+                                                                padding: '2%'
+                                                                }}
+                                                                className='mb-1'>
+                                                                <span
+                                                                    style={{
+                                                                        display: 'block',
+                                                                        fontStyle: 'italic'
+                                                                    }}>{s.question}
+                                                                </span>
+                                                                <ul>
+                                                                    {s.answers.map((an, i) => {
+                                                                        let styles2 = null;
+                                                                        if (i == s.rightAnswerIndex) {
+                                                                            styles2 = {
+                                                                                border: '1px solid green',
+                                                                                padding: '1%'
+                                                                            }
+                                                                        } else {
+                                                                            styles2 = {};
+                                                                        }
+                                                                        return(
+                                                                            <li key={i} style={styles2}>
+                                                                                {an}
+                                                                            </li>
+                                                                        );
+                                                                    })}
+                                                                </ul>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            </div>
+                                        : null }
+                                    </FormGroup>
                                 : null
                                 }
                             </div>
