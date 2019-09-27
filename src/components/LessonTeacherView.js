@@ -97,7 +97,8 @@ class LessonTeacherView extends Component {
         currentSatAllAnswers: [],
         addSatExerciseError: '',
         currentSatRightAnswerIndex: 0,
-        satExercisesAll: []
+        satExercisesAll: [],
+        saveExerciseChangesError: ''
     }
 
     onSaveChanges = () => {
@@ -212,6 +213,15 @@ class LessonTeacherView extends Component {
         }
     }
 
+    onUpdateLessonExercises = () => {
+        const {
+            satExercisesAll,
+            deletedQuestionIds            
+        } = this.state;
+
+        
+    }
+
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
@@ -239,7 +249,8 @@ class LessonTeacherView extends Component {
             currentSatAllAnswers,
             currentSatRightAnswerIndex,
             addSatExerciseError,
-            satExercisesAll
+            satExercisesAll,
+            saveExerciseChangesError
         } = this.state;
 
         let contentInput = null;
@@ -641,7 +652,7 @@ class LessonTeacherView extends Component {
                                         </Button>
                                         { (satExercisesAll.length > 0) ?
                                             <div>
-                                                <h4>All SAT questions</h4>
+                                                <h4>Added SAT questions</h4>
                                                 <ul>
                                                     {satExercisesAll.map((s, index) => {
                                                         return(
@@ -681,6 +692,29 @@ class LessonTeacherView extends Component {
                                             </div>
                                         : null }
                                     </FormGroup>
+                                : null
+                                }
+                                { satsOpened ?
+                                    <div
+                                        className='mb-2'>
+                                        { saveExerciseChangesError ?
+                                            <p
+                                                style={{
+                                                    color: 'red',
+                                                    fontStyle: 'italic'
+                                                }}>{ saveExerciseChangesError }</p>
+                                        : null
+                                        }
+                                        <Button
+                                            style={{
+                                                backgroundColor: 'lime',
+                                                color: 'white',
+                                                border: 'none'
+                                            }}
+                                            onClick={ this.onUpdateLessonExercises }>
+                                            Save Exercise Changes
+                                        </Button>
+                                    </div>
                                 : null
                                 }
                             </div>
