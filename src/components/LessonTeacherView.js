@@ -12,7 +12,7 @@ import {
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getLessonForTeacherById, updateLesson } from '../actions/lessonActions';
 import { createLessonOngoing } from '../actions/lessonOngoingActions';
-import { getSATExercisesByLessonId } from '../actions/exerciseActions';
+import { getSATExercisesByLessonId, updateLessonSatBase } from '../actions/exerciseActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -98,7 +98,8 @@ class LessonTeacherView extends Component {
         addSatExerciseError: '',
         currentSatRightAnswerIndex: 0,
         satExercisesAll: [],
-        saveExerciseChangesError: ''
+        saveExerciseChangesError: '',
+        satUpdateStatus: ''
     }
 
     onSaveChanges = () => {
@@ -216,10 +217,29 @@ class LessonTeacherView extends Component {
     onUpdateLessonExercises = () => {
         const {
             satExercisesAll,
-            deletedQuestionIds
+            deletedQuestionIds,
+            currentLessonId
         } = this.state;
 
-        
+        if ((satExercisesAll.length > 0) || (deletedQuestionIds.length > 0)) {
+            const exercises = satExercisesAll.map(s => {
+                return({
+                    ...s,
+                    lessonId: currentLessonId
+                });
+            });
+
+            this.props.updateLessonSatBase(deletedQuestionIds, exercises);
+            this.setState({
+                satUpdateStatus: '*** Exercises updated!',
+                satExercisesAll: [],
+                deletedQuestionIds: []
+            });
+        } else {
+            this.setState({
+                satUpdateStatus: ''
+            });
+        }
     }
 
     onChange = (e) => {
@@ -250,7 +270,8 @@ class LessonTeacherView extends Component {
             currentSatRightAnswerIndex,
             addSatExerciseError,
             satExercisesAll,
-            saveExerciseChangesError
+            saveExerciseChangesError,
+            satUpdateStatus
         } = this.state;
 
         let contentInput = null;
@@ -705,6 +726,15 @@ class LessonTeacherView extends Component {
                                                 }}>{ saveExerciseChangesError }</p>
                                         : null
                                         }
+                                        { satUpdateStatus ?
+                                            <p
+                                                style={{
+                                                    color: 'green'
+                                                }}>
+                                                { satUpdateStatus }
+                                            </p>
+                                        : null
+                                        }
                                         <Button
                                             style={{
                                                 backgroundColor: 'lime',
@@ -741,7 +771,8 @@ LessonTeacherView.propTypes = {
     createLessonOngoing: PropTypes.func.isRequired,
     allLessonOngoings: PropTypes.array.isRequired,
     getSATExercisesByLessonId: PropTypes.func.isRequired,
-    allSats: PropTypes.array.isRequired
+    allSats: PropTypes.array.isRequired,
+    updateLessonSatBase: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -760,5 +791,6 @@ export default connect(mapStateToProps, {
     getLessonForTeacherById,
     updateLesson,
     createLessonOngoing,
-    getSATExercisesByLessonId
+    getSATExercisesByLessonId,
+    updateLessonSatBase
 })(LessonTeacherView);

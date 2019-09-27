@@ -21,7 +21,10 @@ router.post('/singleAnswerTestQuestion/updateLessonSatBase', auth, function(req,
 
     if (!deletedIds || !Array.isArray(deletedIds)) return res.status(400).json({ msg: 'Bad request' });
 
-    if (!exercises || (exercises.length == 0)) return res.status(400).json({ msg: 'Bad request!' });
+    if (!exercises || !Array.isArray(exercises)) return res.status(400).json({ msg: 'Bad request!' });
+
+    if ((deletedIds.length <= 0) && (exercises.length <= 0))
+        return res.status(400).json({ msg: 'No data to work with!' });
 
     const exercisesWithEmptyAnswers = exercises.filter(e => {
         const answers = e.answers;
