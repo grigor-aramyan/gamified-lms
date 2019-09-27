@@ -216,7 +216,7 @@ class LessonTeacherView extends Component {
     onUpdateLessonExercises = () => {
         const {
             satExercisesAll,
-            deletedQuestionIds            
+            deletedQuestionIds
         } = this.state;
 
         
