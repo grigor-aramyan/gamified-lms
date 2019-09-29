@@ -112,7 +112,7 @@ class CourseView extends Component {
                             <div>
                                 <Row>
                                     <Col xs='4' style={{ textAlign: 'center' }}>
-                                        {extendedCourse.title}
+                                        { extendedCourse.title }
                                     </Col>
                                     <Col xs='4'>
                                         <ol>

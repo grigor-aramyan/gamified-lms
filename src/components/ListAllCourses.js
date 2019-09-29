@@ -80,7 +80,7 @@ class ListAllCourses extends Component {
                                 className='mb-1 pl-1'>
                                 <Row>
                                     <Col xs='3'>
-                                        { c.title }
+                                        <a href={ `/courses/${c.id}` }>{ c.title }</a>
                                     </Col>
                                     <Col xs='6'>
                                         { c.description }

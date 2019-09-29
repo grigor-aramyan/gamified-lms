@@ -301,7 +301,6 @@ class LessonTeacherView extends Component {
                     }}
                     onChange={this.onChange}
                     name='currentLessonContent'
-                    onChange={this.onChange}
                     value={ currentLessonContent ? currentLessonContent : '' }
                     placeholder='Lesson content'
                     disabled />
