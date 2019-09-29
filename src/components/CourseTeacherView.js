@@ -6,6 +6,7 @@ import {
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
+import { getExtendedCourseById } from '../actions/courseActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
@@ -20,7 +21,8 @@ class CourseTeacherView extends Component {
         const {
             isAuthenticated,
             isTeacher,
-            currentTeacher
+            currentTeacher,
+            currentCourseForTeacher
         } = this.props;
 
         return(
@@ -37,17 +39,21 @@ CourseTeacherView.propTypes = {
     isTeacher: PropTypes.bool.isRequired,
     loadLocalToken: PropTypes.func.isRequired,
     loadUser: PropTypes.func.isRequired,
-    currentTeacher: PropTypes.object
+    currentTeacher: PropTypes.object,
+    getExtendedCourseById: PropTypes.func.isRequired,
+    currentCourseForTeacher: PropTypes.object
 }
 
 const mapStateToProps = (state) => ({
     error: state.error,
     isAuthenticated: state.auth.isAuthenticated,
     isTeacher: state.auth.isTeacher,
-    currentTeacher: state.auth.teacher
+    currentTeacher: state.auth.teacher,
+    currentCourseForTeacher: state.course.currentCourseForTeacher
 });
 
 export default connect(mapStateToProps, {
     loadLocalToken,
-    loadUser
+    loadUser,
+    getExtendedCourseById
 })(CourseTeacherView);

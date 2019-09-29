@@ -8,18 +8,25 @@ import {
     COURSE_DELETE_SUCCESS,
     COURSE_DELETE_FAIL,
     COURSES_GET_BY_IDS,
-    COURSES_GET_BY_IDS_INITIATED
+    COURSES_GET_BY_IDS_INITIATED,
+    COURSE_GET_BY_ID
 } from '../actions/types';
 
 const initialState = {
     currentCourse: null,
     allCourses: [],
     extendedCoursesByIds: null,
-    fetchingExtendedCourses: false
+    fetchingExtendedCourses: false,
+    currentCourseForTeacher: null
 };
 
 export default function(state = initialState, action) {
     switch(action.type) {
+        case COURSE_GET_BY_ID:
+            return {
+                ...state,
+                currentCourseForTeacher: action.payload
+            }
         case COURSES_GET_BY_IDS:
             return {
                 ...state,
