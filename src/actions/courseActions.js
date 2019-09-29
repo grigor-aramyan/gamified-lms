@@ -10,7 +10,8 @@ import {
     COURSE_DELETE_SUCCESS,
     COURSE_DELETE_FAIL,
     COURSES_GET_BY_IDS,
-    COURSES_GET_BY_IDS_INITIATED
+    COURSES_GET_BY_IDS_INITIATED,
+    COURSE_GET_BY_ID
 } from './types';
 import { tokenConfig, baseUri } from './authActions';
 import { returnErrors } from './errorActions';
@@ -19,6 +20,25 @@ import { returnErrors } from './errorActions';
 const API_URI = baseUri + '/api/courses';
 export const CREATE_COURSE_ERROR = 'CREATE_COURSE_ERROR';
 export const GET_COURSES_BY_IDS_ERROR = 'GET_COURSES_BY_IDS_ERROR';
+
+export const getExtendedCourseById = (courseId) => (dispatch, getState) => {
+    const uri = `${API_URI}/extended`;
+
+    const body = {
+        coursesIds: [ courseId ]
+    };
+
+    axios.post(uri, body, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: COURSE_GET_BY_ID,
+                payload: res.data.courses[0]
+            });
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status));
+        });
+}
 
 export const getExtendedCoursessById = (coursesIds) => (dispatch, getState) => {
     const uri = `${API_URI}/extended`;
