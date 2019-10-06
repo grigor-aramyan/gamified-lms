@@ -5,13 +5,17 @@ import {
     Container,
     Row,
     Col,
-    Button
+    Button,
+    Spinner
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
-import { getExtendedCourseById } from '../actions/courseActions';
+import { getExtendedCourseById, updateCourse } from '../actions/courseActions';
+import { getLessons } from '../actions/lessonActions';
 
+// Components
 import Header from './Header';
+import ListAllLessons from './ListAllLessons';
 import NotAuthenticated from './NotAuthenticated';
 
 class CourseTeacherView extends Component {
@@ -34,13 +38,26 @@ class CourseTeacherView extends Component {
             this.props.getExtendedCourseById(courseId);
         }
 
-        if (this.props.currentCourseForTeacher && !this.state.currentCourseTitle) {
+        if (this.props.currentCourseForTeacher && !this.state.currentCourseTitle && !this.state.spinnerOpened) {
             this.setState({
                 currentCourseTitle: this.props.currentCourseForTeacher.title,
                 currentCourseDesc: this.props.currentCourseForTeacher.description,
                 currentCoursePrice: this.props.currentCourseForTeacher.price,
                 currentCourseLessons: this.props.currentCourseForTeacher.lessons
             });
+        }
+
+        const {
+            isAuthenticated,
+            isTeacher,
+            currentTeacher,
+            currentCourseForTeacher,
+            allLessons
+        } = this.props;
+
+        if (isAuthenticated && isTeacher && currentCourseForTeacher &&
+            (currentCourseForTeacher.authorId === currentTeacher.id) && !allLessons) {
+            this.props.getLessons();
         }
 
         if (this.props.currentCourseForTeacher) {
@@ -55,19 +72,27 @@ class CourseTeacherView extends Component {
                 currentCourseTitle,
                 currentCourseDesc,
                 currentCoursePrice,
-                currentCourseLessons
+                currentCourseLessons,
+                deletingLessonIds,
+                addingLessonIds
             } = this.state;
     
             if (title == currentCourseTitle && description == currentCourseDesc
                 && price == currentCoursePrice
-                && (JSON.stringify(lessons) == JSON.stringify(currentCourseLessons))
+                && (JSON.stringify(lessons) == JSON.stringify(currentCourseLessons)
+                && (deletingLessonIds.length === 0)
+                && (addingLessonIds.length === 0))
                 && !this.state.serverClientSynched) {
                     this.setState({
-                        serverClientSynched: true
+                        serverClientSynched: true,
+                        spinnerOpened: false,
+                        saveChangesError: ''
                     });
             } else if ((title != currentCourseTitle || description != currentCourseDesc
                 || price != currentCoursePrice
-                || (JSON.stringify(lessons) != JSON.stringify(currentCourseLessons)))
+                || (JSON.stringify(lessons) != JSON.stringify(currentCourseLessons))
+                || (deletingLessonIds.length !== 0)
+                || (addingLessonIds.length !== 0))
                 && this.state.serverClientSynched) {
                 this.setState({
                     serverClientSynched: false
@@ -83,11 +108,19 @@ class CourseTeacherView extends Component {
         currentCoursePrice: null,
         currentCourseLessons: null,
         saveChangesError: '',
-        serverClientSynched: false
+        serverClientSynched: false,
+        deletingLessonIds: [],
+        addingLessonIds: [],
+        spinnerOpened: false
     }
 
     onDeleteLessonFromCourse = (lessonId) => {
-        console.log('lesson id: ' + lessonId);
+        let intermediateArray = this.state.deletingLessonIds;
+        intermediateArray.push(lessonId);
+
+        this.setState({
+            deletingLessonIds: intermediateArray
+        });
     }
 
     onEnroll = () => {
@@ -95,7 +128,73 @@ class CourseTeacherView extends Component {
     }
 
     onSaveChanges = () => {
-        console.log('saving changes!');
+
+        const {
+            currentCourseForTeacher
+        } = this.props;
+
+        const {
+            lessons
+        } = currentCourseForTeacher;
+
+        const {
+            addingLessonIds,
+            deletingLessonIds,
+            currentCourseTitle,
+            currentCourseDesc,
+            currentCoursePrice
+        } = this.state;
+
+        const initialArray = lessons.map(l => {
+            return l.id;
+        });
+
+        const intermediateArray = initialArray.filter(l => {
+            return (!deletingLessonIds.includes(l));
+        });
+
+        const updatedLessons = intermediateArray.concat(addingLessonIds);
+
+        if (!currentCourseTitle || !currentCourseDesc) {
+            this.setState({
+                saveChangesError: 'Course title and description are required!'
+            });
+        } else if (updatedLessons.length < 2) {
+            this.setState({
+                saveChangesError: 'Course should contain at least 2 lessons!'
+            });
+        } else {
+            const params = {
+                title: currentCourseTitle,
+                description: currentCourseDesc,
+                price: currentCoursePrice,
+                lessons: updatedLessons
+            };
+
+            this.setState({
+                spinnerOpened: true
+            });
+            this.props.updateCourse(currentCourseForTeacher.id, params);
+
+            setTimeout(() => {
+                window.open(`/courses/${this.state.currentCourseId}`, '_self');
+            }, 3 * 1000);
+        }
+    }
+
+    toggleLessonForNewCourse = (lessonId) => {
+        if (this.state.addingLessonIds.includes(lessonId)) {
+            const data = this.state.addingLessonIds.filter(l => {
+                return (l !== lessonId);
+            });
+
+            this.setState({ addingLessonIds: data });
+
+        } else {
+            const data = [...this.state.addingLessonIds];
+            data.unshift(lessonId);
+            this.setState({ addingLessonIds: data });
+        }
     }
 
     onChange = (e) => {
@@ -107,7 +206,9 @@ class CourseTeacherView extends Component {
             isAuthenticated,
             isTeacher,
             currentTeacher,
-            currentCourseForTeacher
+            currentCourseForTeacher,
+            allLessons,
+            error
         } = this.props;
 
         const {
@@ -116,7 +217,10 @@ class CourseTeacherView extends Component {
             currentCoursePrice,
             currentCourseLessons,
             saveChangesError,
-            serverClientSynched
+            serverClientSynched,
+            deletingLessonIds,
+            addingLessonIds,
+            spinnerOpened
         } = this.state;
 
         let titleInput = null;
@@ -233,23 +337,44 @@ class CourseTeacherView extends Component {
                     <h5>Lessons</h5>
                     <ol>
                         { currentCourseLessons.map(l => {
-                            return(
-                                <li key={l.id}>
-                                    <a href={ `/lessons/${l.id}` }>{ l.title }</a>
-                                    <Button
-                                        onClick={ () => this.onDeleteLessonFromCourse(l.id) }
-                                        style={{
-                                            color: 'red',
-                                            backgroundColor: 'white',
-                                            border: '1px solid grey',
-                                            borderRadius: '20%',
-                                            fontSize: '80%'
-                                        }}
-                                        className='ml-2 mb-1'>
-                                        X
-                                    </Button>
-                                </li>
-                            );
+                            if (deletingLessonIds.includes(l.id)) {
+                                return(
+                                    <li key={l.id}>
+                                        <p
+                                            style={{
+                                                color: 'red',
+                                                fontStyle: 'italic'
+                                            }}>
+                                                Deleted:
+                                            <span
+                                                className='ml-1'
+                                                style={{
+                                                    color: 'grey'
+                                                }}>
+                                                { l.title }
+                                            </span>
+                                        </p>
+                                    </li>
+                                );
+                            } else {
+                                return(
+                                    <li key={l.id}>
+                                        <a href={ `/lessons/${l.id}` }>{ l.title }</a>
+                                        <Button
+                                            onClick={ () => this.onDeleteLessonFromCourse(l.id) }
+                                            style={{
+                                                color: 'red',
+                                                backgroundColor: 'white',
+                                                border: '1px solid grey',
+                                                borderRadius: '20%',
+                                                fontSize: '80%'
+                                            }}
+                                            className='ml-2 mb-1'>
+                                            X
+                                        </Button>
+                                    </li>
+                                );
+                            }
                         }) }
                     </ol>
                 </div>)
@@ -268,6 +393,26 @@ class CourseTeacherView extends Component {
                         }) }
                     </ol>
                 </div>)
+        }
+
+        let spinnerStyle = null;
+        if (spinnerOpened) {
+            spinnerStyle = {
+                visibility: 'visible',
+                display: 'block',
+                width: '99vw',
+                height: '100vh',
+                backgroundColor: 'rgba(211, 211, 211, 0.8)',
+                textAlign: 'center',
+                position: 'absolute',
+                top: '0',
+                left: '0'
+            };
+        } else {
+            spinnerStyle = {
+                display: 'none',
+                visibility: 'hidden'
+            };
         }
 
         return(
@@ -341,9 +486,46 @@ class CourseTeacherView extends Component {
                                     className='mt-2'>
                                     Save changes
                                 </Button>
+                                { (addingLessonIds.length > 0) ?
+                                    <div>
+                                        <hr />
+                                        <h5>Adding lesson IDs</h5>
+                                        <ol>
+                                            { addingLessonIds.map(l => {
+                                                return (
+                                                    <li key={l}>
+                                                        { l }
+                                                    </li>
+                                                );
+                                            }) }
+                                        </ol>
+                                    </div>
+                                : null
+                                }
+                                { (allLessons && (allLessons.length > 0)) ?
+                                    <div>
+                                        <hr />
+                                        <ListAllLessons
+                                            allLessons={ allLessons }
+                                            isTeacher={ isTeacher }
+                                            error={ error }
+                                            toggleLessonForNewCourse={ this.toggleLessonForNewCourse } />    
+                                    </div>
+                                : null
+                                }
                             </div>
                         : null
                         }
+                        <div style={spinnerStyle}>
+                            <Spinner
+                                style={{
+                                    width: '20vw',
+                                    height: '20vw',
+                                    marginTop: '20vh',
+                                    color: 'deepskyblue'
+                                }}
+                                type='grow' />
+                        </div>
                     </Container>
                 : <NotAuthenticated />
                 }
@@ -360,7 +542,10 @@ CourseTeacherView.propTypes = {
     loadUser: PropTypes.func.isRequired,
     currentTeacher: PropTypes.object,
     getExtendedCourseById: PropTypes.func.isRequired,
-    currentCourseForTeacher: PropTypes.object
+    currentCourseForTeacher: PropTypes.object,
+    allLessons: PropTypes.array,
+    getLessons: PropTypes.func.isRequired,
+    updateCourse: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -368,11 +553,14 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     isTeacher: state.auth.isTeacher,
     currentTeacher: state.auth.teacher,
-    currentCourseForTeacher: state.course.currentCourseForTeacher
+    currentCourseForTeacher: state.course.currentCourseForTeacher,
+    allLessons: state.lesson.allLessons,
 });
 
 export default connect(mapStateToProps, {
     loadLocalToken,
     loadUser,
-    getExtendedCourseById
+    getExtendedCourseById,
+    getLessons,
+    updateCourse
 })(CourseTeacherView);
