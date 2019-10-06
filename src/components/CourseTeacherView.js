@@ -12,6 +12,7 @@ import {
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getExtendedCourseById, updateCourse } from '../actions/courseActions';
 import { getLessons } from '../actions/lessonActions';
+import { createCourseOngoing } from '../actions/courseOngoingActions';
 
 // Components
 import Header from './Header';
@@ -124,7 +125,17 @@ class CourseTeacherView extends Component {
     }
 
     onEnroll = () => {
-        console.log('enrolled');
+        const params = {
+            courseId: this.state.currentCourseId
+        };
+
+        this.setState({
+            spinnerOpened: true
+        });
+        this.props.createCourseOngoing(params);
+        setTimeout(() => {
+            window.open('/course_ongoings', '_self');
+        }, 3 * 1000);
     }
 
     onSaveChanges = () => {
@@ -545,7 +556,8 @@ CourseTeacherView.propTypes = {
     currentCourseForTeacher: PropTypes.object,
     allLessons: PropTypes.array,
     getLessons: PropTypes.func.isRequired,
-    updateCourse: PropTypes.func.isRequired
+    updateCourse: PropTypes.func.isRequired,
+    createCourseOngoing: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -562,5 +574,6 @@ export default connect(mapStateToProps, {
     loadUser,
     getExtendedCourseById,
     getLessons,
-    updateCourse
+    updateCourse,
+    createCourseOngoing
 })(CourseTeacherView);
