@@ -6,7 +6,12 @@ import {
     Button,
     Container,
     Col,
-    Row
+    Row,
+    Card,
+    CardImg,
+    CardText,
+    CardBody,
+    CardTitle
 } from 'reactstrap';
 
 import {
@@ -45,29 +50,7 @@ class ListAllCourseOngoings extends Component {
         return(
             <Container>
                 <h2>-- My ongoing courses --</h2>
-                <Row
-                    style={{
-                        border: '2px solid gold',
-                        borderRadius: '10%',
-                        padding: '4px',
-                        fontStyle: 'italic',
-                        textAlign: 'center'
-                    }}
-                    className='mb-2'>
-                    <Col xs='4'>
-                        TITLE
-                    </Col>
-                    <Col xs='4'>
-                        LESSONS
-                    </Col>
-                    <Col xs='1'>
-                        PRICE
-                    </Col>
-                    <Col xs='2'>
-                        DELETE
-                    </Col>
-                </Row>
-                <ul style={{ listStyle: 'none', marginLeft: '0px' }}>
+                <Row>
                     { allCourseOngoings.map(c => {
                         let courseExtended = null;
                         if (coursesExtended) {
@@ -76,19 +59,36 @@ class ListAllCourseOngoings extends Component {
                             })[0];
                         }
 
-                        return(
-                            <li key={c.id}
-                                style={{
-                                    border: '2px solid deepskyblue',
-                                    borderRadius: '10%',
-                                    padding: '4px'
-                                }} 
-                                className='mb-1 pl-1'>
-                                <Row>
-                                    <Col xs='4'>
-                                        <a href={`/course_ongoings/course/${c.id}`}>{ courseExtended ? courseExtended.title : '' }</a>
-                                    </Col>
-                                    <Col xs='4'>
+                        return (
+                            <Col key={c.id} xs={4}>
+                                <Card
+                                    className='mb-2'>
+                                    <CardImg top width='100%' src='/images/logo_clean_header_transparent.png' />
+                                    <CardBody
+                                        style={{
+                                            textAlign: 'center'
+                                        }}>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Title
+                                        </span>
+                                        <CardTitle><a href={`/course_ongoings/course/${c.id}`}>{ courseExtended ? courseExtended.title : '' }</a></CardTitle>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Lessons
+                                        </span>
                                         <ol>
                                             { courseExtended ?
                                                 courseExtended.lessons.map(l => {
@@ -101,11 +101,27 @@ class ListAllCourseOngoings extends Component {
                                             : null
                                             }
                                         </ol>
-                                    </Col>
-                                    <Col xs='1'>
-                                        { courseExtended ? `$${courseExtended.price}` : '' }
-                                    </Col>
-                                    <Col xs='2'>
+                                        <CardText>
+                                            <span
+                                                className='mr-1'
+                                                style={{
+                                                    color: 'gray',
+                                                    textDecoration: 'underline',
+                                                    fontSize: '90%',
+                                                    fontStyle: 'italic'
+                                                }}>Price</span>
+                                            { courseExtended ? `$${courseExtended.price}` : '' }
+                                        </CardText>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Delete
+                                        </span>
                                         <Button 
                                             onClick={ () => { deleteCourseOngoing(c.id) } }
                                             style={{
@@ -115,12 +131,12 @@ class ListAllCourseOngoings extends Component {
                                             }}>
                                             X
                                         </Button>
-                                    </Col>
-                                </Row>
-                            </li>
+                                    </CardBody>
+                                </Card>
+                            </Col>
                         );
                     }) }
-                </ul>
+                </Row>
             </Container>
         );
     }
