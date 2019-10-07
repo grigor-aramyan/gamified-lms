@@ -6,7 +6,12 @@ import {
     Container,
     Button,
     Col,
-    Row
+    Row,
+    Card,
+    CardImg,
+    CardText,
+    CardBody,
+    CardTitle
 } from 'reactstrap';
 
 import { getCourses } from '../actions/courseActions';
@@ -47,49 +52,51 @@ class ListAllCourses extends Component {
                     <p style={{ color: 'green' }}>{ this.state.addCourseOngoingStatus }</p>
                     : null
                 }
-                <Row
-                    style={{
-                        border: '2px solid gold',
-                        borderRadius: '10%',
-                        padding: '4px',
-                        fontStyle: 'italic',
-                        textAlign: 'center'
-                    }}
-                    className='mb-2'>
-                    <Col xs='3'>
-                        TITLE
-                    </Col>
-                    <Col xs='6'>
-                        DESCRIPTION
-                    </Col>
-                    <Col xs='1'>
-                        PRICE
-                    </Col>
-                </Row>
-                <ul style={{
-                    listStyleType: 'none'
-                }}>
+                <Row>
                     { allCourses.map(c => {
-                        return(
-                            <li key={c.id}
-                                style={{
-                                    border: '2px solid deepskyblue',
-                                    borderRadius: '10%',
-                                    padding: '4px'
-                                }} 
-                                className='mb-1 pl-1'>
-                                <Row>
-                                    <Col xs='3'>
-                                        <a href={ `/courses/${c.id}` }>{ c.title }</a>
-                                    </Col>
-                                    <Col xs='6'>
-                                        { c.description }
-                                    </Col>
-                                    <Col xs='1'>
-                                        ${ c.price ? c.price : '0' }
-                                    </Col>
-                                    { !isTeacher ?
-                                        <Col xs='2'>
+                        return (
+                            <Col key={c.id} xs={4}>
+                                <Card
+                                    className='mb-2'>
+                                    <CardImg top width='100%' src='/images/logo_clean_header_transparent.png' />
+                                    <CardBody
+                                        style={{
+                                            textAlign: 'center'
+                                        }}>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Title
+                                        </span>
+                                        <CardTitle><a href={ `/courses/${c.id}` }>{ c.title }</a></CardTitle>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Description
+                                        </span>
+                                        <CardText>{ c.description }</CardText>
+                                        <CardText>
+                                            <span
+                                                className='mr-1'
+                                                style={{
+                                                    color: 'gray',
+                                                    textDecoration: 'underline',
+                                                    fontSize: '90%',
+                                                    fontStyle: 'italic'
+                                                }}>Price</span>
+                                            { c.price ? '$' + c.price : '$0' }
+                                        </CardText>
+                                        { !isTeacher ?
                                             <Button
                                                 style={{
                                                     backgroundColor: 'gold',
@@ -99,14 +106,14 @@ class ListAllCourses extends Component {
                                                 onClick={ () => { createCourseOngoing({ courseId: c.id }) } }>
                                                 Enroll
                                             </Button>
-                                        </Col>
                                         : null
-                                    }
-                                </Row>
-                            </li>
+                                        }
+                                    </CardBody>
+                                </Card>
+                            </Col>
                         );
                     }) }
-                </ul>
+                </Row>
             </Container>
         );
     }
