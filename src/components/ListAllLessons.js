@@ -6,7 +6,12 @@ import {
     Button,
     Input,
     Col,
-    Row
+    Row,
+    Card,
+    CardImg,
+    CardText,
+    CardBody,
+    CardTitle
 } from 'reactstrap';
 
 import { createLessonOngoing } from '../actions/lessonOngoingActions';
@@ -56,49 +61,58 @@ class ListAllLessons extends Component {
                     <p style={{ color: 'green' }}>{ this.state.addLessonOngoingStatus }</p>
                     : null
                 }
-                <Row
-                    style={{
-                        border: '2px solid gold',
-                        borderRadius: '10%',
-                        padding: '4px',
-                        fontStyle: 'italic',
-                        textAlign: 'center'
-                    }}
-                    className='mb-2'>
-                    <Col xs='3'>
-                        TITLE
-                    </Col>
-                    <Col xs='6'>
-                        DESCRIPTION
-                    </Col>
-                    <Col xs='1'>
-                        PRICE
-                    </Col>
-                    { isTeacher ?
-                        <Col xs='2'>
-                            ADD TO COURSE
-                        </Col>
-                    : null
-                    }
-                </Row>
-                <ul style={{
-                    listStyleType: 'none'
-                }}>
+                <Row>
                     { allLessons.map(l => {
-                        return(
-                            <li key={l.id}
-                                style={{
-                                    border: '2px solid deepskyblue',
-                                    borderRadius: '10%',
-                                    padding: '4px'
-                                }} 
-                                className='mb-1 pl-1'>
-                                <Row>
-                                    <Col xs='3'><a href={`/lessons/${l.id}`}>{l.title}</a></Col>
-                                    <Col xs='6'>{l.description}</Col>
-                                    { l.price ? <Col xs='1'>${l.price}</Col> : <Col xs='1'>$0</Col> }
-                                    { !isTeacher ?
-                                        <Col xs='2' offset='10'>
+                        let avatarSrc = '';
+                        if (l.imageUris.length > 0) {
+                            avatarSrc = l.imageUris[0];
+                        } else {
+                            avatarSrc = '/images/lesson_image_placeholder.png';
+                        }
+
+                        return (
+                            <Col key={l.id} xs={4}>
+                                <Card
+                                    className='mb-2'>
+                                    <CardImg top width='100%' src={avatarSrc} />
+                                    <CardBody
+                                        style={{
+                                            textAlign: 'center'
+                                        }}>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Title
+                                        </span>
+                                        <CardTitle><a href={`/lessons/${l.id}`}>{ l.title }</a></CardTitle>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Description
+                                        </span>
+                                        <CardText>{ l.description }</CardText>
+                                        <CardText>
+                                            <span
+                                                className='mr-1'
+                                                style={{
+                                                    color: 'gray',
+                                                    textDecoration: 'underline',
+                                                    fontSize: '90%',
+                                                    fontStyle: 'italic'
+                                                }}>Price</span>
+                                            { l.price ? '$' + l.price : '$0' }
+                                        </CardText>
+                                        { !isTeacher ?
                                             <Button
                                                 style={{
                                                     backgroundColor: 'gold',
@@ -108,21 +122,32 @@ class ListAllLessons extends Component {
                                                 onClick={ () => { this.onCreateLessonOngoing(l.id) } }>
                                                     Enroll
                                             </Button>
-                                        </Col> : null
-                                    }
-                                    { isTeacher ?
-                                        <Col xs='2' offset='10'>
-                                            <Input
-                                                type='checkbox'
-                                                onClick={ () => { toggleLessonForNewCourse(l.id) } } />
-                                        </Col>
                                         : null
-                                    }
-                                </Row>
-                            </li>
+                                        }
+                                        { isTeacher ?
+                                            <div>
+                                                <span
+                                                    style={{
+                                                        color: 'gray',
+                                                        fontSize: '90%',
+                                                        fontStyle: 'italic',
+                                                        textDecoration: 'underline',
+                                                        display: 'block'
+                                                    }}>
+                                                    Add to Course
+                                                </span>
+                                                <Input
+                                                    type='checkbox'
+                                                    onClick={ () => { toggleLessonForNewCourse(l.id) } } />
+                                            </div>
+                                        : null
+                                        }
+                                    </CardBody>
+                                </Card>
+                            </Col>
                         );
                     }) }
-                </ul>
+                </Row>
             </Container>
         );
     }
