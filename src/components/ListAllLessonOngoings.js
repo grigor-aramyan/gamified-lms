@@ -6,7 +6,12 @@ import {
     Container,
     Button,
     Row,
-    Col
+    Col,
+    Card,
+    CardImg,
+    CardText,
+    CardBody,
+    CardTitle
 } from 'reactstrap';
 
 import {
@@ -44,29 +49,7 @@ class ListAllLessonOngoings extends Component {
         return(
             <Container>
                 <h2>-- My ongoing lessons --</h2>
-                <Row
-                    style={{
-                        border: '2px solid gold',
-                        borderRadius: '10%',
-                        padding: '4px',
-                        fontStyle: 'italic',
-                        textAlign: 'center'
-                    }}
-                    className='mb-2'>
-                    <Col xs='4'>
-                        LESSON TITLE
-                    </Col>
-                    <Col xs='3' style={{ textAlign: 'center' }}>
-                        AUTHOR
-                    </Col>
-                    <Col xs='2' style={{ textAlign: 'center' }}>
-                        SUBJECT
-                    </Col>
-                    <Col xs='1'>
-                        DELETE
-                    </Col>
-                </Row>
-                <ul style={{ listStyle: 'none', marginLeft: '0px' }}>
+                <Row>
                     { allLessonOngoings.map(l => {
                         let lessonExtended = null;
                         if (lessonsExtended) {
@@ -75,25 +58,65 @@ class ListAllLessonOngoings extends Component {
                             })[0];
                         }
 
-                        return(
-                            <li key={l.id}
-                                style={{
-                                    border: '2px solid deepskyblue',
-                                    borderRadius: '10%',
-                                    padding: '4px'
-                                }} 
-                                className='mb-1 pl-1'>
-                                <Row>
-                                    <Col xs='4'>
-                                        <a href={`/lesson_ongoings/lesson/${l.id}`}>{ lessonExtended ? lessonExtended.title : '' }</a>
-                                    </Col>
-                                    <Col xs='3' style={{ textAlign: 'center' }}>
-                                        { lessonExtended ? lessonExtended.authorName : '' }
-                                    </Col>
-                                    <Col xs='2' style={{ textAlign: 'center' }}>
-                                        { lessonExtended ? lessonExtended.authorSubject : '' }
-                                    </Col>
-                                    <Col xs='1'>
+                        let avatarSrc = '';
+                        if (lessonExtended && (lessonExtended.imageUris.length > 0)) {
+                            avatarSrc = lessonExtended.imageUris[0];
+                        } else {
+                            avatarSrc = '/images/lesson_image_placeholder.png';
+                        }
+
+                        return (
+                            <Col key={l.id} xs={4}>
+                                <Card
+                                    className='mb-2'>
+                                    <CardImg top width='100%' src={avatarSrc} />
+                                    <CardBody
+                                        style={{
+                                            textAlign: 'center'
+                                        }}>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Title
+                                        </span>
+                                        <CardTitle><a href={`/lesson_ongoings/lesson/${l.id}`}>{ lessonExtended ? lessonExtended.title : '' }</a></CardTitle>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Author
+                                        </span>
+                                        <CardText>{ lessonExtended ? lessonExtended.authorName : '' }</CardText>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Author Subject
+                                        </span>
+                                        <CardText>{ lessonExtended ? lessonExtended.authorSubject : '' }</CardText>
+                                        <span
+                                            style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '90%',
+                                                display: 'block',
+                                                color: 'gray',
+                                                textDecoration: 'underline'
+                                            }}>
+                                            Delete
+                                        </span>
                                         <Button 
                                             onClick={ () => { deleteLessonOngoing(l.id) } }
                                             style={{
@@ -103,12 +126,12 @@ class ListAllLessonOngoings extends Component {
                                             }}>
                                             X
                                         </Button>
-                                    </Col>          
-                                </Row>
-                            </li>
+                                    </CardBody>
+                                </Card>
+                            </Col>
                         );
                     }) }
-                </ul>
+                </Row>
             </Container>
         );
     }
