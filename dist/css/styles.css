@@ -11,6 +11,14 @@
 }
 
 @media only screen and (max-width: 479px) {
+    .sat-container {
+        width: 80vw;
+    }
+
+    .sat-input {
+        width: 60vw;
+    }
+
     .add-course-form {
         width: 80vw;
     }
@@ -35,6 +43,10 @@
 }
 
 @media only screen and (min-width: 480px) {
+    .sat-input {
+        width: 50vw;
+    }
+
     .add-course-form {
         width: 80vw;
     }
@@ -59,6 +71,22 @@
 }
 
 @media only screen and (min-width: 768px) {
+    .main-content-input {
+        width: 40vw;
+    }
+
+    .main-content-left-margin {
+        margin-left: 20vw;
+    }
+    
+    .sat-container {
+        width: 40vw;
+    }
+
+    .sat-input {
+        width: 30vw;
+    }
+
     .add-course-form {
         width: 25vw;
         margin-left: 25vw;

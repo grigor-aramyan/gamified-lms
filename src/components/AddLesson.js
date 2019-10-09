@@ -240,38 +240,31 @@ class AddLesson extends Component {
         return(
             <Container>
                 <h2
-                    style={{
-                        marginLeft: mainContentLeftMargin
-                    }}>-- New Lesson --</h2>
+                    className='main-content-left-margin'>-- New Lesson --</h2>
                 <Form>
                     <div
-                        style={{
-                            marginLeft: mainContentLeftMargin
-                        }}>
+                        className='main-content-left-margin'>
                         <Input
                             type='text'
                             name='title'
                             placeholder='Lesson title'
                             value={this.state.title}
                             onChange={this.onChange}
-                            className='mb-1'
-                            style={inputsStyle} />
+                            className='mb-1 main-content-input' />
                         <Input
                             type='text'
                             name='description'
                             placeholder='Lesson description'
                             value={this.state.description}
                             onChange={this.onChange}
-                            className='mb-1'
-                            style={inputsStyle} />
+                            className='mb-1 main-content-input' />
                         <Input
                             type='textarea'
                             name='content'
                             placeholder='Lesson content'
                             value={this.state.content}
                             onChange={this.onChange}
-                            className='mb-1'
-                            style={inputsStyle} />
+                            className='mb-1 main-content-input' />
                         <FormGroup>
                             <Label for='lesson-price'>Lesson price</Label>
                             <Input
@@ -280,8 +273,7 @@ class AddLesson extends Component {
                                 name='price'
                                 value={this.state.price}
                                 onChange={this.onChange}
-                                className='mb-1'
-                                style={inputsStyle} />
+                                className='mb-1 main-content-input' />
                         </FormGroup>
                         <FormGroup>
                             <Input
@@ -290,8 +282,8 @@ class AddLesson extends Component {
                                 placeholder='Add video url...'
                                 value={this.state.currentVideoUrl}
                                 onChange={this.onChange}
-                                className='mb-1 mr-1'
-                                style={{width: '30vw', display: 'inline'}} />
+                                className='mb-1 mr-1 sat-input'
+                                style={{display: 'inline'}} />
                             <Button
                                 size='sm'
                                 color='primary'
@@ -329,8 +321,8 @@ class AddLesson extends Component {
                                 placeholder='Add image url...'
                                 value={this.state.currentImageUrl}
                                 onChange={this.onChange}
-                                className='mb-1 mr-1'
-                                style={{width: '30vw', display: 'inline'}} />
+                                className='mb-1 mr-1 sat-input'
+                                style={{display: 'inline'}} />
                             <Button
                                 size='sm'
                                 color='primary'
@@ -365,9 +357,9 @@ class AddLesson extends Component {
                     <FormGroup style={{
                             border: '1px solid grey',
                             borderRadius: '2%',
-                            padding: '2%',
-                            width: '40vw'
-                        }}>
+                            padding: '2%'
+                        }}
+                        className='sat-container'>
                         <h2>Add Single Answer Test Question</h2>
                         <Input
                             type='text'
@@ -375,8 +367,7 @@ class AddLesson extends Component {
                             placeholder='Add question...'
                             value={currentSatQuestion}
                             onChange={this.onChange}
-                            className='mb-1'
-                            style={{width: '30vw'}} />
+                            className='mb-1 sat-input' />
                         <br />
                         <Input
                             type='text'
@@ -384,8 +375,8 @@ class AddLesson extends Component {
                             placeholder='Add some answer to question...'
                             value={currentSatAnswer}
                             onChange={this.onChange}
-                            className='mb-1 mr-1'
-                            style={{width: '30vw', display: 'inline'}} />
+                            className='mb-1 mr-1 sat-input'
+                            style={{display: 'inline'}} />
                         <Button
                             size='sm'
                             color='primary'
@@ -433,8 +424,8 @@ class AddLesson extends Component {
                                 onChange={this.onChange}
                                 min={0}
                                 max={ (currentSatAllAnswers.length == 0) ? 0 : (currentSatAllAnswers.length - 1) }
-                                className='mb-1'
-                                style={{width: '30vw', display: 'inline'}} />
+                                className='mb-1  sat-input'
+                                style={{display: 'inline'}} />
                         </FormGroup>
                         { addSatExerciseError ?
                             <span style={{
