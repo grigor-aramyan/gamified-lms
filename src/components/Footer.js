@@ -10,12 +10,12 @@ export default class Footer extends Component {
             <Row
                 className='footer-row'
                 style={{
-                    backgroundColor: 'black',
+                    backgroundColor: 'gray',
                     marginTop: '2vh'
                 }}>
                 <Col xs='4' className='pt-2'>
                     <img
-                        src='/images/logo.png'
+                        src='/images/logo_clean_transparent.png'
                         style={{
                            width: '60px',
                            height: '60px' 

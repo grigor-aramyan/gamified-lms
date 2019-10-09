@@ -173,6 +173,19 @@ class LoginView extends Component {
                             </Form>
                         </div> : null
                     }
+                    { isAuthenticated ?
+                        <div
+                            style={{
+                                textAlign: 'center'
+                            }}>
+                            <img
+                                style={{
+                                    marginTop: '20vh'
+                                }}
+                                src='/images/logo_with_chit_transparent.png' />
+                        </div>
+                    : null
+                    }
                 </Container>
             </div>
         );
