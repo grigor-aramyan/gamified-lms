@@ -179,7 +179,7 @@ class AddLesson extends Component {
             imageUrls
         } = this.state;
 
-        if (currentImageUrl && currentImageUrl.startsWith('http://') && currentImageUrl.includes('.')) {
+        if (currentImageUrl && (currentImageUrl.startsWith('http://') || currentImageUrl.startsWith('https://')) && currentImageUrl.includes('.')) {
             let data = imageUrls;
             data.unshift(currentImageUrl);
 

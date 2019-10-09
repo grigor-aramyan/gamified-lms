@@ -343,8 +343,6 @@ class LessonView extends Component {
                                 { videos.length > 0 ?
                                     <Carousel
                                         activeIndex={videosActiveIndex}
-                                        next={this.nextVideo}
-                                        previous={this.previousVideo}
                                         className='mb-2'
                                         >
                                         <CarouselIndicators items={videos} activeIndex={videosActiveIndex} onClickHandler={this.goToVideoIndex} />
