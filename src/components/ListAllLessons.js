@@ -71,7 +71,7 @@ class ListAllLessons extends Component {
                         }
 
                         return (
-                            <Col key={l.id} xs={4}>
+                            <Col key={l.id} xs={12} sm={6} md={4}>
                                 <Card
                                     className='mb-2'>
                                     <CardImg top width='100%' src={avatarSrc} />
