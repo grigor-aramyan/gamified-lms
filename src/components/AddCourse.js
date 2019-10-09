@@ -100,10 +100,7 @@ class AddCourse extends Component {
                     : null
                 }
                 <Form
-                    style={{
-                        width: '25vw',
-                        marginLeft: '25vw'
-                    }}>
+                    className='add-course-form'>
                     <Input
                         type='text'
                         name='title'

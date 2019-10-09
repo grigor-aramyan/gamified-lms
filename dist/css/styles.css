@@ -11,6 +11,10 @@
 }
 
 @media only screen and (max-width: 479px) {
+    .add-course-form {
+        width: 80vw;
+    }
+
     .footer-row {
         position: static;
         height: 20vh;
@@ -31,6 +35,10 @@
 }
 
 @media only screen and (min-width: 480px) {
+    .add-course-form {
+        width: 80vw;
+    }
+
     .footer-row {
         position: static;
         height: 20vh;
@@ -51,6 +59,11 @@
 }
 
 @media only screen and (min-width: 768px) {
+    .add-course-form {
+        width: 25vw;
+        margin-left: 25vw;
+    }
+
     .login-form {
         width: 25vw;
         text-align: center;
