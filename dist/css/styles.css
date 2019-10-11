@@ -11,6 +11,11 @@
 }
 
 @media only screen and (max-width: 479px) {
+    .lesson-video-iframe-sizes {
+        width: 90vw;
+        height: 315;
+    }
+
     .sat-container {
         width: 80vw;
     }
@@ -43,6 +48,11 @@
 }
 
 @media only screen and (min-width: 480px) {
+    .lesson-video-iframe-sizes {
+        width: 90vw;
+        height: 315;
+    }
+
     .sat-input {
         width: 50vw;
     }
@@ -71,6 +81,11 @@
 }
 
 @media only screen and (min-width: 768px) {
+    .lesson-video-iframe-sizes {
+        width: 560;
+        height: 315;
+    }
+
     .main-content-input {
         width: 40vw;
     }

@@ -308,8 +308,7 @@ class LessonView extends Component {
                     key={index}
                     >
                     <iframe
-                        width="560"
-                        height="315"
+                        className='lesson-video-iframe-sizes'
                         src={v}
                         frameBorder="0"
                         allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
