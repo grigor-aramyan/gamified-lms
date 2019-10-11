@@ -37,7 +37,7 @@ export default class Footer extends Component {
                             }}
                             className='mr-2'
                         />
-                        + 374 00 00 00 00
+                        +86 15611261080
                     </Row>
                     <Row>
                         <img
@@ -48,9 +48,9 @@ export default class Footer extends Component {
                             }}
                             className='mr-2'
                         />
-                        info@nidha-learning.com
+                        rishi@omchit.org
                     </Row>
-                    <Row>&copy;2019, Nidha Learning. All rights reserved.</Row>
+                    <Row>&copy;2019, Chit Learning. All rights reserved.</Row>
                 </Col>
             </Row>
         );
