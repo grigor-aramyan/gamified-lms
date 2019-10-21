@@ -204,12 +204,32 @@ class AddLesson extends Component {
                 && currentVideoUrl.startsWith('https://www.youtube.com')
                 && currentVideoUrl.includes('.')) {
             let data = videoUrls;
-            data.unshift(currentVideoUrl);
 
-            this.setState({
-                currentVideoUrl: '',
-                videoUrls: data
-            });
+            let processedUri = '';
+            if (currentVideoUrl.includes('embed/')) {
+                processedUri = currentVideoUrl;
+
+                data.unshift(processedUri);
+
+                this.setState({
+                    currentVideoUrl: '',
+                    videoUrls: data
+                });
+            } else if (currentVideoUrl.includes('watch?v=')) {
+                processedUri = currentVideoUrl.replace('watch?v=', 'embed/');
+
+                data.unshift(processedUri);
+
+                this.setState({
+                    currentVideoUrl: '',
+                    videoUrls: data
+                });
+            } else {
+                this.setState({
+                    addLessonError: 'Video Url looks weird. Check, please!'
+                });
+            }
+
         } else {
             this.setState({
                 addLessonError: 'Video Url looks weird. Check, please!'
