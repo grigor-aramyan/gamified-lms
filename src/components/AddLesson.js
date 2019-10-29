@@ -201,12 +201,13 @@ class AddLesson extends Component {
         } = this.state;
 
         if (currentVideoUrl
-                && currentVideoUrl.startsWith('https://www.youtube.com')
-                && currentVideoUrl.includes('.')) {
+                && (currentVideoUrl.startsWith('https://www.youtube.com')
+                || currentVideoUrl.startsWith('https://youtu.be')
+                || currentVideoUrl.startsWith('https://m.youtube.com'))) {
             let data = videoUrls;
 
             let processedUri = '';
-            if (currentVideoUrl.includes('embed/')) {
+            if (currentVideoUrl.startsWith('https://www.youtube.com') && currentVideoUrl.includes('embed/')) {
                 processedUri = currentVideoUrl;
 
                 data.unshift(processedUri);
@@ -215,8 +216,31 @@ class AddLesson extends Component {
                     currentVideoUrl: '',
                     videoUrls: data
                 });
-            } else if (currentVideoUrl.includes('watch?v=')) {
-                processedUri = currentVideoUrl.replace('watch?v=', 'embed/');
+            } else if (currentVideoUrl.startsWith('https://www.youtube.com') && currentVideoUrl.includes('watch?v=')) {
+                const splitted = currentVideoUrl.split('watch?v=')[1];
+                if (splitted.includes('&')) {
+                    processedUri = `https://www.youtube.com/embed/${splitted.split('&')[0]}`;
+                } else {
+                    processedUri = currentVideoUrl.replace('watch?v=', 'embed/');
+                }
+
+                data.unshift(processedUri);
+
+                this.setState({
+                    currentVideoUrl: '',
+                    videoUrls: data
+                });
+            } else if (currentVideoUrl.startsWith('https://youtu.be')) {
+                processedUri = `https://www.youtube.com/embed/${currentVideoUrl.split('.be/')[1]}`;
+
+                data.unshift(processedUri);
+
+                this.setState({
+                    currentVideoUrl: '',
+                    videoUrls: data
+                });
+            } else if (currentVideoUrl.startsWith('https://m.youtube.com')) {
+                processedUri = `https://www.youtube.com/embed/${currentVideoUrl.split('watch?v=')[1]}`;
 
                 data.unshift(processedUri);
 
