@@ -19,10 +19,10 @@ const API_URI = baseUri + '/api';
 export const TEACHER_LOGIN_ERROR = 'TEACHER_LOGIN_ERROR';
 export const LEARNER_LOGIN_ERROR = 'LEARNER_LOGIN_ERROR';
 
-export const loginInit = ({ email, password }) => (dispatch, getState) => {
+export const loginInit = ({ email, password, kind }) => (dispatch, getState) => {
     dispatch({ type: USER_LOADING });
 
-    const body = { email, password };
+    const body = { email, password, kind };
 
     const uri = `${API_URI}/auth`;
 

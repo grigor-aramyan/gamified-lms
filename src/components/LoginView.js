@@ -58,7 +58,8 @@ class LoginView extends Component {
             } else {
                 const newTeacher = {
                     email: teacherEmail,
-                    password: teacherPassword
+                    password: teacherPassword,
+                    kind: 'Teacher'
                 };
 
                 this.props.loginInit(newTeacher);
@@ -70,7 +71,8 @@ class LoginView extends Component {
             } else {
                 const newLearner = {
                     email: learnerEmail,
-                    password: learnerPassword
+                    password: learnerPassword,
+                    kind: 'Learner'
                 };
                 this.props.loginInit(newLearner);
                 this.setState({ learnerError: '' });

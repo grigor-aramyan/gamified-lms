@@ -14,13 +14,17 @@ const router = express.Router();
 // @desc Login user
 // @access Public
 router.post('/', function(req, res) {
-    const { email, password } = req.body;
+    const { email, password, kind } = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ msg: 'Email and Password required' });
     }
 
-    User.findOne({ email })
+    if (!kind) {
+        return res.status(400).json({ msg: 'Bad request!' });
+    }
+
+    User.findOne({ email, kind })
         .then(user => {
             if (!user) return res.status(400).json({ msg: 'User does not exist' });
 
