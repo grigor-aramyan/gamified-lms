@@ -14,28 +14,53 @@ import {
     CardTitle
 } from 'reactstrap';
 
-import { createLessonOngoing } from '../actions/lessonOngoingActions';
+import { createLessonOngoing, getLessonOngoings } from '../actions/lessonOngoingActions';
 
 class ListAllLessons extends Component {
 
-    state = {
-        lessonOngoingCount: 0,
-        addLessonOngoingStatus: ''
-    }
-
     componentDidMount() {
         if (!this.props.isTeacher) {
-            this.setState({ lessonOngoingCount: this.props.allLessonOngoings.length });
+            this.props.getLessonOngoings();
         }
     }
 
     componentDidUpdate() {
-        if (!this.props.isTeacher && (this.props.allLessonOngoings.length > this.state.lessonOngoingCount)) {
+        if (!this.props.isTeacher && this.state.onCreatingLessonOngoing && (this.props.allLessonOngoings.length > this.state.lessonOngoingCount)) {
+            const {
+                allLessonOngoings
+            } = this.props;
+
+            const mapped = allLessonOngoings.map(l => {
+                return l.lessonId;
+            });
+
             this.setState({
-                lessonOngoingCount: this.props.allLessonOngoings.length,
-                addLessonOngoingStatus: 'New lesson ongoing added!'
+                lessonOngoingCount: allLessonOngoings.length,
+                addLessonOngoingStatus: 'New lesson ongoing added!',
+                onCreatingLessonOngoing: false,
+                lessonOngoingsIds: mapped
+            });
+        } else if (!this.props.isTeacher && (this.props.allLessonOngoings.length > this.state.lessonOngoingCount)) {
+            const {
+                allLessonOngoings
+            } = this.props;
+
+            const mapped = allLessonOngoings.map(l => {
+                return l.lessonId;
+            });
+            
+            this.setState({
+                lessonOngoingsIds: mapped,
+                lessonOngoingCount: allLessonOngoings.length
             });
         }
+    }
+
+    state = {
+        lessonOngoingCount: -1,
+        addLessonOngoingStatus: '',
+        lessonOngoingsIds: [],
+        onCreatingLessonOngoing: false
     }
     
     onCreateLessonOngoing = (lessonId) => {
@@ -43,6 +68,9 @@ class ListAllLessons extends Component {
             lessonId
         }
 
+        this.setState({
+            onCreatingLessonOngoing: true
+        });
         this.props.createLessonOngoing(data);
     }
 
@@ -53,6 +81,10 @@ class ListAllLessons extends Component {
             error,
             toggleLessonForNewCourse
         } = this.props;
+
+        const {
+            lessonOngoingsIds
+        } = this.state;
 
         return(
             <Container>
@@ -68,6 +100,22 @@ class ListAllLessons extends Component {
                             avatarSrc = l.imageUris[0];
                         } else {
                             avatarSrc = '/images/lesson_image_placeholder.png';
+                        }
+
+                        let enrollBtnStyle = {};
+                        if ((lessonOngoingsIds && lessonOngoingsIds.includes(l.id))) {
+                            enrollBtnStyle = {
+                                backgroundColor: 'lime',
+                                border: 'none',
+                                padding: '1em 3em',
+                                pointerEvents: 'none'
+                            };
+                        } else {
+                            enrollBtnStyle = {
+                                backgroundColor: 'deepskyblue',
+                                border: 'none',
+                                padding: '1em 3em'
+                            };
                         }
 
                         return (
@@ -114,14 +162,9 @@ class ListAllLessons extends Component {
                                         </CardText>
                                         { !isTeacher ?
                                             <Button
-                                                style={{
-                                                    backgroundColor: 'deepskyblue',
-                                                    //color: 'grey',
-                                                    border: 'none',
-                                                    padding: '1em 3em'
-                                                }}
+                                                style={ enrollBtnStyle }
                                                 onClick={ () => { this.onCreateLessonOngoing(l.id) } }>
-                                                    Enroll
+                                                    { (lessonOngoingsIds && lessonOngoingsIds.includes(l.id)) ? 'Enrolled' : 'Enroll' }
                                             </Button>
                                         : null
                                         }
@@ -160,7 +203,8 @@ ListAllLessons.propTypes = {
     isTeacher: PropTypes.bool.isRequired,
     createLessonOngoing: PropTypes.func.isRequired,
     allLessonOngoings: PropTypes.array.isRequired,
-    toggleLessonForNewCourse: PropTypes.func
+    toggleLessonForNewCourse: PropTypes.func,
+    getLessonOngoings: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -169,5 +213,6 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-    createLessonOngoing
+    createLessonOngoing,
+    getLessonOngoings
 })(ListAllLessons);
