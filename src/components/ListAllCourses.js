@@ -15,27 +15,61 @@ import {
 } from 'reactstrap';
 
 import { getCourses } from '../actions/courseActions';
-import { createCourseOngoing } from '../actions/courseOngoingActions';
+import { createCourseOngoing, getCourseOngoings } from '../actions/courseOngoingActions';
 
 class ListAllCourses extends Component {
     componentDidMount() {
         this.props.getCourses();
-
-        this.setState({ courseOngoingsCount: this.props.allCourseOngoings.length });
+        
+        if (!this.props.isTeacher) {
+            this.props.getCourseOngoings();
+        }
     }
 
     componentDidUpdate() {
-        if (this.state.courseOngoingsCount < this.props.allCourseOngoings.length) {
+        if (!this.props.isTeacher && this.state.onCreatingCourseOngoing && (this.state.courseOngoingsCount < this.props.allCourseOngoings.length)) {
+            const {
+                allCourseOngoings
+            } = this.props;
+
+            const mapped = allCourseOngoings.map(c => {
+                return c.courseId;
+            });
+
             this.setState({
                 courseOngoingsCount: this.props.allCourseOngoings.length,
-                addCourseOngoingStatus: 'Enrolled'
+                addCourseOngoingStatus: 'Enrolled',
+                onCreatingLessonOngoing: false,
+                courseOngoingsIds: mapped
+            });
+        } else if (!this.props.isTeacher && (this.state.courseOngoingsCount < this.props.allCourseOngoings.length)) {
+            const {
+                allCourseOngoings
+            } = this.props;
+
+            const mapped = allCourseOngoings.map(c => {
+                return c.courseId;
+            });
+            
+            this.setState({
+                courseOngoingsIds: mapped,
+                courseOngoingsCount: allCourseOngoings.length
             });
         }
     }
 
     state = {
-        courseOngoingsCount: 0,
-        addCourseOngoingStatus: ''
+        courseOngoingsCount: -1,
+        addCourseOngoingStatus: '',
+        courseOngoingsIds: [],
+        onCreatingCourseOngoing: false
+    }
+
+    onCourseEnroll = (courseId) => {
+        this.setState({
+            onCreatingCourseOngoing: true
+        });
+        this.createCourseOngoing({ courseId });
     }
 
     render() {
@@ -44,6 +78,10 @@ class ListAllCourses extends Component {
             isTeacher,
             createCourseOngoing
         } = this.props;
+
+        const {
+            courseOngoingsIds
+        } = this.state;
 
         return(
             <Container>
@@ -54,6 +92,22 @@ class ListAllCourses extends Component {
                 }
                 <Row>
                     { allCourses.map(c => {
+                        let enrollBtnStyle = {};
+                        if (courseOngoingsIds && courseOngoingsIds.includes(c.id)) {
+                            enrollBtnStyle = {
+                                backgroundColor: 'lime',
+                                border: 'none',
+                                padding: '1em 3em',
+                                pointerEvents: 'none'
+                            };
+                        } else {
+                            enrollBtnStyle = {
+                                backgroundColor: 'deepskyblue',
+                                border: 'none',
+                                padding: '1em 3em'
+                            };
+                        }
+
                         return (
                             <Col key={c.id} xs={12} sm={6} md={4}>
                                 <Card
@@ -98,14 +152,9 @@ class ListAllCourses extends Component {
                                         </CardText>
                                         { !isTeacher ?
                                             <Button
-                                                style={{
-                                                    backgroundColor: 'deepskyblue',
-                                                    //color: 'grey',
-                                                    border: 'none',
-                                                    padding: '1em 3em'
-                                                }}
-                                                onClick={ () => { createCourseOngoing({ courseId: c.id }) } }>
-                                                Enroll
+                                                style={ enrollBtnStyle }
+                                                onClick={ () => { this.onCourseEnroll(c.id) } }>
+                                                { (courseOngoingsIds && courseOngoingsIds.includes(c.id)) ? 'Enrolled' : 'Enroll' }
                                             </Button>
                                         : null
                                         }
@@ -126,7 +175,8 @@ ListAllCourses.propTypes = {
     allCourses: PropTypes.array.isRequired,
     isTeacher: PropTypes.bool.isRequired,
     createCourseOngoing: PropTypes.func.isRequired,
-    allCourseOngoings: PropTypes.array.isRequired
+    allCourseOngoings: PropTypes.array.isRequired,
+    getCourseOngoings: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -137,5 +187,6 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
     getCourses,
-    createCourseOngoing
+    createCourseOngoing,
+    getCourseOngoings
 })(ListAllCourses);

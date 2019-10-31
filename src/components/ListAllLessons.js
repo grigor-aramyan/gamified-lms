@@ -103,7 +103,7 @@ class ListAllLessons extends Component {
                         }
 
                         let enrollBtnStyle = {};
-                        if ((lessonOngoingsIds && lessonOngoingsIds.includes(l.id))) {
+                        if (lessonOngoingsIds && lessonOngoingsIds.includes(l.id)) {
                             enrollBtnStyle = {
                                 backgroundColor: 'lime',
                                 border: 'none',
