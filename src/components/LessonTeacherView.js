@@ -427,9 +427,10 @@ class LessonTeacherView extends Component {
                                 <Button
                                     onClick={this.onEnroll}
                                     style={{
-                                        backgroundColor: 'gold',
-                                        color: 'grey',
-                                        border: 'none'
+                                        backgroundColor: 'deepskyblue',
+                                        //color: 'grey',
+                                        border: 'none',
+                                        padding: '1em 3em'
                                     }}
                                     className='mr-2 mt-2'>
                                     Enroll

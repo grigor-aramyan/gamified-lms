@@ -115,9 +115,10 @@ class ListAllLessons extends Component {
                                         { !isTeacher ?
                                             <Button
                                                 style={{
-                                                    backgroundColor: 'gold',
-                                                    color: 'grey',
-                                                    border: 'none'
+                                                    backgroundColor: 'deepskyblue',
+                                                    //color: 'grey',
+                                                    border: 'none',
+                                                    padding: '1em 3em'
                                                 }}
                                                 onClick={ () => { this.onCreateLessonOngoing(l.id) } }>
                                                     Enroll
