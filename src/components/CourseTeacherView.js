@@ -12,7 +12,7 @@ import {
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getExtendedCourseById, updateCourse } from '../actions/courseActions';
 import { getLessons } from '../actions/lessonActions';
-import { createCourseOngoing } from '../actions/courseOngoingActions';
+import { createCourseOngoing, getCourseOngoings } from '../actions/courseOngoingActions';
 
 // Components
 import Header from './Header';
@@ -53,7 +53,8 @@ class CourseTeacherView extends Component {
             isTeacher,
             currentTeacher,
             currentCourseForTeacher,
-            allLessons
+            allLessons,
+            allCourseOngoings
         } = this.props;
 
         if (isAuthenticated && isTeacher && currentCourseForTeacher &&
@@ -75,7 +76,9 @@ class CourseTeacherView extends Component {
                 currentCoursePrice,
                 currentCourseLessons,
                 deletingLessonIds,
-                addingLessonIds
+                addingLessonIds,
+                ongoingsInitialFetch,
+                courseOngoingsIds
             } = this.state;
     
             if (title == currentCourseTitle && description == currentCourseDesc
@@ -99,6 +102,23 @@ class CourseTeacherView extends Component {
                     serverClientSynched: false
                 });
             }
+
+            if (isAuthenticated && !isTeacher && !ongoingsInitialFetch) {
+                this.setState({
+                    ongoingsInitialFetch: true
+                });
+                this.props.getCourseOngoings();
+            }
+
+            if (isAuthenticated && !isTeacher && (courseOngoingsIds.length < allCourseOngoings.length)) {
+                const mapped = allCourseOngoings.map(c => {
+                    return c.courseId;
+                });
+    
+                this.setState({
+                    courseOngoingsIds: mapped
+                });
+            }
         }
     }
 
@@ -112,7 +132,9 @@ class CourseTeacherView extends Component {
         serverClientSynched: false,
         deletingLessonIds: [],
         addingLessonIds: [],
-        spinnerOpened: false
+        spinnerOpened: false,
+        ongoingsInitialFetch: false,
+        courseOngoingsIds: []
     }
 
     onDeleteLessonFromCourse = (lessonId) => {
@@ -231,7 +253,8 @@ class CourseTeacherView extends Component {
             serverClientSynched,
             deletingLessonIds,
             addingLessonIds,
-            spinnerOpened
+            spinnerOpened,
+            courseOngoingsIds
         } = this.state;
 
         let titleInput = null;
@@ -426,6 +449,22 @@ class CourseTeacherView extends Component {
             };
         }
 
+        let enrollBtnStyle = {};
+        if (courseOngoingsIds && currentCourseForTeacher && courseOngoingsIds.includes(currentCourseForTeacher.id)) {
+            enrollBtnStyle = {
+                backgroundColor: 'lime',
+                border: 'none',
+                padding: '1em 3em',
+                pointerEvents: 'none'
+            };
+        } else {
+            enrollBtnStyle = {
+                backgroundColor: 'deepskyblue',
+                border: 'none',
+                padding: '1em 3em'
+            };
+        }
+
         return(
             <div>
                 <Header />
@@ -440,14 +479,9 @@ class CourseTeacherView extends Component {
                                 <hr />
                                 <Button
                                     onClick={this.onEnroll}
-                                    style={{
-                                        backgroundColor: 'deepskyblue',
-                                        //color: 'grey',
-                                        border: 'none',
-                                        padding: '1em 3em'
-                                    }}
+                                    style={ enrollBtnStyle }
                                     className='mr-2 mt-2'>
-                                    Enroll
+                                    { (courseOngoingsIds && currentCourseForTeacher && courseOngoingsIds.includes(currentCourseForTeacher.id)) ? 'Enrolled' : 'Enroll' }
                                 </Button>
                                 { currentCourseForTeacher ?
                                     <span
@@ -558,7 +592,9 @@ CourseTeacherView.propTypes = {
     allLessons: PropTypes.array,
     getLessons: PropTypes.func.isRequired,
     updateCourse: PropTypes.func.isRequired,
-    createCourseOngoing: PropTypes.func.isRequired
+    createCourseOngoing: PropTypes.func.isRequired,
+    getCourseOngoings: PropTypes.func.isRequired,
+    allCourseOngoings: PropTypes.array.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -568,6 +604,7 @@ const mapStateToProps = (state) => ({
     currentTeacher: state.auth.teacher,
     currentCourseForTeacher: state.course.currentCourseForTeacher,
     allLessons: state.lesson.allLessons,
+    allCourseOngoings: state.courseOngoing.allCourseOngoings
 });
 
 export default connect(mapStateToProps, {
@@ -576,5 +613,6 @@ export default connect(mapStateToProps, {
     getExtendedCourseById,
     getLessons,
     updateCourse,
-    createCourseOngoing
+    createCourseOngoing,
+    getCourseOngoings
 })(CourseTeacherView);
