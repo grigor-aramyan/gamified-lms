@@ -11,7 +11,7 @@ import {
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getLessonForTeacherById, updateLesson } from '../actions/lessonActions';
-import { createLessonOngoing } from '../actions/lessonOngoingActions';
+import { createLessonOngoing, getLessonOngoings } from '../actions/lessonOngoingActions';
 import { getSATExercisesByLessonId, updateLessonSatBase } from '../actions/exerciseActions';
 
 import Header from './Header';
@@ -76,8 +76,41 @@ class LessonTeacherView extends Component {
             }
         }
 
-        if (this.props.allLessonOngoings.length > this.state.allLessonOngoingsCount) {
+        const {
+            isAuthenticated,
+            isTeacher,
+            allLessonOngoings,
+            getLessonOngoings
+        } = this.props;
+
+        const {
+            onCreatingLessonOngoing,
+            allLessonOngoingsCount,
+            ongoingsInitialFetch
+        } = this.state;
+
+        if (isAuthenticated && !isTeacher && !ongoingsInitialFetch) {
+            this.setState({
+                ongoingsInitialFetch: true
+            });
+            getLessonOngoings();
+        }
+
+        if (isAuthenticated && !isTeacher && onCreatingLessonOngoing && (allLessonOngoingsCount < allLessonOngoings.length)) {
+            this.setState({
+                onCreatingLessonOngoing: false
+            });
+            
             window.open('/lesson_ongoings', '_self');
+        } else if (isAuthenticated && !isTeacher && (allLessonOngoingsCount < allLessonOngoings.length)) {
+            const mapped = allLessonOngoings.map(l => {
+                return l.lessonId;
+            });
+
+            this.setState({
+                lessonOngoingsIds: mapped,
+                allLessonOngoingsCount: allLessonOngoings.length
+            });
         }
     }
 
@@ -89,7 +122,7 @@ class LessonTeacherView extends Component {
         currentLessonPrice: null,
         saveChangesError: '',
         serverClientSynched: false,
-        allLessonOngoingsCount: 0,
+        allLessonOngoingsCount: -1,
         satsOpened: false,
         deletedQuestionIds: [],
         currentSatQuestion: '',
@@ -99,7 +132,10 @@ class LessonTeacherView extends Component {
         currentSatRightAnswerIndex: 0,
         satExercisesAll: [],
         saveExerciseChangesError: '',
-        satUpdateStatus: ''
+        satUpdateStatus: '',
+        lessonOngoingsIds: [],
+        onCreatingLessonOngoing: false,
+        ongoingsInitialFetch: false
     }
 
     onSaveChanges = () => {
@@ -144,6 +180,9 @@ class LessonTeacherView extends Component {
             lessonId: currentLessonId
         }
 
+        this.setState({
+            onCreatingLessonOngoing: true
+        });
         this.props.createLessonOngoing(body);
     }
 
@@ -271,7 +310,8 @@ class LessonTeacherView extends Component {
             addSatExerciseError,
             satExercisesAll,
             saveExerciseChangesError,
-            satUpdateStatus
+            satUpdateStatus,
+            lessonOngoingsIds
         } = this.state;
 
         let contentInput = null;
@@ -412,6 +452,24 @@ class LessonTeacherView extends Component {
             priceInput = null;
         }
 
+        let enrollBtnStyle = {};
+        if (lessonOngoingsIds && currentLessonForTeacher && lessonOngoingsIds.includes(currentLessonForTeacher.id)) {
+            enrollBtnStyle = {
+                backgroundColor: 'lime',
+                border: 'none',
+                padding: '1em 3em',
+                pointerEvents: 'none'
+            };
+        } else {
+            enrollBtnStyle = {
+                backgroundColor: 'deepskyblue',
+                border: 'none',
+                padding: '1em 3em'
+            };
+        }
+
+        console.log(JSON.stringify(lessonOngoingsIds));
+
         return(
             <div>
                 <Header />
@@ -426,14 +484,9 @@ class LessonTeacherView extends Component {
                                 <hr />
                                 <Button
                                     onClick={this.onEnroll}
-                                    style={{
-                                        backgroundColor: 'deepskyblue',
-                                        //color: 'grey',
-                                        border: 'none',
-                                        padding: '1em 3em'
-                                    }}
+                                    style={ enrollBtnStyle }
                                     className='mr-2 mt-2'>
-                                    Enroll
+                                    { (lessonOngoingsIds && currentLessonForTeacher && lessonOngoingsIds.includes(currentLessonForTeacher.id)) ? 'Enrolled' : 'Enroll' }
                                 </Button>
                                 { currentLessonForTeacher ?
                                     <span
@@ -772,7 +825,8 @@ LessonTeacherView.propTypes = {
     allLessonOngoings: PropTypes.array.isRequired,
     getSATExercisesByLessonId: PropTypes.func.isRequired,
     allSats: PropTypes.array.isRequired,
-    updateLessonSatBase: PropTypes.func.isRequired
+    updateLessonSatBase: PropTypes.func.isRequired,
+    getLessonOngoings: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -792,5 +846,6 @@ export default connect(mapStateToProps, {
     updateLesson,
     createLessonOngoing,
     getSATExercisesByLessonId,
-    updateLessonSatBase
+    updateLessonSatBase,
+    getLessonOngoings
 })(LessonTeacherView);
