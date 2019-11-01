@@ -468,8 +468,6 @@ class LessonTeacherView extends Component {
             };
         }
 
-        console.log(JSON.stringify(lessonOngoingsIds));
-
         return(
             <div>
                 <Header />
@@ -482,23 +480,28 @@ class LessonTeacherView extends Component {
                         { (isAuthenticated && !isTeacher) ?
                             <div>
                                 <hr />
-                                <Button
-                                    onClick={this.onEnroll}
-                                    style={ enrollBtnStyle }
-                                    className='mr-2 mt-2'>
-                                    { (lessonOngoingsIds && currentLessonForTeacher && lessonOngoingsIds.includes(currentLessonForTeacher.id)) ? 'Enrolled' : 'Enroll' }
-                                </Button>
-                                { currentLessonForTeacher ?
-                                    <span
-                                        style={{
-                                            border: '1px solid grey',
-                                            borderRadius: '30%',
-                                            padding: '0.3em'
-                                        }}>
-                                            { '$' + currentLessonForTeacher.price }
-                                    </span>
-                                : '$0'
-                                }
+                                <div
+                                    style={{
+                                        marginLeft: '35vw'
+                                    }}>
+                                    <Button
+                                        onClick={this.onEnroll}
+                                        style={ enrollBtnStyle }
+                                        className='mr-2 mt-2'>
+                                        { (lessonOngoingsIds && currentLessonForTeacher && lessonOngoingsIds.includes(currentLessonForTeacher.id)) ? 'Enrolled' : 'Enroll' }
+                                    </Button>
+                                    { currentLessonForTeacher ?
+                                        <span
+                                            style={{
+                                                border: '1px solid grey',
+                                                borderRadius: '30%',
+                                                padding: '0.3em'
+                                            }}>
+                                                { '$' + currentLessonForTeacher.price }
+                                        </span>
+                                    : '$0'
+                                    }
+                                </div>
                             </div>
                         : null
                         }

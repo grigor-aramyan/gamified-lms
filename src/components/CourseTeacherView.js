@@ -477,23 +477,28 @@ class CourseTeacherView extends Component {
                         { (isAuthenticated && !isTeacher) ?
                             <div>
                                 <hr />
-                                <Button
-                                    onClick={this.onEnroll}
-                                    style={ enrollBtnStyle }
-                                    className='mr-2 mt-2'>
-                                    { (courseOngoingsIds && currentCourseForTeacher && courseOngoingsIds.includes(currentCourseForTeacher.id)) ? 'Enrolled' : 'Enroll' }
-                                </Button>
-                                { currentCourseForTeacher ?
-                                    <span
-                                        style={{
-                                            border: '1px solid grey',
-                                            borderRadius: '30%',
-                                            padding: '0.3em'
-                                        }}>
-                                            { '$' + currentCourseForTeacher.price }
-                                    </span>
-                                : '$0'
-                                }
+                                <div
+                                    style={{
+                                        marginLeft: '35vw'
+                                    }}>
+                                    <Button
+                                        onClick={this.onEnroll}
+                                        style={ enrollBtnStyle }
+                                        className='mr-2 mt-2'>
+                                        { (courseOngoingsIds && currentCourseForTeacher && courseOngoingsIds.includes(currentCourseForTeacher.id)) ? 'Enrolled' : 'Enroll' }
+                                    </Button>
+                                    { currentCourseForTeacher ?
+                                        <span
+                                            style={{
+                                                border: '1px solid grey',
+                                                borderRadius: '30%',
+                                                padding: '0.3em'
+                                            }}>
+                                                { '$' + currentCourseForTeacher.price }
+                                        </span>
+                                    : '$0'
+                                    }
+                                </div>
                             </div>
                         : null
                         }
