@@ -11,6 +11,10 @@
 }
 
 @media only screen and (max-width: 479px) {
+    .enroll-btn-centered {
+        margin-left: 15vw;
+    }
+
     .lesson-video-iframe-sizes {
         width: 90vw;
         height: 315;
@@ -48,6 +52,10 @@
 }
 
 @media only screen and (min-width: 480px) {
+    .enroll-btn-centered {
+        margin-left: 30vw;
+    }
+
     .lesson-video-iframe-sizes {
         width: 90vw;
         height: 315;
@@ -81,6 +89,10 @@
 }
 
 @media only screen and (min-width: 768px) {
+    .enroll-btn-centered {
+        margin-left: 35vw;
+    }
+
     .lesson-video-iframe-sizes {
         width: 560;
         height: 315;

@@ -478,9 +478,7 @@ class CourseTeacherView extends Component {
                             <div>
                                 <hr />
                                 <div
-                                    style={{
-                                        marginLeft: '35vw'
-                                    }}>
+                                    className='enroll-btn-centered'>
                                     <Button
                                         onClick={this.onEnroll}
                                         style={ enrollBtnStyle }
