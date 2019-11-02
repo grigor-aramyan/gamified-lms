@@ -6,7 +6,11 @@ import {
     Button,
     FormGroup,
     Input,
-    Label
+    Label,
+    Carousel,
+    CarouselItem,
+    CarouselControl,
+    CarouselIndicators
 } from 'reactstrap';
 
 import { loadLocalToken, loadUser } from '../actions/authActions';
@@ -135,7 +139,87 @@ class LessonTeacherView extends Component {
         satUpdateStatus: '',
         lessonOngoingsIds: [],
         onCreatingLessonOngoing: false,
-        ongoingsInitialFetch: false
+        ongoingsInitialFetch: false,
+        imagesActiveIndex: 0,
+        imagesAnimating: false,
+        videosActiveIndex: 0,
+        videosAnimating: false,
+        satsVisible: false,
+    }
+
+    onExitingImages = () => {
+        this.setState({
+            imagesAnimating: true
+        });
+    }
+    
+    onExitedImages = () => {
+        this.setState({
+            imagesAnimating: false
+        });
+    }
+    
+    nextImage = () => {
+        const {
+            currentLessonForTeacher
+        } = this.props;
+
+        if (this.state.imagesAnimating) return;
+        const nextIndex = this.state.imagesActiveIndex === currentLessonForTeacher.imageUris.length - 1 ? 0 : this.state.imagesActiveIndex + 1;
+        this.setState({ imagesActiveIndex: nextIndex });
+    }
+    
+    previousImage = () => {
+        const {
+            currentLessonForTeacher
+        } = this.props;
+
+        if (this.state.imagesAnimating) return;
+        const nextIndex = this.state.imagesActiveIndex === 0 ? currentLessonForTeacher.imageUris.length - 1 : this.state.imagesActiveIndex - 1;
+        this.setState({ imagesActiveIndex: nextIndex });
+    }
+    
+    goToImagesIndex = (newIndex) => {
+        if (this.state.imagesAnimating) return;
+        this.setState({ imagesActiveIndex: newIndex });
+    }
+
+    /////////////////////////
+    onExitingVideos = () => {
+        this.setState({
+            videosAnimating: true
+        });
+    }
+    
+    onExitedVideos = () => {
+        this.setState({
+            videosAnimating: false
+        });
+    }
+    
+    nextVideo = () => {
+        const {
+            currentLessonForTeacher
+        } = this.props;
+
+        if (this.state.videosAnimating) return;
+        const nextIndex = this.state.videosActiveIndex === currentLessonForTeacher.videoUris.length - 1 ? 0 : this.state.videosActiveIndex + 1;
+        this.setState({ videosActiveIndex: nextIndex });
+    }
+    
+    previousVideo = () => {
+        const {
+            currentLessonForTeacher
+        } = this.props;
+
+        if (this.state.videosAnimating) return;
+        const nextIndex = this.state.videosActiveIndex === 0 ? currentLessonForTeacher.videoUris.length - 1 : this.state.videosActiveIndex - 1;
+        this.setState({ videosActiveIndex: nextIndex });
+    }
+    
+    goToVideoIndex = (newIndex) => {
+        if (this.state.videosAnimating) return;
+        this.setState({ videosActiveIndex: newIndex });
     }
 
     onSaveChanges = () => {
@@ -191,6 +275,15 @@ class LessonTeacherView extends Component {
         this.setState({
             satsOpened: true
         });
+    }
+
+    onGetSatsForCurrentLesson = () => {
+        if(!this.props.gettingSats) {
+            this.props.getSATExercisesByLessonId(this.props.currentLessonForTeacher.id);
+            this.setState({
+                satsVisible: true
+            });
+        }
     }
 
     onDeleteQuestion = (questionId) => {
@@ -295,6 +388,8 @@ class LessonTeacherView extends Component {
         } = this.props;
 
         const {
+            imagesActiveIndex,
+            videosActiveIndex,
             currentLessonTitle,
             currentLessonDesc,
             currentLessonContent,
@@ -311,7 +406,8 @@ class LessonTeacherView extends Component {
             satExercisesAll,
             saveExerciseChangesError,
             satUpdateStatus,
-            lessonOngoingsIds
+            lessonOngoingsIds,
+            satsVisible
         } = this.state;
 
         let contentInput = null;
@@ -468,6 +564,47 @@ class LessonTeacherView extends Component {
             };
         }
 
+        let imageHrefs = [];
+        let videoHrefs = [];
+        if (currentLessonForTeacher) {
+            imageHrefs = currentLessonForTeacher.imageUris;
+            videoHrefs = currentLessonForTeacher.videoUris;
+        }
+
+        const images = imageHrefs.map((i, index) => {
+            return(
+                <CarouselItem
+                    onExiting={this.onExitingImages}
+                    onExited={this.onExitedImages}
+                    key={index}
+                    >
+                    <img
+                        src={i}
+                        width="560"
+                        height="315"
+                        />
+                </CarouselItem>
+            );
+        });
+
+        const videos = videoHrefs.map((v, index) => {
+            return(
+                <CarouselItem
+                    onExiting={this.onExitingVideos}
+                    onExited={this.onExitedVideos}
+                    key={index}
+                    >
+                    <iframe
+                        className='lesson-video-iframe-sizes'
+                        src={v}
+                        frameBorder="0"
+                        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen>
+                    </iframe>
+                </CarouselItem>
+            );
+        });
+
         return(
             <div>
                 <Header />
@@ -475,8 +612,34 @@ class LessonTeacherView extends Component {
                     <Container>
                         { titleInput }
                         { descInput }
+                        { (isTeacher && (videos.length > 0)) ?
+                            <Carousel
+                                activeIndex={videosActiveIndex}
+                                className='mb-2'
+                                >
+                                <CarouselIndicators items={videos} activeIndex={videosActiveIndex} onClickHandler={this.goToVideoIndex} />
+                                {videos}
+                                <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previousVideo} />
+                                <CarouselControl direction="next" directionText="Next" onClickHandler={this.nextVideo} />
+                            </Carousel>
+                        : null
+                        }
                         { contentInput }
                         { priceInput }
+                        { (isTeacher && (images.length > 0)) ?
+                            <Carousel
+                                activeIndex={imagesActiveIndex}
+                                next={this.nextImage}
+                                previous={this.previousImage}
+                                className='mt-2 mb-2'
+                                >
+                                <CarouselIndicators items={images} activeIndex={imagesActiveIndex} onClickHandler={this.goToImagesIndex} />
+                                {images}
+                                <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previousImage} />
+                                <CarouselControl direction="next" directionText="Next" onClickHandler={this.nextImage} />
+                            </Carousel>
+                        : null
+                        }
                         { (isAuthenticated && !isTeacher) ?
                             <div>
                                 <hr />
@@ -804,6 +967,88 @@ class LessonTeacherView extends Component {
                             </div>
                         : null
                         }
+                        { (isAuthenticated && isTeacher && currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId !== currentTeacher.id)) ?
+                            <div>
+                                <Button
+                                    onClick={this.onGetSatsForCurrentLesson}
+                                    className='btn btn-info mb-2'>
+                                    Get Exercises
+                                </Button>
+                                { (allSats && satsVisible && currentLessonForTeacher && currentTeacher) ?
+                                    <div
+                                        style={{
+                                            border: '1px solid grey',
+                                            borderRadius: '2%',
+                                            padding: '2%',
+                                            width: '40vw'
+                                        }}
+                                        className='mt-1 mb-2'>
+                                        <h4>SAT Questions</h4>
+                                        { allSats.length > 0 ?
+                                            <ol>
+                                                { allSats.map((s, index) => {
+                                                    const rightAnswerIndex = s.rightAnswerIndex;
+                                                    const selectedAnswer = satAnswers.filter(a => {
+                                                        return(a.split(':::')[0] == s.id);
+                                                    });
+                                                    let selectedAnswerIndex = null;
+                                                    if (selectedAnswer.length > 0) {
+                                                        selectedAnswerIndex = selectedAnswer[0].split(':::')[1];
+                                                    }
+
+                                                    const inputName = `answer-${s.id}`;
+
+                                                    return(
+                                                        <li key={index}>
+                                                            <p style={{
+                                                                fontStyle: 'italic'
+                                                            }}>{s.question}</p>
+                                                            <ul style={{ listStyle: 'none' }}>
+                                                                {s.answers.map((a, i) => {
+                                                                    let styles = null;
+                                                                    if ((rightAnswerIndex == i) &&
+                                                                        (selectedAnswerIndex == i)) {
+                                                                        styles = {
+                                                                            border: '1px solid green',
+                                                                            padding: '1%'
+                                                                        }
+                                                                    } else {
+                                                                        styles = {}
+                                                                    }
+                                                                    
+                                                                    return(
+                                                                        <li key={i} style={styles} className='mb-1'>
+                                                                            <input
+                                                                                type='radio'
+                                                                                name={inputName}
+                                                                                id='sat-answer'
+                                                                                value={i}
+                                                                                className='mr-1'
+                                                                                //onClick={() => {this.onSelectSatAnswer(s.id, i)}}
+                                                                                />
+                                                                            <label
+                                                                                htmlFor='sat-answer'>
+                                                                                {a}
+                                                                            </label>
+                                                                        </li>
+                                                                    );
+                                                                })}
+                                                            </ul>
+                                                            <hr />
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ol>
+                                        : <span style={{ fontStyle: 'italic' }}>
+                                            No SAT questions for this lesson!
+                                        </span>
+                                        }
+                                    </div>
+                                : null
+                                }
+                            </div>
+                        : null
+                        }
                     </Container>
                 : <NotAuthenticated />
                 }
@@ -827,7 +1072,8 @@ LessonTeacherView.propTypes = {
     getSATExercisesByLessonId: PropTypes.func.isRequired,
     allSats: PropTypes.array.isRequired,
     updateLessonSatBase: PropTypes.func.isRequired,
-    getLessonOngoings: PropTypes.func.isRequired
+    getLessonOngoings: PropTypes.func.isRequired,
+    gettingSats: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -837,7 +1083,8 @@ const mapStateToProps = (state) => ({
     currentLessonForTeacher: state.lesson.currentLessonForTeacher,
     currentTeacher: state.auth.teacher,
     allLessonOngoings: state.lessonOngoing.allLessonOngoings,
-    allSats: state.exercise.allSATExercisesForCurrentLesson
+    allSats: state.exercise.allSATExercisesForCurrentLesson,
+    gettingSats: state.exercise.gettingSATExercises
 });
 
 export default connect(mapStateToProps, {
