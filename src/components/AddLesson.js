@@ -12,6 +12,7 @@ import {
 
 import { createLesson, CREATE_LESSON_ERROR } from '../actions/lessonActions';
 import { createManySATExercises } from '../actions/exerciseActions';
+import AddAudioExercise from './AddAudioExercise';
 
 class AddLesson extends Component {
     componentDidMount() {
@@ -532,6 +533,7 @@ class AddLesson extends Component {
                             </div>
                         : null }
                     </FormGroup>
+                    <AddAudioExercise />
                     { this.state.addLessonError ?
                         <span style={{
                             display: 'block',
