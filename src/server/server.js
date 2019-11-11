@@ -17,6 +17,7 @@ import courseRoutes from './routes/courseRoutes';
 import lessonOngoingRoutes from './routes/lessonOngoingRoutes';
 import courseOngoingRoutes from './routes/courseOngoingRoutes';
 import exerciseRoutes from './routes/exerciseRoutes';
+import audioExercisesRoutes from './routes/audioExerciseRoutes';
 
 // components
 import App from '../components/App';
@@ -41,6 +42,7 @@ server.use('/api/courses', courseRoutes);
 server.use('/api/lesson_ongoings', lessonOngoingRoutes);
 server.use('/api/course_ongoings', courseOngoingRoutes);
 server.use('/api/exercises', exerciseRoutes);
+server.use('/api/exercises', audioExercisesRoutes);
 
 server.get('/*', (req, res) => {
     const store = createStore(reducers);
