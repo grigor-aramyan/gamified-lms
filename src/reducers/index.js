@@ -9,6 +9,7 @@ import courseOngoingReducer from './courseOngoingReducer';
 import learnerReducer from './learnerReducer';
 import teacherReducer from './teacherReducer';
 import exerciseReducer from './exerciseReducer';
+import audioExerciseReducer from './audioExerciseReducer';
 
 export default combineReducers({
     auth: authReducer,
@@ -19,5 +20,6 @@ export default combineReducers({
     courseOngoing: courseOngoingReducer,
     learner: learnerReducer,
     teacher: teacherReducer,
-    exercise: exerciseReducer
+    exercise: exerciseReducer,
+    audioExercise: audioExerciseReducer
 });
