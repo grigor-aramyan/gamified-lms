@@ -79,7 +79,14 @@ class AddLesson extends Component {
         currentSatAnswer: '',
         currentSatAllAnswers: [],
         currentSatRightAnswerIndex: 0,
-        initialLastLesson: null
+        initialLastLesson: null,
+        
+        aqExercisesAll: [],
+        currentAqQuestion: '',
+        currentAqAnswer: '',
+        currentAqAllAnswers: [],
+        currentAqRightAnswerIndex: 0,
+        addAqExerciseError: ''
     }
 
     addSatExerciseToAll = () => {
@@ -133,6 +140,62 @@ class AddLesson extends Component {
             });
         }
     }
+
+    // ************ AQ questions start **********************
+
+    addAqExerciseToAll = () => {
+        const {
+            currentAqQuestion,
+            currentAqAllAnswers,
+            currentAqRightAnswerIndex
+        } = this.state;
+
+        if (!currentAqQuestion) {
+            this.setState({
+                addAqExerciseError: 'Audio question required!'
+            });
+        } else if (currentAqAllAnswers.length < 2) {
+            this.setState({
+                addAqExerciseError: 'All AQ questions should have at least 2 answers!'
+            });
+        } else {
+            const o = {
+                audioQuestion: currentAqQuestion,
+                answerImages: currentAqAllAnswers,
+                rightAnswerIndex: currentAqRightAnswerIndex
+            }
+
+            let allAqs = this.state.aqExercisesAll;
+            allAqs.unshift(o);
+
+            this.setState({
+                aqExercisesAll: allAqs,
+                currentAqQuestion: '',
+                currentAqAllAnswers: [],
+                currentAqRightAnswerIndex: 0,
+                addAqExerciseError: ''
+            });
+        }
+    }
+
+    addAqExerciseAnswer = () => {
+        const currentAnswer = this.state.currentAqAnswer;
+        if (currentAnswer) {
+            let answers = this.state.currentAqAllAnswers;
+            answers.unshift(currentAnswer);
+            this.setState({
+                currentAqAllAnswers: answers,
+                currentAqAnswer: '',
+                addAqExerciseError: ''
+            });
+        } else {
+            this.setState({
+                addAqExerciseError: 'AQ can\'t have empty answer'
+            });
+        }
+    }
+
+    // ********************* AQ questions end *********************
 
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
@@ -273,7 +336,13 @@ class AddLesson extends Component {
             currentSatRightAnswerIndex,
             currentSatAllAnswers,
             addSatExerciseError,
-            satExercisesAll
+            satExercisesAll,
+            aqExercisesAll,
+            currentAqQuestion,
+            currentAqAnswer,
+            currentAqAllAnswers,
+            currentAqRightAnswerIndex,
+            addAqExerciseError
         } = this.state;
 
         const inputsStyle = {
@@ -533,7 +602,15 @@ class AddLesson extends Component {
                             </div>
                         : null }
                     </FormGroup>
-                    <AddAudioExercise />
+                    <AddAudioExercise
+                        aqExercisesAll = { aqExercisesAll }
+                        currentAqQuestion = { currentAqQuestion }
+                        currentAqAnswer = { currentAqAnswer }
+                        currentAqAllAnswers = { currentAqAllAnswers }
+                        currentAqRightAnswerIndex = { currentAqRightAnswerIndex }
+                        addAqExerciseError = { addAqExerciseError }
+                        addAqExerciseToAll = { this.addAqExerciseToAll }
+                        addAqExerciseAnswer = { this.addAqExerciseAnswer } />
                     { this.state.addLessonError ?
                         <span style={{
                             display: 'block',

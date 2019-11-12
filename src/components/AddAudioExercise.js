@@ -18,14 +18,23 @@ class AddAudioExercise extends Component {
                 }}
                 className='sat-container'>
                 <h2>Add Audio Question</h2>
-                
+                <p>{ this.props.currentAqQuestion }</p>
             </FormGroup>
         );
     }
 }
 
 AddAudioExercise.propTypes = {
-    error: PropTypes.object.isRequired
+    error: PropTypes.object.isRequired,
+
+    aqExercisesAll: PropTypes.array.isRequired,
+    currentAqQuestion: PropTypes.string.isRequired,
+    currentAqAnswer: PropTypes.string.isRequired,
+    currentAqAllAnswers: PropTypes.array.isRequired,
+    currentAqRightAnswerIndex: PropTypes.number.isRequired,
+    addAqExerciseError: PropTypes.string.isRequired,
+    addAqExerciseToAll: PropTypes.func.isRequired,
+    addAqExerciseAnswer: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
