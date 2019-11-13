@@ -89,11 +89,21 @@ class AddLesson extends Component {
         addAqExerciseError: ''
     }
 
+    onChooseAqRightAnswerIndex = (index) => {
+        this.setState({
+            currentAqRightAnswerIndex: index
+        });
+    }
+
     onAddCurrentAqQuestion = (qUrl) => {
-        console.log(qUrl);
-        
         this.setState({
             currentAqQuestion: qUrl
+        });
+    }
+
+    onAddAqExerciseError = (errorMsg) => {
+        this.setState({
+            addAqExerciseError: errorMsg
         });
     }
 
@@ -186,14 +196,12 @@ class AddLesson extends Component {
         }
     }
 
-    addAqExerciseAnswer = () => {
-        const currentAnswer = this.state.currentAqAnswer;
-        if (currentAnswer) {
+    addAqExerciseAnswer = (imageUri) => {
+        if (imageUri) {
             let answers = this.state.currentAqAllAnswers;
-            answers.unshift(currentAnswer);
+            answers.unshift(imageUri);
             this.setState({
                 currentAqAllAnswers: answers,
-                currentAqAnswer: '',
                 addAqExerciseError: ''
             });
         } else {
@@ -347,7 +355,6 @@ class AddLesson extends Component {
             satExercisesAll,
             aqExercisesAll,
             currentAqQuestion,
-            currentAqAnswer,
             currentAqAllAnswers,
             currentAqRightAnswerIndex,
             addAqExerciseError
@@ -613,13 +620,14 @@ class AddLesson extends Component {
                     <AddAudioExercise
                         aqExercisesAll = { aqExercisesAll }
                         currentAqQuestion = { currentAqQuestion }
-                        currentAqAnswer = { currentAqAnswer }
                         currentAqAllAnswers = { currentAqAllAnswers }
                         currentAqRightAnswerIndex = { currentAqRightAnswerIndex }
                         addAqExerciseError = { addAqExerciseError }
                         addAqExerciseToAll = { this.addAqExerciseToAll }
                         addAqExerciseAnswer = { this.addAqExerciseAnswer }
-                        onAddCurrentAqQuestion = { this.onAddCurrentAqQuestion } />
+                        onAddCurrentAqQuestion = { this.onAddCurrentAqQuestion }
+                        onAddAqExerciseError = { this.onAddAqExerciseError }
+                        onChooseAqRightAnswerIndex = { this.onChooseAqRightAnswerIndex } />
                     { this.state.addLessonError ?
                         <span style={{
                             display: 'block',

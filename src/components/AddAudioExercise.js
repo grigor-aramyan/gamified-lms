@@ -5,7 +5,9 @@ import {
     Button,
     Container,
     FormGroup,
-    Form
+    Form,
+    Input,
+    Label
 } from 'reactstrap';
 
 let recorder = null;
@@ -14,7 +16,8 @@ class AddAudioExercise extends Component {
     state = {
         recording: false,
         currentRecordedAudioQuestion: null,
-        stream: null
+        stream: null,
+        currentAqAnswerImage: ''
     }
 
     createDownloadLink = blob => {
@@ -74,11 +77,46 @@ class AddAudioExercise extends Component {
         });
     }
 
+    addAqExerciseAnswer = () => {
+        const {
+            currentAqAnswerImage
+        } = this.state;
+
+        if (!currentAqAnswerImage) {
+
+            this.props.onAddAqExerciseError('Provide some image URI, please!')
+        
+        } else if (!currentAqAnswerImage.endsWith('png')
+            && !currentAqAnswerImage.endsWith('jpg')
+            && !currentAqAnswerImage.endsWith('jpeg')) {
+        
+                this.props.onAddAqExerciseError('Image URI does not look correct');
+        
+        } else {
+            this.props.addAqExerciseAnswer(currentAqAnswerImage);
+            this.setState({
+                currentAqAnswerImage: ''
+            });
+        }
+    }
+
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
     render() {
         const {
             currentRecordedAudioQuestion,
-            recording
+            recording,
+            currentAqAnswerImage
         } = this.state;
+
+        const {
+            addAqExerciseError,
+            currentAqRightAnswerIndex,
+            currentAqAllAnswers,
+            aqExercisesAll
+        } = this.props;
 
         return(
             <FormGroup
@@ -117,6 +155,132 @@ class AddAudioExercise extends Component {
                                 }} />
                         </a>
                     }
+                    <br />
+                    <Input
+                        type='text'
+                        name='currentAqAnswerImage'
+                        placeholder='Add some image URL...'
+                        value={currentAqAnswerImage}
+                        onChange={this.onChange}
+                        className='mb-1 mr-1 mt-2 sat-input'
+                        style={{display: 'inline'}} />
+                    <Button
+                        size='sm'
+                        color='primary'
+                        outline
+                        onClick={this.addAqExerciseAnswer}>
+                            +
+                    </Button>
+                    <br />
+                    { currentAqAllAnswers.length > 0 ?
+                        <ul style={{ listStyle: 'none' }}>
+                            { currentAqAllAnswers.map((a, index) => {
+                                let styles = null;
+                                if (index == currentAqRightAnswerIndex) {
+                                    styles = {
+                                        border: '1px solid green',
+                                        padding: '1%',
+                                        display: 'inline'
+                                    }
+                                } else {
+                                    styles = { display: 'inline' };
+                                }
+
+                                return(
+                                    <li key={index} style={styles}>
+                                        <img src={a} style={{
+                                            width: '35px',
+                                            height: '35px'
+                                        }} />
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    : null
+                    }
+                    <FormGroup>
+                        <Label
+                            for='rightAnswerIndexId'
+                            style={{
+                                display: 'block'
+                            }}>
+                            Right answer index
+                        </Label>
+                        <Input
+                            id='rightAnswerIndexId'
+                            type='number'
+                            name='currentAqRightAnswerIndex'
+                            placeholder='Right answer index (starting from 0)...'
+                            value={currentAqRightAnswerIndex}
+                            onChange={ (e) => this.props.onChooseAqRightAnswerIndex(parseInt(e.target.value)) }
+                            min={0}
+                            max={ (currentAqAllAnswers.length == 0) ? 0 : (currentAqAllAnswers.length - 1) }
+                            className='mb-1  sat-input'
+                            style={{display: 'inline'}} />
+                    </FormGroup>
+                    { addAqExerciseError ?
+                        <span style={{
+                            display: 'block',
+                            color: 'red',
+                            fontSize: '90%',
+                            fontStyle: 'italic'
+                        }}>{addAqExerciseError}</span> 
+                    : null
+                    }
+                    <Button
+                        size='sm'
+                        color='primary'
+                        outline
+                        onClick={this.props.addAqExerciseToAll}
+                        style={{
+                            display: 'block'
+                        }}>
+                            Add Audio Exercise
+                    </Button>
+                    { (aqExercisesAll.length > 0) ?
+                        <div>
+                            <h4>All Audio questions</h4>
+                            <ul>
+                                {aqExercisesAll.map((s, index) => {
+                                    return(
+                                        <li key={index} style={{
+                                            border: '1px solid grey',
+                                            padding: '2%'
+                                            }}
+                                            className='mb-1'>
+                                            <audio
+                                                src={ s.audioQuestion }
+                                                controls
+                                                style={{ verticalAlign: 'middle' }}>
+                                            </audio>
+                                            <ul>
+                                                {s.answerImages.map((an, i) => {
+                                                    let styles2 = null;
+                                                    if (i == s.rightAnswerIndex) {
+                                                        styles2 = {
+                                                            border: '1px solid green',
+                                                            padding: '1%',
+                                                            display: 'inline'
+                                                        }
+                                                    } else {
+                                                        styles2 = { display: 'inline' };
+                                                    }
+                                                    return(
+                                                        <li key={i} style={styles2}>
+                                                            <img src={an} style={{
+                                                                width: '35px',
+                                                                height: '35px'
+                                                            }} />
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    : null }
                 </FormGroup>
             </FormGroup>
         );
@@ -128,13 +292,14 @@ AddAudioExercise.propTypes = {
 
     aqExercisesAll: PropTypes.array.isRequired,
     currentAqQuestion: PropTypes.string.isRequired,
-    currentAqAnswer: PropTypes.string.isRequired,
     currentAqAllAnswers: PropTypes.array.isRequired,
     currentAqRightAnswerIndex: PropTypes.number.isRequired,
     addAqExerciseError: PropTypes.string.isRequired,
     addAqExerciseToAll: PropTypes.func.isRequired,
     addAqExerciseAnswer: PropTypes.func.isRequired,
-    onAddCurrentAqQuestion: PropTypes.func.isRequired
+    onAddCurrentAqQuestion: PropTypes.func.isRequired,
+    onAddAqExerciseError: PropTypes.func.isRequired,
+    onChooseAqRightAnswerIndex: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
