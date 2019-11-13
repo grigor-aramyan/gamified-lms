@@ -78,6 +78,7 @@ server.get('/*', (req, res) => {
             </head>
             <body>
                 <div id="root">${initialMarkup}</div>
+                <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
                 <script src="/main.js"></script>
             </body>
         </html>
