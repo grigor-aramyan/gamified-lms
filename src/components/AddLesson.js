@@ -89,6 +89,14 @@ class AddLesson extends Component {
         addAqExerciseError: ''
     }
 
+    onAddCurrentAqQuestion = (qUrl) => {
+        console.log(qUrl);
+        
+        this.setState({
+            currentAqQuestion: qUrl
+        });
+    }
+
     addSatExerciseToAll = () => {
         const {
             currentSatQuestion,
@@ -610,7 +618,8 @@ class AddLesson extends Component {
                         currentAqRightAnswerIndex = { currentAqRightAnswerIndex }
                         addAqExerciseError = { addAqExerciseError }
                         addAqExerciseToAll = { this.addAqExerciseToAll }
-                        addAqExerciseAnswer = { this.addAqExerciseAnswer } />
+                        addAqExerciseAnswer = { this.addAqExerciseAnswer }
+                        onAddCurrentAqQuestion = { this.onAddCurrentAqQuestion } />
                     { this.state.addLessonError ?
                         <span style={{
                             display: 'block',

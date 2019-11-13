@@ -19,7 +19,24 @@ class AddAudioExercise extends Component {
 
     createDownloadLink = blob => {
         const url = URL.createObjectURL(blob);
+        const filename = url.split('/')[url.split('/').length - 1];
         
+        var metadata = {
+            contentType: 'audio/mp3'
+        };
+
+        const storageRef = firebase.storage().ref();
+        const uploadTask = storageRef.child(`aqs/${filename}.mp3`).put(blob, metadata);
+        uploadTask.on('state_changed', (snapshot) => {
+
+        }, (error) => {
+
+        }, () => {
+            uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                this.props.onAddCurrentAqQuestion(downloadURL);
+            });
+        });
+
         this.setState({
             currentRecordedAudioQuestion: url
         });
@@ -50,7 +67,7 @@ class AddAudioExercise extends Component {
                 const input = audioContext.createMediaStreamSource(stream);
                 
                 recorder = new Recorder(input, {
-                    numChannels: 2
+                    numChannels: 1
                 }) 
                 
                 recorder.record();
@@ -116,7 +133,8 @@ AddAudioExercise.propTypes = {
     currentAqRightAnswerIndex: PropTypes.number.isRequired,
     addAqExerciseError: PropTypes.string.isRequired,
     addAqExerciseToAll: PropTypes.func.isRequired,
-    addAqExerciseAnswer: PropTypes.func.isRequired
+    addAqExerciseAnswer: PropTypes.func.isRequired,
+    onAddCurrentAqQuestion: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({

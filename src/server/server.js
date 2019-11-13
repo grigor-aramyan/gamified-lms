@@ -79,6 +79,29 @@ server.get('/*', (req, res) => {
             <body>
                 <div id="root">${initialMarkup}</div>
                 <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+            
+                <!-- The core Firebase JS SDK is always required and must be listed first -->
+                <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
+                <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-storage.js"></script>
+
+                <!-- TODO: Add SDKs for Firebase products that you want to use
+                    https://firebase.google.com/docs/web/setup#available-libraries -->
+
+                <script>
+                    // Your web app's Firebase configuration
+                    var firebaseConfig = {
+                        apiKey: "AIzaSyBxsAa9QSdaFUDYpFwg7ba05t4tzplrr2w",
+                        authDomain: "chit-learning.firebaseapp.com",
+                        databaseURL: "https://chit-learning.firebaseio.com",
+                        projectId: "chit-learning",
+                        storageBucket: "chit-learning.appspot.com",
+                        messagingSenderId: "709658193354",
+                        appId: "1:709658193354:web:add688eb9670ffde107333"
+                    };
+                    // Initialize Firebase
+                    firebase.initializeApp(firebaseConfig);
+                </script>
+
                 <script src="/main.js"></script>
             </body>
         </html>
