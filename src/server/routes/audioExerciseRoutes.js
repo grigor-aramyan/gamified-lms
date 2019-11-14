@@ -27,7 +27,7 @@ router.post('/audioQuestion/updateLessonAqBase', auth, function(req, res) {
         return res.status(400).json({ msg: 'No data to work with!' });
 
     const exercisesWithEmptyAnswers = exercises.filter(e => {
-        const answers = e.answers;
+        const answers = e.answerImages;
         if (!Array.isArray(answers) || (answers.length < 2)) {
             return true;
         } else {
@@ -39,7 +39,7 @@ router.post('/audioQuestion/updateLessonAqBase', auth, function(req, res) {
         return res.status(400).json({ msg: 'All exercises should have at least 2 answers!' });
 
     const exercisesWithWrongRightAnswerIndex = exercises.filter(e => {
-        const answers = e.answers;
+        const answers = e.answerImages;
         const rightAnswerIndex = e.rightAnswerIndex;
 
         if ((rightAnswerIndex > (answers.length - 1)) || (rightAnswerIndex < 0)) {
@@ -188,7 +188,7 @@ router.post('/audioQuestion', auth, function(req, res) {
     if (!exercises || (exercises.length == 0)) return res.status(400).json({ msg: 'Bad request!' });
 
     const exercisesWithEmptyAnswers = exercises.filter(e => {
-        const answers = e.answers;
+        const answers = e.answerImages;
         if (!Array.isArray(answers) || (answers.length < 2)) {
             return true;
         } else {
@@ -200,7 +200,7 @@ router.post('/audioQuestion', auth, function(req, res) {
         return res.status(400).json({ msg: 'All exercises should have at least 2 answers!' });
 
     const exercisesWithWrongRightAnswerIndex = exercises.filter(e => {
-        const answers = e.answers;
+        const answers = e.answerImages;
         const rightAnswerIndex = e.rightAnswerIndex;
 
         if ((rightAnswerIndex > (answers.length - 1)) || (rightAnswerIndex < 0)) {
