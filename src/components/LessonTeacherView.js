@@ -17,9 +17,11 @@ import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getLessonForTeacherById, updateLesson } from '../actions/lessonActions';
 import { createLessonOngoing, getLessonOngoings } from '../actions/lessonOngoingActions';
 import { getSATExercisesByLessonId, updateLessonSatBase } from '../actions/exerciseActions';
+import { getAQExercisesByLessonId, updateLessonAqBase } from '../actions/audioExerciseActions';
 
 import Header from './Header';
 import NotAuthenticated from './NotAuthenticated';
+import AddAudioExercise from './AddAudioExercise';
 
 class LessonTeacherView extends Component {
     componentDidMount() {
@@ -145,6 +147,17 @@ class LessonTeacherView extends Component {
         videosActiveIndex: 0,
         videosAnimating: false,
         satsVisible: false,
+
+        aqsOpened: false,
+        deletedAudioQuestionIds: [],
+        currentAqQuestion: '',
+        currentAqAllAnswers: [],
+        addAqExerciseError: '',
+        currentAqRightAnswerIndex: 0,
+        aqExercisesAll: [],
+        aqUpdateStatus: '',
+        aqsVisible: false,
+        saveAudioExerciseChangesError: ''
     }
 
     onExitingImages = () => {
@@ -278,6 +291,7 @@ class LessonTeacherView extends Component {
     }
 
     onGetSatsForCurrentLesson = () => {
+        
         if(!this.props.gettingSats) {
             this.props.getSATExercisesByLessonId(this.props.currentLessonForTeacher.id);
             this.setState({
@@ -285,6 +299,156 @@ class LessonTeacherView extends Component {
             });
         }
     }
+
+    onGetExercisesForCurrentLessonForGuestTeacher = () => {
+        if(!this.props.gettingSats) {
+            this.props.getSATExercisesByLessonId(this.props.currentLessonForTeacher.id);
+            this.setState({
+                satsVisible: true
+            });
+        }
+
+        if(!this.props.gettingAqs) {
+            this.props.getAQExercisesByLessonId(this.props.currentLessonForTeacher.id);
+            this.setState({
+                aqsVisible: true
+            });
+        }
+    }
+
+    onGetExercisesForCurrentLesson = () => {
+        
+        this.props.getSATExercisesByLessonId(this.state.currentLessonId);
+        this.setState({
+            satsOpened: true
+        });
+        
+        this.props.getAQExercisesByLessonId(this.props.currentLessonForTeacher.id);
+        this.setState({
+            aqsOpened: true
+        });
+    }
+
+    // ****************** AQs methods start ***********************
+
+
+
+    onChooseAqRightAnswerIndex = (index) => {
+        this.setState({
+            currentAqRightAnswerIndex: index
+        });
+    }
+    
+    onAddCurrentAqQuestion = (qUrl) => {
+        this.setState({
+            currentAqQuestion: qUrl
+        });
+    }
+
+    onAddAqExerciseError = (errorMsg) => {
+        this.setState({
+            addAqExerciseError: errorMsg
+        });
+    }
+
+    onGetAqsForCurrentLesson = () => {
+        
+        if(!this.props.gettingAqs) {
+            this.props.getAQExercisesByLessonId(this.props.currentLessonForTeacher.id);
+            this.setState({
+                aqsVisible: true
+            });
+        }
+    }
+
+    onDeleteAudioQuestion = (questionId) => {
+        let intermediateList = this.state.deletedAudioQuestionIds;
+        intermediateList.push(questionId);
+        this.setState({
+            deletedAudioQuestionIds: intermediateList
+        });
+    }
+
+    addAqExerciseAnswer = (imageUri) => {
+
+        if (imageUri) {
+            let answers = this.state.currentAqAllAnswers;
+            answers.unshift(imageUri);
+            this.setState({
+                currentAqAllAnswers: answers,
+                addAqExerciseError: ''
+            });
+        } else {
+            this.setState({
+                addAqExerciseError: 'AQ can\'t have empty answer'
+            });
+        }
+    }
+
+    addAqExerciseToAll = () => {
+        const {
+            currentAqQuestion,
+            currentAqAllAnswers,
+            currentAqRightAnswerIndex
+        } = this.state;
+
+        if (!currentAqQuestion) {
+            this.setState({
+                addAqExerciseError: 'Audio question required!'
+            });
+        } else if (currentAqAllAnswers.length < 2) {
+            this.setState({
+                addAqExerciseError: 'All AQ questions should have at least 2 answers!'
+            });
+        } else {
+            const o = {
+                audioQuestion: currentAqQuestion,
+                answerImages: currentAqAllAnswers,
+                rightAnswerIndex: currentAqRightAnswerIndex
+            }
+
+            let allAqs = this.state.aqExercisesAll;
+            allAqs.unshift(o);
+
+            this.setState({
+                aqExercisesAll: allAqs,
+                currentAqQuestion: '',
+                currentAqAllAnswers: [],
+                currentAqRightAnswerIndex: 0,
+                addAqExerciseError: ''
+            });
+        }
+    }
+
+    onUpdateLessonAudioExercises = () => {
+        const {
+            aqExercisesAll,
+            deletedAudioQuestionIds,
+            currentLessonId
+        } = this.state;
+
+        if ((aqExercisesAll.length > 0) || (deletedAudioQuestionIds.length > 0)) {
+            const exercises = aqExercisesAll.map(s => {
+                return({
+                    ...s,
+                    lessonId: currentLessonId
+                });
+            });
+
+            this.props.updateLessonAqBase(deletedAudioQuestionIds, exercises);
+            this.setState({
+                aqUpdateStatus: '*** Exercises updated!',
+                aqExercisesAll: [],
+                deletedAudioQuestionIds: []
+            });
+        } else {
+            this.setState({
+                aqUpdateStatus: ''
+            });
+        }
+    }
+
+    // ***************** AQs methods end **************************
 
     onDeleteQuestion = (questionId) => {
         let intermediateList = this.state.deletedQuestionIds;
@@ -384,7 +548,8 @@ class LessonTeacherView extends Component {
             isTeacher,
             currentLessonForTeacher,
             currentTeacher,
-            allSats
+            allSats,
+            allAqs
         } = this.props;
 
         const {
@@ -407,7 +572,18 @@ class LessonTeacherView extends Component {
             saveExerciseChangesError,
             satUpdateStatus,
             lessonOngoingsIds,
-            satsVisible
+            satsVisible,
+
+            aqsOpened,
+            deletedAudioQuestionIds,
+            currentAqQuestion,
+            currentAqAllAnswers,
+            currentAqRightAnswerIndex,
+            addAqExerciseError,
+            aqExercisesAll,
+            aqsVisible,
+            aqUpdateStatus,
+            saveAudioExerciseChangesError
         } = this.state;
 
         let contentInput = null;
@@ -703,7 +879,7 @@ class LessonTeacherView extends Component {
                                 </Button>
                                 <br />
                                 <Button
-                                    onClick={this.onGetSatExercises}
+                                    onClick={this.onGetExercisesForCurrentLesson}
                                     style={{
                                         backgroundColor: 'gold',
                                         color: 'grey',
@@ -964,13 +1140,152 @@ class LessonTeacherView extends Component {
                                     </div>
                                 : null
                                 }
+                                { aqsOpened ?
+                                    (allAqs.length > 0) ?
+                                        <div>
+                                            <h4>-- Audio Questions --</h4>
+                                            <ol>
+                                                { allAqs.map(s => {
+                                                    const rightAnswerIndex = s.rightAnswerIndex;
+
+                                                    if (deletedAudioQuestionIds.includes(s.id)) {
+                                                        return(
+                                                            <p
+                                                                style={{
+                                                                    color: 'red',
+                                                                    fontStyle: 'italic'
+                                                                }}>
+                                                                    Deleted:
+                                                                <span
+                                                                    className='ml-1'
+                                                                    style={{
+                                                                        color: 'grey'
+                                                                    }}>
+                                                                    { s.id }
+                                                                </span>
+                                                            </p>
+                                                        );
+                                                    }
+
+                                                    return(
+                                                        <li key={s.id}>
+                                                            <audio
+                                                                src={ s.audioQuestion }
+                                                                controls
+                                                                style={{ verticalAlign: 'middle' }}>
+                                                            </audio>
+                                                            <ul
+                                                                style={{
+                                                                    marginLeft: '0px'
+                                                                }}
+                                                                className='mt-2 mb-3'>
+                                                                { s.answerImages.map((a, i) => {
+
+                                                                    let liStyles = {};
+                                                                    if (rightAnswerIndex == i) {
+                                                                        liStyles = {
+                                                                            backgroundColor: 'green',
+                                                                            padding: '2%',
+                                                                            display: 'inline'
+                                                                        };
+                                                                    } else {
+                                                                        liStyles = {
+                                                                            padding: '1%',
+                                                                            display: 'inline'
+                                                                        };
+                                                                    }
+
+                                                                    return(
+                                                                        <li key={i}
+                                                                            style={ liStyles }
+                                                                            className='mr-1'>
+                                                                            <img src={a} style={{
+                                                                                width: '50px',
+                                                                                height: 'auto'
+                                                                            }} />
+                                                                        </li>
+                                                                    );
+                                                                }) }
+                                                            </ul>
+                                                            <p
+                                                                style={{
+                                                                    fontStyle: 'italic',
+                                                                    color: 'red'
+                                                                }}>Delete this question:
+                                                                <Button
+                                                                    onClick={ () => this.onDeleteAudioQuestion(s.id) }
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        fontWeight: 'bold',
+                                                                        border: '1px solid grey',
+                                                                        backgroundColor: 'white',
+                                                                        fontSize: '80%'
+                                                                    }}
+                                                                    className='ml-1'>
+                                                                    X
+                                                                </Button>
+                                                            </p>
+                                                        </li>
+                                                    );
+                                                }) }
+                                            </ol>
+                                        </div>
+                                    : <p style={{ color: 'info' }}>No AQs for this lesson!</p>
+                                : null
+                                }
+                                { aqsOpened ?
+                                    <AddAudioExercise
+                                        aqExercisesAll = { aqExercisesAll }
+                                        currentAqQuestion = { currentAqQuestion }
+                                        currentAqAllAnswers = { currentAqAllAnswers }
+                                        currentAqRightAnswerIndex = { currentAqRightAnswerIndex }
+                                        addAqExerciseError = { addAqExerciseError }
+                                        addAqExerciseToAll = { this.addAqExerciseToAll }
+                                        addAqExerciseAnswer = { this.addAqExerciseAnswer }
+                                        onAddCurrentAqQuestion = { this.onAddCurrentAqQuestion }
+                                        onAddAqExerciseError = { this.onAddAqExerciseError }
+                                        onChooseAqRightAnswerIndex = { this.onChooseAqRightAnswerIndex } />
+                                : null
+                                }
+                                { aqsOpened ?
+                                    <div
+                                        className='mb-2'>
+                                        { saveAudioExerciseChangesError ?
+                                            <p
+                                                style={{
+                                                    color: 'red',
+                                                    fontStyle: 'italic'
+                                                }}>{ saveAudioExerciseChangesError }</p>
+                                        : null
+                                        }
+                                        { aqUpdateStatus ?
+                                            <p
+                                                style={{
+                                                    color: 'green'
+                                                }}>
+                                                { aqUpdateStatus }
+                                            </p>
+                                        : null
+                                        }
+                                        <Button
+                                            style={{
+                                                backgroundColor: 'lime',
+                                                color: 'white',
+                                                border: 'none'
+                                            }}
+                                            onClick={ this.onUpdateLessonAudioExercises }>
+                                            Save Audio Exercise Changes
+                                        </Button>
+                                    </div>
+                                : null
+                                }
                             </div>
                         : null
                         }
                         { (isAuthenticated && isTeacher && currentLessonForTeacher && currentTeacher && (currentLessonForTeacher.authorId !== currentTeacher.id)) ?
                             <div>
                                 <Button
-                                    onClick={this.onGetSatsForCurrentLesson}
+                                    onClick={this.onGetExercisesForCurrentLessonForGuestTeacher}
                                     className='btn btn-info mb-2'>
                                     Get Exercises
                                 </Button>
@@ -988,14 +1303,7 @@ class LessonTeacherView extends Component {
                                             <ol>
                                                 { allSats.map((s, index) => {
                                                     const rightAnswerIndex = s.rightAnswerIndex;
-                                                    const selectedAnswer = satAnswers.filter(a => {
-                                                        return(a.split(':::')[0] == s.id);
-                                                    });
-                                                    let selectedAnswerIndex = null;
-                                                    if (selectedAnswer.length > 0) {
-                                                        selectedAnswerIndex = selectedAnswer[0].split(':::')[1];
-                                                    }
-
+                                                    
                                                     const inputName = `answer-${s.id}`;
 
                                                     return(
@@ -1006,8 +1314,7 @@ class LessonTeacherView extends Component {
                                                             <ul style={{ listStyle: 'none' }}>
                                                                 {s.answers.map((a, i) => {
                                                                     let styles = null;
-                                                                    if ((rightAnswerIndex == i) &&
-                                                                        (selectedAnswerIndex == i)) {
+                                                                    if (rightAnswerIndex == i) {
                                                                         styles = {
                                                                             border: '1px solid green',
                                                                             padding: '1%'
@@ -1046,6 +1353,66 @@ class LessonTeacherView extends Component {
                                     </div>
                                 : null
                                 }
+                                { (allAqs && aqsVisible && currentLessonForTeacher && currentTeacher) ?
+                                    <div
+                                        style={{
+                                            border: '1px solid grey',
+                                            borderRadius: '2%',
+                                            padding: '2%',
+                                            width: '40vw'
+                                        }}
+                                        className='mt-1 mb-2'>
+                                        <h4>Audio Questions</h4>
+                                        { allAqs.length > 0 ?
+                                            <ol>
+                                                { allAqs.map((s, index) => {
+                                                    const rightAnswerIndex = s.rightAnswerIndex;
+
+                                                    return(
+                                                        <li key={index}>
+                                                            <audio
+                                                                src={ s.audioQuestion }
+                                                                controls
+                                                                style={{ verticalAlign: 'middle' }}>
+                                                            </audio>
+                                                            <ul style={{ listStyle: 'none' }}>
+                                                                {s.answerImages.map((a, i) => {
+                                                                    let styles = null;
+                                                                    if (rightAnswerIndex == i) {
+                                                                        styles = {
+                                                                            backgroundColor: 'green',
+                                                                            padding: '2%',
+                                                                            display: 'inline'
+                                                                        }
+                                                                    } else {
+                                                                        styles = {
+                                                                            padding: '1%',
+                                                                            display: 'inline'
+                                                                        }
+                                                                    }
+                                                                    
+                                                                    return(
+                                                                        <li key={i} style={styles} className='mr-1'>
+                                                                            <img src={a} style={{
+                                                                                width: '50px',
+                                                                                height: 'auto'
+                                                                            }} />
+                                                                        </li>
+                                                                    );
+                                                                })}
+                                                            </ul>
+                                                            <hr />
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ol>
+                                        : <span style={{ fontStyle: 'italic' }}>
+                                            No audio questions for this lesson!
+                                        </span>
+                                        }
+                                    </div>
+                                : null
+                                }
                             </div>
                         : null
                         }
@@ -1073,7 +1440,11 @@ LessonTeacherView.propTypes = {
     allSats: PropTypes.array.isRequired,
     updateLessonSatBase: PropTypes.func.isRequired,
     getLessonOngoings: PropTypes.func.isRequired,
-    gettingSats: PropTypes.bool.isRequired
+    gettingSats: PropTypes.bool.isRequired,
+    getAQExercisesByLessonId: PropTypes.func.isRequired,
+    allAqs: PropTypes.array.isRequired,
+    gettingAqs: PropTypes.bool.isRequired,
+    updateLessonAqBase: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -1084,7 +1455,9 @@ const mapStateToProps = (state) => ({
     currentTeacher: state.auth.teacher,
     allLessonOngoings: state.lessonOngoing.allLessonOngoings,
     allSats: state.exercise.allSATExercisesForCurrentLesson,
-    gettingSats: state.exercise.gettingSATExercises
+    gettingSats: state.exercise.gettingSATExercises,
+    allAqs: state.audioExercise.allAQExercisesForCurrentLesson,
+    gettingAqs: state.audioExercise.gettingAQExercises
 });
 
 export default connect(mapStateToProps, {
@@ -1095,5 +1468,7 @@ export default connect(mapStateToProps, {
     createLessonOngoing,
     getSATExercisesByLessonId,
     updateLessonSatBase,
-    getLessonOngoings
+    getLessonOngoings,
+    getAQExercisesByLessonId,
+    updateLessonAqBase
 })(LessonTeacherView);

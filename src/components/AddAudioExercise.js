@@ -138,7 +138,8 @@ class AddAudioExercise extends Component {
                             href='javascript:void(0)'
                             onClick={this.onStop}>
                             <img
-                                src='images/muted_icon.png'
+                                //src='images/muted_icon.png'
+                                src='https://cdn0.iconfinder.com/data/icons/computers-and-development/432/microphone-mute-512.png'
                                 style={{
                                     width: '50px',
                                     height: 'auto'
@@ -148,7 +149,8 @@ class AddAudioExercise extends Component {
                             href='javascript:void(0)'
                             onClick={this.onStartRecording}>
                             <img
-                                src='images/microphone_icon.png'
+                                //src='../images/microphone_icon.png'
+                                src='https://clip.cookdiary.net/sites/default/files/wallpaper/mic-clipart/227276/mic-clipart-purple-227276-6091547.png'
                                 style={{
                                     width: '50px',
                                     height: 'auto'
