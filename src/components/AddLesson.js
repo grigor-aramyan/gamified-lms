@@ -12,6 +12,7 @@ import {
 
 import { createLesson, CREATE_LESSON_ERROR } from '../actions/lessonActions';
 import { createManySATExercises } from '../actions/exerciseActions';
+import { createManyAQExercises } from '../actions/audioExerciseActions';
 import AddAudioExercise from './AddAudioExercise';
 
 class AddLesson extends Component {
@@ -58,7 +59,27 @@ class AddLesson extends Component {
                     currentSatAllAnswers: [],
                     currentSatRightAnswerIndex: 0            
                 });
-            }    
+            }
+
+            if (this.state.aqExercisesAll.length > 0) {
+                const allAqs = this.state.aqExercisesAll;
+                const allAqsFinished = allAqs.map(s => {
+                    return({
+                        ...s,
+                        lessonId: lastLessonId
+                    });
+                });
+
+                this.props.createManyAQExercises(allAqsFinished);
+                this.setState({
+                    aqExercisesAll: [],
+                    addAqExerciseError: '',
+                    currentAqQuestion: '',
+                    currentAqAnswer: '',
+                    currentAqAllAnswers: [],
+                    currentAqRightAnswerIndex: 0            
+                });
+            }
         }
     }
 
@@ -225,14 +246,15 @@ class AddLesson extends Component {
             price,
             videoUrls,
             imageUrls,
-            satExercisesAll
+            satExercisesAll,
+            aqExercisesAll
         } = this.state;
 
         if (!(title && description && content)) {
             this.setState({ addLessonError: 'Title, description and content required!' });
         } else if (price < 0) {
             this.setState({ addLessonError: 'Price can\'t be less then 0' });
-        } else if (satExercisesAll.length == 0) {
+        } else if ((satExercisesAll.length == 0) && (aqExercisesAll.length == 0)) {
             this.setState({ addLessonError: 'All lessons should have at least 1 question!' });
         } else {
             const newLesson = {
@@ -662,7 +684,8 @@ AddLesson.propTypes = {
     createLesson: PropTypes.func.isRequired,
     allLessonsCount: PropTypes.number.isRequired,
     lastLesson: PropTypes.object,
-    createManySATExercises: PropTypes.func.isRequired
+    createManySATExercises: PropTypes.func.isRequired,
+    createManyAQExercises: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -671,5 +694,6 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
     createLesson,
-    createManySATExercises
+    createManySATExercises,
+    createManyAQExercises
 })(AddLesson);

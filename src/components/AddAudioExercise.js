@@ -178,19 +178,22 @@ class AddAudioExercise extends Component {
                                 let styles = null;
                                 if (index == currentAqRightAnswerIndex) {
                                     styles = {
-                                        border: '1px solid green',
-                                        padding: '1%',
+                                        backgroundColor: 'green',
+                                        padding: '2%',
                                         display: 'inline'
                                     }
                                 } else {
-                                    styles = { display: 'inline' };
+                                    styles = {
+                                        padding: '1%',
+                                        display: 'inline'
+                                    };
                                 }
 
                                 return(
                                     <li key={index} style={styles}>
                                         <img src={a} style={{
-                                            width: '35px',
-                                            height: '35px'
+                                            width: '50px',
+                                            height: 'auto'
                                         }} />
                                     </li>
                                 );
@@ -258,18 +261,21 @@ class AddAudioExercise extends Component {
                                                     let styles2 = null;
                                                     if (i == s.rightAnswerIndex) {
                                                         styles2 = {
-                                                            border: '1px solid green',
-                                                            padding: '1%',
+                                                            backgroundColor: 'green',
+                                                            padding: '2%',
                                                             display: 'inline'
                                                         }
                                                     } else {
-                                                        styles2 = { display: 'inline' };
+                                                        styles2 = {
+                                                            padding: '1%',
+                                                            display: 'inline'
+                                                        };
                                                     }
                                                     return(
                                                         <li key={i} style={styles2}>
                                                             <img src={an} style={{
-                                                                width: '35px',
-                                                                height: '35px'
+                                                                width: '50px',
+                                                                height: 'auto'
                                                             }} />
                                                         </li>
                                                     );
