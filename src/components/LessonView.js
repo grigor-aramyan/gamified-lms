@@ -17,6 +17,7 @@ import {
 } from '../actions/lessonOngoingActions';
 import { loadLocalToken, loadUser } from '../actions/authActions';
 import { getSATExercisesByLessonId } from '../actions/exerciseActions';
+import { getAQExercisesByLessonId } from '../actions/audioExerciseActions';
 
 // Statics
 import GET_LESSON_BY_LESSON_ONGOING_ID_ERROR from '../actions/lessonOngoingActions';
@@ -57,18 +58,27 @@ class LessonView extends Component {
         // item: satId:::answerIndex
         satAnswers: [],
         lessonSubmitError: '',
-        currentLessonOngoingId: null
+        currentLessonOngoingId: null,
+
+        aqsVisible: false,
+        aqsWithSingleAttempt: [],
+        aqsWithSecondAttempt: [],
+        aqsWithThirdAttempt: [],
+        // item: satId:::answerIndex
+        aqAnswers: []
     }
 
     onLessonSubmit = () => {
-        if ((this.props.allSatsForLesson.length == 0) ||
-            (this.props.allSatsForLesson.length > this.state.satAnswers.length)) {
+        if (((this.props.allSatsForLesson.length == 0) && (this.props.allAqsForLesson.length == 0)) ||
+            (this.props.allSatsForLesson.length > this.state.satAnswers.length) ||
+            (this.props.allAqsForLesson.length > this.state.aqAnswers.length)) {
             this.setState({
                 lessonSubmitError: 'Should get and answer all exercises before submitting!'
             });
         } else {
             const {
                 allSatsForLesson,
+                allAqsForLesson,
                 updateLessonOngoingByLearningLearner
             } = this.props;
 
@@ -77,6 +87,12 @@ class LessonView extends Component {
                 satsWithSecondAttempt,
                 satsWithThirdAttempt,
                 satAnswers,
+
+                aqsWithSingleAttempt,
+                aqsWithSecondAttempt,
+                aqsWithThirdAttempt,
+                aqAnswers,
+
                 currentLessonOngoingId
             } = this.state;
 
@@ -103,9 +119,32 @@ class LessonView extends Component {
                 }
             }, 0);
 
+            const totalAudioPoints = aqAnswers.reduce((acc, answer) => {
+                const satId = answer.split(':::')[0];
+                const answerIndex = answer.split(':::')[1];
+
+                const currentSatData = allAqsForLesson.filter(sat => {
+                    return(sat.id == satId);
+                })[0];
+                if (answerIndex != currentSatData.rightAnswerIndex) {
+                    return acc;
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (aqsWithSingleAttempt.includes(satId))) {
+                    return (acc + 3);
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (aqsWithSecondAttempt.includes(satId))) {
+                    return (acc + 2);
+                } else if ((answerIndex == currentSatData.rightAnswerIndex) &&
+                    (aqsWithThirdAttempt.includes(satId))) {
+                    return (acc + 1);
+                } else {
+                    return acc;
+                }
+            }, 0);
+
             const body = {
                 completed: true,
-                completionPoint: totalPoints
+                completionPoint: totalPoints + totalAudioPoints
             };
 
             updateLessonOngoingByLearningLearner(currentLessonOngoingId, body);
@@ -173,6 +212,68 @@ class LessonView extends Component {
             this.setState({
                 satsWithSingleAttempt: dumbData,
                 satAnswers: filteredAnswers
+            });
+        }
+    }
+
+    onSelectAqAnswer = (satId, answerIndex) => {
+        const {
+            aqsWithSingleAttempt,
+            aqsWithSecondAttempt,
+            aqsWithThirdAttempt,
+            aqAnswers
+        } = this.state;
+
+        if (aqsWithSingleAttempt.includes(satId)) {
+            const updatedSatsWithSingleAttempt = aqsWithSingleAttempt.filter(s => {
+                return(s !== satId);
+            });
+
+            const dumbData = aqsWithSecondAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = aqAnswers.filter(a => {
+                return(a.split(':::')[0] != satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                aqsWithSingleAttempt: updatedSatsWithSingleAttempt,
+                aqsWithSecondAttempt: dumbData,
+                aqAnswers: filteredAnswers
+            });
+        } else if(aqsWithSecondAttempt.includes(satId)) {
+            const updatedSatsWithSecondAttempt = aqsWithSecondAttempt.filter(s => {
+                return(s !== satId);
+            });
+
+            const dumbData = aqsWithThirdAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = aqAnswers.filter(a => {
+                return(a.split(':::')[0] !== satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                aqsWithSecondAttempt: updatedSatsWithSecondAttempt,
+                aqsWithThirdAttempt: dumbData,
+                aqAnswers: filteredAnswers
+            });
+        } else if(aqsWithThirdAttempt.includes(satId)) {
+            
+        } else {
+            const dumbData = aqsWithSingleAttempt;
+            dumbData.unshift(satId);
+
+            const filteredAnswers = aqAnswers.filter(a => {
+                return(a.split(':::')[0] !== satId);
+            });
+            filteredAnswers.unshift(satId + ':::' + answerIndex);
+
+            this.setState({
+                aqsWithSingleAttempt: dumbData,
+                aqAnswers: filteredAnswers
             });
         }
     }
@@ -261,13 +362,40 @@ class LessonView extends Component {
         }
     }
 
+    onGetAqsForCurrentLesson = () => {
+        if(!this.props.gettingAqs) {
+            this.props.getAQExercisesByLessonId(this.props.currentLesson.id);
+            this.setState({
+                aqsVisible: true
+            });
+        }
+    }
+
+    onGetExercisesForCurrentLesson = () => {
+
+        if(!this.props.gettingSats) {
+            this.props.getSATExercisesByLessonId(this.props.currentLesson.id);
+            this.setState({
+                satsVisible: true
+            });
+        }
+
+        if(!this.props.gettingAqs) {
+            this.props.getAQExercisesByLessonId(this.props.currentLesson.id);
+            this.setState({
+                aqsVisible: true
+            });
+        }
+    }
+
     render() {
         const {
             isAuthenticated,
             isTeacher,
             currentLesson,
             error,
-            allSatsForLesson
+            allSatsForLesson,
+            allAqsForLesson
         } = this.props;
 
         let imageHrefs = [];
@@ -281,7 +409,9 @@ class LessonView extends Component {
             imagesActiveIndex,
             videosActiveIndex,
             satsVisible,
-            satAnswers
+            satAnswers,
+            aqsVisible,
+            aqAnswers
         } = this.state;
 
         const images = imageHrefs.map((i, index) => {
@@ -374,7 +504,7 @@ class LessonView extends Component {
                                 : null
                                 }
                                 <Button
-                                    onClick={this.onGetSatsForCurrentLesson}
+                                    onClick={this.onGetExercisesForCurrentLesson}
                                     className='btn btn-info'>
                                     Get Exercises
                                 </Button>
@@ -450,6 +580,85 @@ class LessonView extends Component {
                                     </div>
                                 : null
                                 }
+                                { (allAqsForLesson && aqsVisible) ?
+                                    <div
+                                        style={{
+                                            border: '1px solid grey',
+                                            borderRadius: '2%',
+                                            padding: '2%',
+                                            width: '40vw'
+                                        }}
+                                        className='mt-1'>
+                                        <h4>Audio Questions</h4>
+                                        { allAqsForLesson.length > 0 ?
+                                            <ol>
+                                                { allAqsForLesson.map((s, index) => {
+                                                    const rightAnswerIndex = s.rightAnswerIndex;
+                                                    const selectedAnswer = aqAnswers.filter(a => {
+                                                        return(a.split(':::')[0] == s.id);
+                                                    });
+                                                    let selectedAnswerIndex = null;
+                                                    if (selectedAnswer.length > 0) {
+                                                        selectedAnswerIndex = selectedAnswer[0].split(':::')[1];
+                                                    }
+
+                                                    return(
+                                                        <li key={index}>
+                                                            <audio
+                                                                src={ s.audioQuestion }
+                                                                controls
+                                                                style={{ verticalAlign: 'middle' }}>
+                                                            </audio>
+                                                            <ul style={{ listStyle: 'none' }}>
+                                                                {s.answerImages.map((a, i) => {
+                                                                    let styles = null;
+                                                                    if ((rightAnswerIndex == i) &&
+                                                                        (selectedAnswerIndex == i)) {
+                                                                        styles = {
+                                                                            backgroundColor: 'green',
+                                                                            padding: '2%',
+                                                                            display: 'inline'
+                                                                        }
+                                                                    } else if ((rightAnswerIndex != i) &&
+                                                                        (selectedAnswerIndex == i)) {
+                                                                            styles = {
+                                                                                backgroundColor: 'red',
+                                                                                padding: '2%',
+                                                                                display: 'inline'
+                                                                            }
+                                                                    } else {
+                                                                        styles = {
+                                                                            padding: '1%',
+                                                                            display: 'inline'
+                                                                        }
+                                                                    }
+                                                                    
+                                                                    return(
+                                                                        <li key={i} style={styles} className='mr-1'>
+                                                                            <a
+                                                                                onClick={() => {this.onSelectAqAnswer(s.id, i)}}
+                                                                                href='javascript:void(0)'>
+                                                                                <img src={a} style={{
+                                                                                    width: '50px',
+                                                                                    height: 'auto'
+                                                                                }} />
+                                                                            </a>
+                                                                        </li>
+                                                                    );
+                                                                })}
+                                                            </ul>
+                                                            <hr />
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ol>
+                                        : <span style={{ fontStyle: 'italic' }}>
+                                            No audio questions for this lesson!
+                                        </span>
+                                        }
+                                    </div>
+                                : null
+                                }
                                 <hr />
                                 { this.state.lessonSubmitError ?
                                     <span style={{
@@ -492,7 +701,10 @@ LessonView.propTypes = {
     getSATExercisesByLessonId: PropTypes.func.isRequired,
     allSatsForLesson: PropTypes.array.isRequired,
     gettingSats: PropTypes.bool.isRequired,
-    updateLessonOngoingByLearningLearner: PropTypes.func.isRequired
+    updateLessonOngoingByLearningLearner: PropTypes.func.isRequired,
+    gettingAqs: PropTypes.bool.isRequired,
+    getAQExercisesByLessonId: PropTypes.func.isRequired,
+    allAqsForLesson: PropTypes.array.isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -501,7 +713,9 @@ const mapStateToProps = (state) => ({
     isTeacher: state.auth.isTeacher,
     currentLesson: state.lessonOngoing.lessonForSelectedOngoing,
     allSatsForLesson: state.exercise.allSATExercisesForCurrentLesson,
-    gettingSats: state.exercise.gettingSATExercises
+    gettingSats: state.exercise.gettingSATExercises,
+    gettingAqs: state.audioExercise.gettingAQExercises,
+    allAqsForLesson: state.audioExercise.allAQExercisesForCurrentLesson
 });
 
 export default connect(mapStateToProps, {
@@ -509,5 +723,6 @@ export default connect(mapStateToProps, {
     getSATExercisesByLessonId,
     getLessonByLessonOngoingId,
     loadLocalToken,
-    loadUser
+    loadUser,
+    getAQExercisesByLessonId
 })(LessonView);
