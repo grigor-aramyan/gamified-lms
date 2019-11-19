@@ -17,7 +17,8 @@ class AddAudioExercise extends Component {
         recording: false,
         currentRecordedAudioQuestion: null,
         stream: null,
-        currentAqAnswerImage: ''
+        currentAqAnswerImage: '',
+        currentAqAnswerClickableText: ''
     }
 
     handleImageUpload = (e) => {
@@ -109,6 +110,21 @@ class AddAudioExercise extends Component {
         });
     }
 
+    addAqExerciseAnswerClickableText = () => {
+        const {
+            currentAqAnswerClickableText
+        } = this.state;
+
+        if (!currentAqAnswerClickableText) {
+            this.props.onAddAqExerciseError('Can\'t add blank clickable text...');
+        } else {
+            this.props.addAqExerciseAnswer(currentAqAnswerClickableText);
+            this.setState({
+                currentAqAnswerClickableText: ''
+            });
+        }
+    }
+
     addAqExerciseAnswer = () => {
         const {
             currentAqAnswerImage
@@ -140,7 +156,8 @@ class AddAudioExercise extends Component {
         const {
             currentRecordedAudioQuestion,
             recording,
-            currentAqAnswerImage
+            currentAqAnswerImage,
+            currentAqAnswerClickableText
         } = this.state;
 
         const {
@@ -193,7 +210,7 @@ class AddAudioExercise extends Component {
                     <Input
                         type='text'
                         name='currentAqAnswerImage'
-                        placeholder='Add some image URL...'
+                        placeholder='Add answer image URL...'
                         value={currentAqAnswerImage}
                         onChange={this.onChange}
                         className='mb-1 mr-1 mt-2 sat-input'
@@ -214,6 +231,24 @@ class AddAudioExercise extends Component {
                         name='imageFile'
                         accept='image/*' />
                     <br />
+                    <span>... OR ...</span>
+                    <br />
+                    <Input
+                        type='text'
+                        name='currentAqAnswerClickableText'
+                        placeholder='Type answer clickable text...'
+                        value={currentAqAnswerClickableText}
+                        onChange={this.onChange}
+                        className='mb-1 mr-1 mt-2 sat-input'
+                        style={{display: 'inline'}} />
+                    <Button
+                        size='sm'
+                        color='primary'
+                        outline
+                        onClick={this.addAqExerciseAnswerClickableText}>
+                            +
+                    </Button>
+                    <br />
                     { currentAqAllAnswers.length > 0 ?
                         <ul style={{ listStyle: 'none' }}>
                             { currentAqAllAnswers.map((a, index) => {
@@ -233,10 +268,20 @@ class AddAudioExercise extends Component {
 
                                 return(
                                     <li key={index} style={styles}>
-                                        <img src={a} style={{
-                                            width: '50px',
-                                            height: 'auto'
-                                        }} />
+                                        { a.startsWith('http') ?
+                                            <img src={a} style={{
+                                                width: '50px',
+                                                height: 'auto'
+                                            }} />
+                                        : <span
+                                            style={{
+                                                width: '50px',
+                                                height: 'auto',
+                                                border: '2px solid lightgrey',
+                                                borderRadius: '10%',
+                                                padding: '0.2em 0.5em'
+                                            }}>{a}</span>
+                                        }
                                     </li>
                                 );
                             })}
