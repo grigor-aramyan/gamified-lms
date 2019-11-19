@@ -638,10 +638,20 @@ class LessonView extends Component {
                                                                             <a
                                                                                 onClick={() => {this.onSelectAqAnswer(s.id, i)}}
                                                                                 href='javascript:void(0)'>
-                                                                                <img src={a} style={{
-                                                                                    width: '50px',
-                                                                                    height: 'auto'
-                                                                                }} />
+                                                                                { a.startsWith('http') ?
+                                                                                    <img src={a} style={{
+                                                                                        width: '50px',
+                                                                                        height: 'auto'
+                                                                                    }} />
+                                                                                : <span
+                                                                                    style={{
+                                                                                        width: '50px',
+                                                                                        height: 'auto',
+                                                                                        border: '2px solid lightgrey',
+                                                                                        borderRadius: '10%',
+                                                                                        padding: '0.2em 0.5em'
+                                                                                    }}>{a}</span>
+                                                                                }
                                                                             </a>
                                                                         </li>
                                                                     );

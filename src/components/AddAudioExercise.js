@@ -360,10 +360,19 @@ class AddAudioExercise extends Component {
                                                     }
                                                     return(
                                                         <li key={i} style={styles2}>
-                                                            <img src={an} style={{
-                                                                width: '50px',
-                                                                height: 'auto'
-                                                            }} />
+                                                            { an.startsWith('http') ?
+                                                                <img src={an} style={{
+                                                                    width: '50px',
+                                                                    height: 'auto'
+                                                                }} />
+                                                            : <span
+                                                                style={{
+                                                                    width: '50px',
+                                                                    height: 'auto',
+                                                                    border: '2px solid lightgrey',
+                                                                    borderRadius: '10%',
+                                                                    padding: '0.2em 0.5em'
+                                                                }}>{an}</span>}
                                                         </li>
                                                     );
                                                 })}
