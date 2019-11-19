@@ -20,6 +20,38 @@ class AddAudioExercise extends Component {
         currentAqAnswerImage: ''
     }
 
+    handleImageUpload = (e) => {
+        const imageFile = e.target.files[0];
+
+        const extension = imageFile.name.split('.')[imageFile.name.split('.').length - 1];
+        if ((extension !== 'png') && (extension !== 'jpg') && (extension != 'jpeg')) {
+            this.props.onAddAqExerciseError('Image format does not look correct! Png, jpg and jpeg files are accepted only!');
+        } else {
+            const seconds = new Date().getTime();
+            const filename = imageFile.name.split('.')[0] + '_' + seconds + '.' + extension;
+
+            const metadata = {
+                contentType: `image/${extension}`
+            };
+
+            const storageRef = firebase.storage().ref();
+            const uploadTask = storageRef.child(`aqanswerimages/${filename}`).put(imageFile, metadata);
+            uploadTask.on('state_changed', (snapshot) => {
+
+            }, (error) => {
+
+            }, () => {
+                uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                    this.props.addAqExerciseAnswer(downloadURL);
+
+                    this.setState({
+                        currentAqAnswerImage: ''
+                    });
+                });
+            });
+        }
+    }
+
     createDownloadLink = blob => {
         const url = URL.createObjectURL(blob);
         const filename = url.split('/')[url.split('/').length - 1];
@@ -173,6 +205,14 @@ class AddAudioExercise extends Component {
                         onClick={this.addAqExerciseAnswer}>
                             +
                     </Button>
+                    <br />
+                    <span>... OR ...</span>
+                    <br />
+                    <Input
+                        type='file'
+                        onChange={this.handleImageUpload}
+                        name='imageFile'
+                        accept='image/*' />
                     <br />
                     { currentAqAllAnswers.length > 0 ?
                         <ul style={{ listStyle: 'none' }}>
