@@ -1,6 +1,6 @@
 {
-    "DB_URI2": "mongodb://127.0.0.1:27017/gamified_lms_dev",
-    "DB_URI": "mongodb://heroku_1xvsb4vg:kqmkv2s14g9ko3f8klicthbl7k@ds351987.mlab.com:51987/heroku_1xvsb4vg",
+    "DB_URI": "mongodb://127.0.0.1:27017/gamified_lms_dev",
+    "DB_URI2": "mongodb://heroku_1xvsb4vg:kqmkv2s14g9ko3f8klicthbl7k@ds351987.mlab.com:51987/heroku_1xvsb4vg",
     "jwtSecret": "vKsjWSgv0Qi+EJQzPbcR/UQlrqSZv7uYQjNpbnwAznTyQ/0gT2lUzL9X/ZjvI1ah",
     "appName": "Chit Learning"
 }
