@@ -90,7 +90,13 @@ server.get('/*', (req, res) => {
                 <script>
                     // Your web app's Firebase configuration
                     var firebaseConfig = {
-                        
+                        apiKey: "AIzaSyBxsAa9QSdaFUDYpFwg7ba05t4tzplrr2w",
+                        authDomain: "chit-learning.firebaseapp.com",
+                        databaseURL: "https://chit-learning.firebaseio.com",
+                        projectId: "chit-learning",
+                        storageBucket: "chit-learning.appspot.com",
+                        messagingSenderId: "709658193354",
+                        appId: "1:709658193354:web:add688eb9670ffde107333"
                     };
                     // Initialize Firebase
                     firebase.initializeApp(firebaseConfig);
