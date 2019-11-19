@@ -1199,10 +1199,20 @@ class LessonTeacherView extends Component {
                                                                         <li key={i}
                                                                             style={ liStyles }
                                                                             className='mr-1'>
-                                                                            <img src={a} style={{
-                                                                                width: '50px',
-                                                                                height: 'auto'
-                                                                            }} />
+                                                                            { a.startsWith('http') ?
+                                                                                <img src={a} style={{
+                                                                                    width: '50px',
+                                                                                    height: 'auto'
+                                                                                }} />
+                                                                            :   <span
+                                                                                    style={{
+                                                                                        width: '50px',
+                                                                                        height: 'auto',
+                                                                                        border: '2px solid lightgrey',
+                                                                                        borderRadius: '10%',
+                                                                                        padding: '0.2em 0.5em'
+                                                                                    }}>{a}</span>
+                                                                            }
                                                                         </li>
                                                                     );
                                                                 }) }
