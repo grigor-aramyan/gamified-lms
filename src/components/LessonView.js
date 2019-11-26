@@ -546,6 +546,12 @@ class LessonView extends Component {
                                                                             border: '1px solid green',
                                                                             padding: '1%'
                                                                         }
+                                                                    } else if ((rightAnswerIndex != i) &&
+                                                                        (selectedAnswerIndex == i)) {
+                                                                        styles = {
+                                                                            border: '1px solid red',
+                                                                            padding: '1%'
+                                                                        }
                                                                     } else {
                                                                         styles = {}
                                                                     }
