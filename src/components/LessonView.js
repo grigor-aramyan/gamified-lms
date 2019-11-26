@@ -66,7 +66,7 @@ class LessonView extends Component {
         aqsWithThirdAttempt: [],
         // item: satId:::answerIndex
         aqAnswers: [],
-        completedWithPoints: 0
+        completedWithPoints: 10
     }
 
     onLessonSubmit = () => {
@@ -702,26 +702,35 @@ class LessonView extends Component {
                                 </Button>
                                 { completedWithPoints > 0 ?
                                     <div
-                                        style={{
-                                            border: '3px solid deepskyblue',
-                                            borderRadius: '5%',
-                                            padding: '10px',
-                                            textAlign: 'center',
-                                            width: '20vw',
-                                            marginLeft: '32vw'
-                                        }}
                                         className='mb-2 mt-2'>
-                                        <span>
-                                            Lesson completed with points:
-                                        </span>
-                                        <span style={{
-                                            color: 'fuchsia',
-                                            fontWeight: 'bold',
-                                            fontSize: '200%',
-                                            display: 'block'
-                                        }}>
-                                            { completedWithPoints }
-                                        </span>
+                                        <div
+                                            style={{
+                                                textAlign: 'center'
+                                            }}>
+                                            <span
+                                                style={{
+                                                    border: '3px solid deepskyblue',
+                                                    borderRadius: '5%',
+                                                    padding: '10px'
+                                                }}>
+                                                Lesson completed with points
+                                            </span>
+                                            <br />
+                                            <span style={{
+                                                color: 'fuchsia',
+                                                fontWeight: 'bold',
+                                                fontSize: '300%'
+                                            }}>
+                                                { completedWithPoints }
+                                            </span>
+                                        </div>
+                                        <a
+                                            style={{
+                                                textDecoration: 'underline'
+                                            }}
+                                            href='/lesson_ongoings'>
+                                                Back to Lesson ongoings
+                                        </a>
                                     </div>
                                 : null
                                 }
