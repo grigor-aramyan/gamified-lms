@@ -65,7 +65,8 @@ class LessonView extends Component {
         aqsWithSecondAttempt: [],
         aqsWithThirdAttempt: [],
         // item: satId:::answerIndex
-        aqAnswers: []
+        aqAnswers: [],
+        completedWithPoints: 0
     }
 
     onLessonSubmit = () => {
@@ -142,14 +143,17 @@ class LessonView extends Component {
                 }
             }, 0);
 
+            const total = totalPoints + totalAudioPoints;
+
             const body = {
                 completed: true,
-                completionPoint: totalPoints + totalAudioPoints
+                completionPoint: total
             };
 
             updateLessonOngoingByLearningLearner(currentLessonOngoingId, body);
             this.setState({
-                lessonSubmitError: ''
+                lessonSubmitError: '',
+                completedWithPoints: total
             });
         }
     }
@@ -411,7 +415,8 @@ class LessonView extends Component {
             satsVisible,
             satAnswers,
             aqsVisible,
-            aqAnswers
+            aqAnswers,
+            completedWithPoints
         } = this.state;
 
         const images = imageHrefs.map((i, index) => {
@@ -695,6 +700,31 @@ class LessonView extends Component {
                                     className='btn btn-primary mb-2'>
                                     Submit
                                 </Button>
+                                { completedWithPoints > 0 ?
+                                    <div
+                                        style={{
+                                            border: '3px solid deepskyblue',
+                                            borderRadius: '5%',
+                                            padding: '10px',
+                                            textAlign: 'center',
+                                            width: '20vw',
+                                            marginLeft: '32vw'
+                                        }}
+                                        className='mb-2 mt-2'>
+                                        <span>
+                                            Lesson completed with points:
+                                        </span>
+                                        <span style={{
+                                            color: 'fuchsia',
+                                            fontWeight: 'bold',
+                                            fontSize: '200%',
+                                            display: 'block'
+                                        }}>
+                                            { completedWithPoints }
+                                        </span>
+                                    </div>
+                                : null
+                                }
                             </div>
                         : null 
                         }
