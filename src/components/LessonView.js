@@ -726,10 +726,11 @@ class LessonView extends Component {
                                         </div>
                                         <a
                                             style={{
-                                                textDecoration: 'underline'
+                                                textDecoration: 'underline',
+                                                fontStyle: 'italic'
                                             }}
                                             href='/lesson_ongoings'>
-                                                Back to Lesson ongoings
+                                                &#x2190; Back to Lesson ongoings
                                         </a>
                                     </div>
                                 : null
