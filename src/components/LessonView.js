@@ -66,7 +66,7 @@ class LessonView extends Component {
         aqsWithThirdAttempt: [],
         // item: satId:::answerIndex
         aqAnswers: [],
-        completedWithPoints: 10
+        completedWithPoints: 0
     }
 
     onLessonSubmit = () => {
